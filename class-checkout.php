@@ -12,17 +12,51 @@ use Omnipay\Omnipay;
 class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 {
 
-    /** @var bool 日志是否启用 */
+    /**
+     * @var bool 日志是否启用
+     */
     public $debug_active = false;
 
-    /** @var WC_Logger Logger 实例 */
+    /**
+     * @var WC_Logger Logger 实例
+     */
     public $log = false;
 
+    /**
+     * @var bool
+     */
     public $environment = false;
 
-    public $app_id = false;
-    public $private_key = false;
-    public $alipay_public_key = false;
+    /**
+     * @var string
+     */
+    public $app_id = '';
+
+    /**
+     * @var string
+     */
+    public $private_key = '';
+
+    /**
+     * @var string
+     */
+    public $alipay_public_key = '';
+
+    /**
+     * @var string
+     */
+    public $current_currency = '';
+
+    /**
+     * @var bool
+     */
+    public $multi_currency_enabled = false;
+
+    /**
+     * @var string
+     */
+    public $exchange_rate = '';
+
 
     /**
      * 网关支持的功能
@@ -41,13 +75,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
         // 支付网关页面显示的支付网关标题
-        $this->method_title = __("Alipay", 'wprs-woo-alipay');
+        $this->method_title = __("Alipay", 'wprs-wc-alipay');
 
         // 支付网关设置页面显示的支付网关标题
-        $this->method_description = __("Alipay Payment Gateway for WooCommerce", 'wprs-woo-alipay');
+        $this->method_description = __("Alipay Payment Gateway for WooCommerce", 'wprs-wc-alipay');
 
         // 前端显示的支付网关名称
-        $this->title = __("Alipay", 'wprs-woo-alipay');
+        $this->title = __("Alipay", 'wprs-wc-alipay');
 
         // 支付网关标题
         $this->icon = apply_filters('omnipay_alipay_icon', null);
@@ -59,7 +93,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $this->init_settings();
 
-        $this->debug_active = true;
+        $this->debug_active = false;
+
         $this->has_fields   = false;
 
         $this->description = $this->get_option('description');
@@ -70,7 +105,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         // 设置是否应该重命名按钮。
-        $this->order_button_text = apply_filters('woocommerce_Alipay_button_text', __('Proceed to Alipay', 'wprs-woo-alipay'));
+        $this->order_button_text = apply_filters('woocommerce_Alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));
 
         // 保存设置
         if (is_admin()) {
@@ -90,47 +125,58 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $this->form_fields = [
             'enabled'           => [
-                'title'   => __('Enable / Disable', 'wprs-woo-alipay'),
-                'label'   => __('Enable this payment gateway', 'wprs-woo-alipay'),
+                'title'   => __('Enable / Disable', 'wprs-wc-alipay'),
+                'label'   => __('Enable this payment gateway', 'wprs-wc-alipay'),
                 'type'    => 'checkbox',
                 'default' => 'no',
             ],
             'environment'       => [
-                'title'       => __(' Alipay Sanbox Mode', 'wprs-woo-alipay'),
-                'label'       => __('Enable Alipay Sanbox Mode', 'wprs-woo-alipay'),
+                'title'       => __(' Alipay Sanbox Mode', 'wprs-wc-alipay'),
+                'label'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
                 'type'        => 'checkbox',
                 'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a href="%s">here</a>',
-                    'wprs-woo-alipay'),
+                    'wprs-wc-alipay'),
                     'https://sandbox.Alipay.com'),
                 'default'     => 'no',
             ],
             'title'             => [
-                'title'   => __('Title', 'wprs-woo-alipay'),
+                'title'   => __('Title', 'wprs-wc-alipay'),
                 'type'    => 'text',
-                'default' => __('Alipay', 'wprs-woo-alipay'),
+                'default' => __('Alipay', 'wprs-wc-alipay'),
             ],
             'description'       => [
-                'title'   => __('Description', 'wprs-woo-alipay'),
+                'title'   => __('Description', 'wprs-wc-alipay'),
                 'type'    => 'textarea',
-                'default' => __('Pay securely using Alipay', 'wprs-woo-alipay'),
+                'default' => __('Pay securely using Alipay', 'wprs-wc-alipay'),
                 'css'     => 'max-width:350px;',
             ],
             'app_id'            => [
-                'title'       => __('App ID', 'wprs-woo-alipay'),
+                'title'       => __('App ID', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => __('Enter your Alipay Partner Number.', 'wprs-woo-alipay'),
+                'description' => __('Enter your Alipay Partner Number.', 'wprs-wc-alipay'),
             ],
             'private_key'       => [
-                'title'       => __('Private Key', 'wprs-woo-alipay'),
+                'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay secret key.', 'wprs-woo-alipay'),
+                'description' => __('Enter your Alipay secret key.', 'wprs-wc-alipay'),
             ],
             'alipay_public_key' => [
-                'title'       => __('Alipay Public Key Key', 'wprs-woo-alipay'),
+                'title'       => __('Alipay Public Key Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay Seller Email.', 'wprs-woo-alipay'),
+                'description' => __('Enter your Alipay Seller Email.', 'wprs-wc-alipay'),
             ],
         ];
+
+        if ( ! in_array($this->current_currency, ['RMB', 'CNY'])) {
+
+            $this->form_fields[ 'exchange_rate' ] = [
+                'title'       => __('Exchange Rate', 'wprs-wc-alipay'),
+                'type'        => 'text',
+                'description' => sprintf(__("Please set the %s against Chinese Yuan exchange rate, eg if your currency is US Dollar, then you should enter 6.19",
+                    'wprs-wc-wechatpay'), $this->current_currency),
+            ];
+
+        }
     }
 
 
@@ -172,6 +218,44 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function is_sandbox_test()
     {
         return apply_filters('woocommerce_wenprise_alipay_enable_sandbox', true);
+    }
+
+
+    /**
+     * 检查是否满足需求
+     *
+     * @access public
+     * @return void
+     */
+    function requirement_checks()
+    {
+        if ( ! in_array($this->current_currency, ['RMB', 'CNY']) && ! $this->exchange_rate) {
+            echo '<div class="error"><p>' . sprintf(__('WeChatPay is enabled, but the store currency is not set to Chinese Yuan. Please <a href="%1s">set the %2s against the Chinese Yuan exchange rate</a>.',
+                    'wechatpay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate'),
+                    $this->current_currency) . '</p></div>';
+        }
+    }
+
+
+    /**
+     * 检查是否可用
+     *
+     * @return bool
+     */
+    function is_available()
+    {
+
+        $is_available = ('yes' === $this->enabled) ? true : false;
+
+        if ($this->multi_currency_enabled) {
+            if ( ! in_array(get_woocommerce_currency(), ['RMB', 'CNY']) && ! $this->exchange_rate) {
+                $is_available = false;
+            }
+        } elseif ( ! in_array($this->current_currency, ['RMB', 'CNY']) && ! $this->exchange_rate) {
+            $is_available = false;
+        }
+
+        return $is_available;
     }
 
 
@@ -221,8 +305,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $order_data = apply_filters('woocommerce_wenprise_alipay_args',
                 [
                     'out_trade_no'     => $order_no,
-                    'subject'          => __('Pay for order #', 'wprs-woo-alipay') . $order_no . __(' At ', 'wprs-woo-alipay') . get_bloginfo('name'),
-                    'body'             => __('Pay for order #', 'wprs-woo-alipay') . $order_no . __(' At ', 'wprs-woo-alipay') . get_bloginfo('name'),
+                    'subject'          => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
+                    'body'             => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
                     'total_amount'     => $order->get_total(),
                     'product_code'     => 'FAST_INSTANT_TRADE_PAY',
                     'spbill_create_ip' => '127.0.0.1',
@@ -288,6 +372,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function process_refund($order_id, $amount = null, $reason = '')
     {
         dd($order_id . $amount . $reason);
+
         return false;
     }
 
@@ -323,7 +408,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                     $order->payment_complete();
 
                     // 添加订单备注
-                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-woo-alipay'), $_REQUEST[ 'trade_no' ]));
+                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
 
                     wp_redirect($this->get_return_url($order));
                     exit;
@@ -362,7 +447,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             if ( ! ($this->log)) {
                 $this->log = new WC_Logger();
             }
-            $this->log->add('woocommerce_wprs-woo-alipay', $message);
+            $this->log->add('woocommerce_wprs-wc-alipay', $message);
         }
     }
 

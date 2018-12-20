@@ -6,7 +6,7 @@
  * Version: 1.0.1
  * Author: WenPrice Co., Ltd
  * Author URI: https://www.wpzhiku.com
- * Text Domain: wprs-woo-alipay
+ * Text Domain: wprs-wc-alipay
  * Domain Path: /languages
  */
 
@@ -17,7 +17,7 @@ if ( ! defined('ABSPATH')) {
 define('WENPRISE_ALIPAY_FILE_PATH', __FILE__);
 define('WENPRISE_ALIPAY_PATH', plugin_dir_path(__FILE__));
 define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
-define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-woo-alipay');
+define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-wc-alipay');
 define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL . 'assets/');
 
 add_action('plugins_loaded', function ()
@@ -32,7 +32,7 @@ add_action('plugins_loaded', function ()
     require WENPRISE_ALIPAY_PATH . 'class-checkout.php';
 
     // 加载语言包
-    load_plugin_textdomain('wprs-woo-alipay', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('wprs-wc-alipay', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
     // 添加支付方法
     add_filter('woocommerce_payment_gateways', function ($methods)

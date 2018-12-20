@@ -268,7 +268,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
 
         /**
-         * @var \omnipay\Alipay\AbstractAopGateway | \omnipay\Alipay\AopWapGateway | \Omnipay\WechatPay\BaseAbstractGateway $gateway
+         * @var \omnipay\Alipay\AbstractAopGateway | \omnipay\Alipay\AopWapGateway | \Omnipay\Alipay\AopPageGateway $gateway
          */
         $gateway = Omnipay::create('Alipay_AopPage');
         $gateway->setSignType('RSA2');

@@ -95,7 +95,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $this->debug_active = false;
 
-        $this->has_fields   = false;
+        $this->has_fields = false;
 
         $this->description = $this->get_option('description');
 
@@ -113,8 +113,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         // Hooks
-        add_action('woocommerce_api_wprs-alipay-return', [$this, 'listen_return_notify']);
-        add_action('woocommerce_api_wprs-alipay-notify', [$this, 'listen_return_notify']);
+        add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
+        add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
     }
 
 
@@ -275,8 +275,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $gateway->setAppId($this->app_id);
         $gateway->setPrivateKey($this->private_key);
         $gateway->setAlipayPublicKey($this->alipay_public_key);
-        $gateway->setReturnUrl(wc_get_endpoint_url('wprs-alipay-return'));
-        $gateway->setNotifyUrl(wc_get_endpoint_url('wprs-alipay-notify'));
+        $gateway->setReturnUrl(wc_get_endpoint_url('wprs-wc-alipay-return'));
+        $gateway->setNotifyUrl(wc_get_endpoint_url('wprs-wc-alipay-notify'));
 
         return $gateway;
     }

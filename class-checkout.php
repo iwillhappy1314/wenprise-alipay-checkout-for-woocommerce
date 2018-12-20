@@ -24,6 +24,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public $private_key = false;
     public $alipay_public_key = false;
 
+    /**
+     * 网关支持的功能
+     *
+     * @var array
+     */
+    public $supports = ['products', 'refunds'];
+
     /** @var string WC_API for the gateway - 作为回调 url 使用 */
     public $notify_url;
 
@@ -184,8 +191,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $gateway->setAppId($this->app_id);
         $gateway->setPrivateKey($this->private_key);
         $gateway->setAlipayPublicKey($this->alipay_public_key);
-        $gateway->setReturnUrl(urldecode(WC()->api_request_url('wprs-alipay-return')));
-        $gateway->setNotifyUrl(urldecode(WC()->api_request_url('wprs-alipay-notify')));
+        $gateway->setReturnUrl(wc_get_endpoint_url('wprs-alipay-return'));
+        $gateway->setNotifyUrl(wc_get_endpoint_url('wprs-alipay-notify'));
 
         return $gateway;
     }
@@ -202,7 +209,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $order = wc_get_order($order_id);
+        $order    = wc_get_order($order_id);
+        $order_no = $order->get_order_number();
 
         do_action('wenprise_woocommerce_alipay_before_process_payment');
 
@@ -210,61 +218,22 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         try {
             $gateway = $this->get_gateway();
 
-            // 账单及收货地址
-            $formData = [
-                'firstName' => $order->billing_first_name,
-                'lastName'  => $order->billing_last_name,
-                'email'     => $order->billing_email,
-                'address1'  => $order->billing_address_1,
-                'address2'  => $order->billing_address_2,
-                'city'      => $order->billing_city,
-                'state'     => $order->billing_state,
-                'postcode'  => $order->billing_postcode,
-                'country'   => $order->billing_country,
-            ];
-
-
-            // 获取购物车中的商品
-            $order_cart = $order->get_items();
-
-            // 构造购物车数组
-            $cart = [];
-            foreach ($order_cart as $product_id => $product) {
-                $cart[] = [
-                    'name'       => $product[ 'name' ],
-                    'quantity'   => $product[ 'qty' ],
-                    'price'      => $product[ 'line_total' ],
-                    'product_id' => $product_id,
-                ];
-            }
-
-            // 添加更多购物车数据
-            if (($shipping_total = $order->get_total()) > 0) {
-                $cart[] = [
-                    'name'     => __('Shipping Fee', 'wprs-woo-alipay'),
-                    'quantity' => 1,
-                    'price'    => $shipping_total,
-                ];
-            }
+            $order_data = apply_filters('woocommerce_wenprise_alipay_args',
+                [
+                    'out_trade_no'     => $order_no,
+                    'subject'          => __('Pay for order #', 'wprs-woo-alipay') . $order_no . __(' At ', 'wprs-woo-alipay') . get_bloginfo('name'),
+                    'body'             => __('Pay for order #', 'wprs-woo-alipay') . $order_no . __(' At ', 'wprs-woo-alipay') . get_bloginfo('name'),
+                    'total_amount'     => $order->get_total(),
+                    'product_code'     => 'FAST_INSTANT_TRADE_PAY',
+                    'spbill_create_ip' => '127.0.0.1',
+                    'show_url'         => get_permalink(),
+                ]
+            );
 
             // 生成订单并发送支付
             /** @var \Omnipay\Alipay\Requests\AbstractAopRequest $request */
             $request = $gateway->purchase();
-            $request->setBizContent(
-                apply_filters('woocommerce_wenprise_alipay_args',
-                    [
-                        'out_trade_no'     => $order->get_order_number(),
-                        'subject'          => __('Pay for order #', 'wprs-woo-alipay') . $order->get_order_number() . __(' At ',
-                                'wprs-woo-alipay') . get_bloginfo('name'),
-                        'body'             => __('Pay for order #', 'wprs-woo-alipay') . $order->get_order_number() . __(' At ',
-                                'wprs-woo-alipay') . get_bloginfo('name'),
-                        'total_amount'     => $order->get_total(),
-                        'product_code'     => 'FAST_INSTANT_TRADE_PAY',
-                        'spbill_create_ip' => '127.0.0.1',
-                        'show_url'         => get_permalink(),
-                    ]
-                )
-            );
+            $request->setBizContent($order_data);
 
             /** @var \Omnipay\Alipay\Responses\AopTradePagePayResponse $response */
             $response = $request->send();
@@ -273,6 +242,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
             if ($response->isRedirect()) {
+                wc_empty_cart();
+
                 return [
                     'result'   => 'success',
                     'redirect' => $response->getRedirectUrl(),
@@ -299,6 +270,25 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'redirect' => '',
             ];
         }
+    }
+
+
+    /**
+     * 处理退款
+     *
+     * If the gateway declares 'refunds' support, this will allow it to refund.
+     * a passed in amount.
+     *
+     * @param  int    $order_id Order ID.
+     * @param  float  $amount   Refund amount.
+     * @param  string $reason   Refund reason.
+     *
+     * @return boolean True or false based on success, or a WP_Error object.
+     */
+    public function process_refund($order_id, $amount = null, $reason = '')
+    {
+        dd($order_id . $amount . $reason);
+        return false;
     }
 
 
@@ -335,7 +325,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                     // 添加订单备注
                     $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-woo-alipay'), $_REQUEST[ 'trade_no' ]));
 
-                    wc_empty_cart();
                     wp_redirect($this->get_return_url($order));
                     exit;
                 } else {

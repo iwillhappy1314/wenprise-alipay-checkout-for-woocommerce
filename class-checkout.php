@@ -355,18 +355,16 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 $this->log($error);
 
                 return [
-                    'result'   => 'fail',
+                    'result'   => 'failure',
                     'messages' => $response->getMessage(),
                 ];
             }
 
         } catch (Exception $e) {
-            $error = $e->getMessage();
-            $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
-            wc_add_notice($error, "error");
+            $this->log($e);
 
             return [
-                'result'   => 'fail',
+                'result'   => 'failure',
                 'messages' => $e->getMessage(),
             ];
         }
@@ -443,6 +441,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
                 wc_add_notice($error, 'error');
                 $this->log($error);
+
                 wp_redirect(wc_get_checkout_url());
                 exit;
 

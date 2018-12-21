@@ -99,6 +99,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $this->description = $this->get_option('description');
 
+        $this->current_currency = get_option('woocommerce_currency');
+
+        $this->multi_currency_enabled = in_array('woocommerce-multilingual/wpml-woocommerce.php',
+                apply_filters('active_plugins', get_option('active_plugins'))) && get_option('icl_enable_multi_currency') == 'yes';
+
+        $this->exchange_rate = $this->get_option('exchange_rate');
+
         // 转换设置为变量以方便使用
         foreach ($this->settings as $setting_key => $value) {
             $this->$setting_key = $value;

@@ -277,7 +277,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         /**
          * @var \omnipay\Alipay\AbstractAopGateway | \omnipay\Alipay\AopWapGateway | \Omnipay\Alipay\AopPageGateway $gateway
          */
-        $gateway = Omnipay::create('Alipay_AopPage');
+
+        if (wp_is_mobile()) {
+            $gateway = Omnipay::create('Alipay_AopWap');
+        } else {
+            $gateway = Omnipay::create('Alipay_AopPage');
+        }
+
         $gateway->setSignType('RSA2');
         $gateway->setAppId($this->app_id);
         $gateway->setPrivateKey($this->private_key);

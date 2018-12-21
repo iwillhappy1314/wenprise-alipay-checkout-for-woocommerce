@@ -292,8 +292,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $gateway->setAppId($this->app_id);
         $gateway->setPrivateKey($this->private_key);
         $gateway->setAlipayPublicKey($this->alipay_public_key);
-        $gateway->setReturnUrl(wc_get_endpoint_url('wprs-wc-alipay-return'));
-        $gateway->setNotifyUrl(wc_get_endpoint_url('wprs-wc-alipay-notify'));
+        $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
+        $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
 
         return $gateway;
     }
@@ -321,13 +321,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             $order_data = apply_filters('woocommerce_wenprise_alipay_args',
                 [
-                    'out_trade_no'     => $order_no,
-                    'subject'          => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
-                    'body'             => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
-                    'total_amount'     => $order->get_total(),
-                    'product_code'     => 'FAST_INSTANT_TRADE_PAY',
-                    'spbill_create_ip' => '127.0.0.1',
-                    'show_url'         => get_permalink(),
+                    'out_trade_no' => $order_no,
+                    'subject'      => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
+                    'body'         => __('Pay for order #', 'wprs-wc-alipay') . $order_no . __(' At ', 'wprs-wc-alipay') . get_bloginfo('name'),
+                    'total_amount' => $order->get_total(),
+                    'product_code' => 'FAST_INSTANT_TRADE_PAY',
+                    'show_url'     => get_permalink(),
                 ]
             );
 

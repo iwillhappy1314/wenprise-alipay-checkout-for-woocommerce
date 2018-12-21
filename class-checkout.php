@@ -341,16 +341,21 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
         if ($response->isRedirect()) {
+
             wc_empty_cart();
 
             return [
                 'result'   => 'success',
                 'redirect' => $response->getRedirectUrl(),
             ];
+
         } else {
             $error = $response->getMessage();
+
             $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
+
             wc_add_notice($error, 'error');
+
             $this->log($error);
 
             return [

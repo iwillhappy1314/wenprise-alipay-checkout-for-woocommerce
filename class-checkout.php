@@ -356,7 +356,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
                 return [
                     'result'   => 'fail',
-                    'redirect' => '',
+                    'messages' => $response->getMessage(),
                 ];
             }
 
@@ -367,7 +367,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             return [
                 'result'   => 'fail',
-                'redirect' => '',
+                'messages' => $e->getMessage(),
             ];
         }
     }

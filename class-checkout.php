@@ -160,17 +160,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'app_id'            => [
                 'title'       => __('App ID', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => __('Enter your Alipay Partner Number.', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay APPID.（开放平台密钥中的"APPID"）', 'wprs-wc-alipay'),
             ],
             'private_key'       => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay secret key.', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容, mapi 网关产品密钥中的 RSA(SHA1) 密钥)', 'wprs-wc-alipay'),
             ],
             'alipay_public_key' => [
                 'title'       => __('Alipay Public Key Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay Seller Email.', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"）', 'wprs-wc-alipay'),
             ],
         ];
 
@@ -289,9 +289,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         $gateway->setSignType('RSA2');
-        $gateway->setAppId($this->app_id);
-        $gateway->setPrivateKey($this->private_key);
-        $gateway->setAlipayPublicKey($this->alipay_public_key);
+        $gateway->setAppId(trim($this->app_id));
+        $gateway->setPrivateKey(trim($this->private_key));
+        $gateway->setAlipayPublicKey(trim($this->alipay_public_key));
         $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
         $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
 
@@ -406,29 +406,42 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $request = $gateway->completePurchase();
             $request->setParams(array_merge($_POST, $_GET));
 
+            file_put_contents(get_theme_file_path("request.log"), print_r($request, true));
 
-            /** @var \Omnipay\Alipay\Responses\AopTradeQueryResponse $response */
-            $response = $request->send();
+            try {
 
-            $this->log($response);
+                /** @var \Omnipay\Alipay\Responses\AopTradeQueryResponse $response */
+                $response = $request->send();
 
-            if ($response->isPaid()) {
+                file_put_contents(get_theme_file_path("respnose.log"), print_r($response, true));
 
-                $order->payment_complete();
+                $this->log($response);
 
-                // 添加订单备注
-                $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
+                if ($response->isPaid()) {
 
-                wp_redirect($this->get_return_url($order));
-                exit;
-            } else {
-                $error = $response->getMessage();
-                $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
-                wc_add_notice($error, 'error');
-                $this->log($error);
-                wp_redirect(wc_get_checkout_url());
-                exit;
+                    $order->payment_complete();
+
+                    // 添加订单备注
+                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
+
+                    wp_redirect($this->get_return_url($order));
+
+                } else {
+
+                    $error = $response->getMessage();
+                    $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
+                    wc_add_notice($error, 'error');
+                    $this->log($error);
+                    wp_redirect(wc_get_checkout_url());
+
+                }
+
+            } catch (\Exception $e) {
+
+                file_put_contents(get_theme_file_path("error.log"), print_r($e, true));
+
             }
+
 
         }
 

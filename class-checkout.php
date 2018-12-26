@@ -166,9 +166,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
                 'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容, mapi 网关产品密钥中的 RSA(SHA1) 密钥)', 'wprs-wc-alipay'),
+                'css'         => 'height:300px',
             ],
             'alipay_public_key' => [
-                'title'       => __('Alipay Public Key Key', 'wprs-wc-alipay'),
+                'title'       => __('Alipay Public Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
                 'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"）', 'wprs-wc-alipay'),
             ],
@@ -279,7 +280,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
 
         /**
-         * @var \omnipay\Alipay\AbstractAopGateway | \omnipay\Alipay\AopWapGateway | \Omnipay\Alipay\AopPageGateway $gateway
+         * @var \omnipay\Alipay\AopWapGateway | \Omnipay\Alipay\AopPageGateway $gateway
          */
 
         if (wp_is_mobile()) {
@@ -289,9 +290,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         $gateway->setSignType('RSA2');
-        $gateway->setAppId(trim($this->app_id));
-        $gateway->setPrivateKey(trim($this->private_key));
-        $gateway->setAlipayPublicKey(trim($this->alipay_public_key));
+        $gateway->setAppId($this->app_id);
+        $gateway->setPrivateKey($this->private_key);
+        $gateway->setAlipayPublicKey($this->alipay_public_key);
         $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
         $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
 
@@ -404,16 +405,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
              */
             /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
             $request = $gateway->completePurchase();
-            $request->setParams(array_merge($_POST, $_GET));
+            // $request->setParams(array_merge($_POST, $_GET));
+            $request->setParams($_POST);
 
             file_put_contents(get_theme_file_path("request.log"), print_r($request, true));
 
             try {
 
-                /** @var \Omnipay\Alipay\Responses\AopTradeQueryResponse $response */
+                /** @var \Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
                 $response = $request->send();
 
-                file_put_contents(get_theme_file_path("respnose.log"), print_r($response, true));
+                file_put_contents(get_theme_file_path("response.log"), print_r($response, true));
 
                 $this->log($response);
 
@@ -424,7 +426,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                     // 添加订单备注
                     $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
 
-                    wp_redirect($this->get_return_url($order));
+                    if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
+                        echo "success";
+                    } else {
+                        wp_redirect($this->get_return_url($order));
+                    }
 
                 } else {
 

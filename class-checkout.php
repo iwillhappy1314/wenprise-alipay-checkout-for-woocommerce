@@ -406,7 +406,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
              */
             /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
             $request = $gateway->completePurchase();
-            $request->setParams(array_map('stripslashes', array_merge($_POST, $_GET)));
+            // $request->setParams(array_map('stripslashes', array_merge($_POST, $_GET)));
+            $request->setParams(stripslashes_deep(array_merge($_POST, $_GET)));
 
             try {
 

@@ -1,5 +1,6 @@
 {
     "require": {
-        "lokielse/omnipay-alipay": "^3.0"
+        "lokielse/omnipay-alipay": "^3.0",
+        "yahnis-elsts/plugin-update-checker": "^4.4"
     }
 }

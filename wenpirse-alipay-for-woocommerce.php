@@ -4,7 +4,7 @@
  * Plugin URI: https://www.wpzhiku.com
  * Description: Alipay Checkout For WooCommerce
  * Version: 1.0.1
- * Author: WenPrice Co., Ltd
+ * Author: WenPrise Co., Ltd
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
  * Domain Path: /languages

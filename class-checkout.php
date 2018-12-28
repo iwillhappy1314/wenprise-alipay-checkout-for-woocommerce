@@ -86,7 +86,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         // 支付网关标题
         $this->icon = apply_filters('omnipay_alipay_icon', null);
 
-        $this->supports = [];
+        $this->supports = ['products', 'refunds'];
 
         // 被 init_settings() 加载的基础设置
         $this->init_form_fields();
@@ -383,7 +383,34 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function process_refund($order_id, $amount = null, $reason = '')
     {
-        dd($order_id . $amount . $reason);
+        $gateway = $this->get_gateway();
+
+        $trade_no = get_post_meta($order_id, 'trade_no', true);
+        $order    = wc_get_order($order_id);
+
+        /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
+        $request = $gateway->refund();
+
+        $request->setBizContent([
+            'out_trade_no'   => $order_id,
+            'trade_no'       => $trade_no,
+            'refund_amount'  => $amount,
+            'out_request_no' => date('YmdHis') . mt_rand(1000, 9999),
+        ]);
+
+
+        /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
+        $response = $request->send();
+
+        file_put_contents(get_theme_file_path("refund.log"), print_r($response->isSuccessful(), true));
+
+        if ($response->isSuccessful()) {
+            $order->add_order_note(
+                sprintf(__('Refunded %1$s', 'woocommerce'), $amount)
+            );
+
+            return true;
+        }
 
         return false;
     }
@@ -419,6 +446,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 if ($response->isPaid()) {
 
                     $order->payment_complete();
+                    update_post_meta($order->get_id(), 'trade_no', $_REQUEST[ 'trade_no' ]);
 
                     // Remove cart.
                     WC()->cart->empty_cart();

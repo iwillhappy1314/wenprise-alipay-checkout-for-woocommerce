@@ -165,13 +165,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'private_key'       => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容, mapi 网关产品密钥中的 RSA(SHA1) 密钥)', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容, mapi 网关产品密钥中的 RSA(SHA1) 密钥，创建订单时使用)', 'wprs-wc-alipay'),
                 'css'         => 'height:300px',
             ],
             'alipay_public_key' => [
                 'title'       => __('Alipay Public Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"）', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"，验证支付结果时使用）', 'wprs-wc-alipay'),
             ],
         ];
 
@@ -314,6 +314,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $order    = wc_get_order($order_id);
         $order_no = $order->get_order_number();
 
+        // Remove cart.
+        WC()->cart->empty_cart();
+
         do_action('wenprise_woocommerce_alipay_before_process_payment');
 
         // 调用响应的方法来处理支付
@@ -342,8 +345,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
         if ($response->isRedirect()) {
-
-            wc_empty_cart();
 
             return [
                 'result'   => 'success',
@@ -405,23 +406,21 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
              */
             /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
             $request = $gateway->completePurchase();
-            // $request->setParams(array_merge($_POST, $_GET));
-            $request->setParams($_POST);
-
-            file_put_contents(get_theme_file_path("request.log"), print_r($request, true));
+            $request->setParams(array_map('stripslashes', array_merge($_POST, $_GET)));
 
             try {
 
                 /** @var \Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
                 $response = $request->send();
 
-                file_put_contents(get_theme_file_path("response.log"), print_r($response, true));
-
                 $this->log($response);
 
                 if ($response->isPaid()) {
 
                     $order->payment_complete();
+
+                    // Remove cart.
+                    WC()->cart->empty_cart();
 
                     // 添加订单备注
                     $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));

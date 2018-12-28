@@ -20,6 +20,8 @@ define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
 define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-wc-alipay');
 define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL . 'assets/');
 
+require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
+
 add_action('plugins_loaded', function ()
 {
 
@@ -28,7 +30,6 @@ add_action('plugins_loaded', function ()
     }
 
     // 加载文件
-    require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
     require WENPRISE_ALIPAY_PATH . 'helpers.php';
     require WENPRISE_ALIPAY_PATH . 'class-checkout.php';
 

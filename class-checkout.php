@@ -400,10 +400,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $exchange_rate = 1;
         }
 
-        $total  = round($total * $exchange_rate, 2);
-        $amount = round($amount * $exchange_rate, 2);
+        $total         = round($total * $exchange_rate, 2);
+        $refund_amount = round($amount * $exchange_rate, 2);
 
-        if ($amount <= 0 || $amount > $total) {
+        if ($refund_amount <= 0 || $refund_amount > $total) {
             false;
         }
 
@@ -413,7 +413,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $request->setBizContent([
             'out_trade_no'   => $order_id,
             'trade_no'       => $order->get_transaction_id(),
-            'refund_amount'  => $amount,
+            'refund_amount'  => $refund_amount,
             'out_request_no' => date('YmdHis') . mt_rand(1000, 9999),
         ]);
 
@@ -421,8 +421,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         try {
             /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
             $response = $request->send();
-
-            file_put_contents(get_theme_file_path("refund.log"), print_r($response->isSuccessful(), true));
 
             if ($response->isSuccessful()) {
                 $order->add_order_note(

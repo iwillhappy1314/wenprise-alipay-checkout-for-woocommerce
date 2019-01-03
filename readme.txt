@@ -18,6 +18,7 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝支付网关。
 * 移动端调起支付宝 APP 或者登录 wap 版支付宝支付
 * 支持在 WooCommerce 订单中直接通过支付宝支付退款，退款原路返回
 * 由于支付宝在微信中被屏蔽掉了，支付宝支付在微信中自动隐藏
+* 货币不是人民币时，可以设置一个固定汇率
 
 ### Support 技术支持 ###
 

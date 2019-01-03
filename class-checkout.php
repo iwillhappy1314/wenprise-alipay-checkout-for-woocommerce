@@ -314,7 +314,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $order    = wc_get_order($order_id);
         $order_no = $order->get_order_number();
-        $total    = $order->get_total();
+        $total    = $this->get_order_total();
 
         $exchange_rate = floatval($this->get_option('exchange_rate'));
         if ($exchange_rate <= 0) {
@@ -394,7 +394,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $gateway = $this->get_gateway();
         $order   = wc_get_order($order_id);
-        $total   = $order->get_total();
+        $total   = $this->get_order_total();
 
         $exchange_rate = floatval($this->get_option('exchange_rate'));
         if ($exchange_rate <= 0) {

@@ -88,11 +88,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $this->supports = ['products', 'refunds'];
 
-        // 被 init_settings() 加载的基础设置
-        $this->init_form_fields();
-
-        $this->init_settings();
-
         $this->debug_active = false;
 
         $this->has_fields = false;
@@ -110,6 +105,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         foreach ($this->settings as $setting_key => $value) {
             $this->$setting_key = $value;
         }
+
+        // 被 init_settings() 加载的基础设置
+        $this->init_form_fields();
+
+        $this->init_settings();
 
         // 设置是否应该重命名按钮。
         $this->order_button_text = apply_filters('woocommerce_Alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));
@@ -141,7 +141,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'title'       => __(' Alipay Sanbox Mode', 'wprs-wc-alipay'),
                 'label'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
                 'type'        => 'checkbox',
-                'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a href="%s">here</a>',
+                'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>',
                     'wprs-wc-alipay'),
                     'https://sandbox.Alipay.com'),
                 'default'     => 'no',
@@ -165,7 +165,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'private_key'       => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容, mapi 网关产品密钥中的 RSA(SHA1) 密钥，创建订单时使用)', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wprs-wc-alipay'),
                 'css'         => 'height:300px',
             ],
             'alipay_public_key' => [

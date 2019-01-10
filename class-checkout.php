@@ -120,6 +120,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
         }
 
+        // 仪表盘通知
+        add_action('admin_notices', [$this, 'requirement_checks']);
+
         // Hooks
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
@@ -182,7 +185,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'title'       => __('Exchange Rate', 'wprs-wc-alipay'),
                 'type'        => 'text',
                 'description' => sprintf(__("Please set the %s against Chinese Yuan exchange rate, eg if your currency is US Dollar, then you should enter 6.19",
-                    'wprs-wc-wechatpay'), $this->current_currency),
+                    'wprs-wc-alipay'), $this->current_currency),
             ];
 
         }
@@ -195,7 +198,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function admin_options()
     { ?>
 
-        <h3><?php echo ( ! empty($this->method_title)) ? $this->method_title : __('Settings', 'woocommerce'); ?></h3>
+        <h3><?php echo ( ! empty($this->method_title)) ? $this->method_title : __('Settings', 'wprs-wc-alipay'); ?></h3>
 
         <?php echo ( ! empty($this->method_description)) ? wpautop($this->method_description) : ''; ?>
 
@@ -239,8 +242,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     function requirement_checks()
     {
         if ( ! in_array($this->current_currency, ['RMB', 'CNY']) && ! $this->exchange_rate) {
-            echo '<div class="error"><p>' . sprintf(__('WeChatPay is enabled, but the store currency is not set to Chinese Yuan. Please <a href="%1s">set the %2s against the Chinese Yuan exchange rate</a>.',
-                    'wechatpay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate'),
+            echo '<div class="error"><p>' . sprintf(__('Alipay is enabled, but the store currency is ·not set to Chinese Yuan. Please <a href="%1s">set the %2s against the Chinese Yuan exchange rate</a>.',
+                    'wprs-wc-alipay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate'),
                     $this->current_currency) . '</p></div>';
         }
     }

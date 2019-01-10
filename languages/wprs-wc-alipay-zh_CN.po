@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2019-01-03 10:36+0800\n"
-"PO-Revision-Date: 2019-01-03 10:37+0800\n"
+"POT-Creation-Date: 2019-01-10 09:22+0800\n"
+"PO-Revision-Date: 2019-01-10 09:22+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
 
-#: class-checkout.php:78 class-checkout.php:84 class-checkout.php:153
+#: class-checkout.php:78 class-checkout.php:84 class-checkout.php:156
 msgid "Alipay"
 msgstr "支付宝"
 
@@ -32,93 +32,93 @@ msgstr "WooCommerce 的支付宝支付网关"
 msgid "Proceed to Alipay"
 msgstr "到支付宝付款"
 
-#: class-checkout.php:136
+#: class-checkout.php:139
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: class-checkout.php:137
+#: class-checkout.php:140
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: class-checkout.php:151
+#: class-checkout.php:154
 msgid "Title"
 msgstr "标题"
 
-#: class-checkout.php:156
+#: class-checkout.php:159
 msgid "Description"
 msgstr "描述"
 
-#: class-checkout.php:158
+#: class-checkout.php:161
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付。"
 
-#: class-checkout.php:162
+#: class-checkout.php:165
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: class-checkout.php:164
+#: class-checkout.php:167
 msgid "Enter your Alipay APPID.（开放平台密钥中的\"APPID\"）"
 msgstr "输入您的支付宝 APPID（开放平台密中中的“APPID”）"
 
-#: class-checkout.php:167
+#: class-checkout.php:170
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: class-checkout.php:169
+#: class-checkout.php:172
 msgid ""
 "Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时"
 "使用)"
 msgstr "输入您的支付宝密钥(rsa_private_key.pem 文件的全部内容，创建订单时使用)"
 
-#: class-checkout.php:173
+#: class-checkout.php:176
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: class-checkout.php:175
+#: class-checkout.php:178
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\"，验证支付结果时使用）"
 
-#: class-checkout.php:182
+#: class-checkout.php:185
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: class-checkout.php:184
+#: class-checkout.php:187
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:198
+#: class-checkout.php:201
 msgid "Settings"
 msgstr "设置"
 
-#: class-checkout.php:242
+#: class-checkout.php:245
 #, php-format
 msgid ""
-"WeChatPay is enabled, but the store currency is not set to Chinese Yuan. "
+"Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
 "Please <a href=\"%1s\">set the %2s against the Chinese Yuan exchange rate</"
 "a>."
 msgstr ""
 "微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
 "币的汇率</a>。"
 
-#: class-checkout.php:337 class-checkout.php:338
+#: class-checkout.php:340 class-checkout.php:341
 msgid "Pay for order #"
 msgstr "支付订单"
 
-#: class-checkout.php:337 class-checkout.php:338
+#: class-checkout.php:340 class-checkout.php:341
 msgid " At "
 msgstr "在"
 
-#: class-checkout.php:428
+#: class-checkout.php:431
 #, php-format
 msgid "Refunded %1$s"
 msgstr "退款 %1$s"
 
-#: class-checkout.php:476
+#: class-checkout.php:479
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"

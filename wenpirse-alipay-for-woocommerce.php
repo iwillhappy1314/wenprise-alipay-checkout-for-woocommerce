@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Wenprise Alipay Checkout For WooCommerce
- * Plugin URI: https://www.wpzhiku.com/wenprise-alipay-for-woocommerce
+ * Plugin Name: Wenprise Alipay Payment Gateway For WooCommerce
+ * Plugin URI: https://www.wpzhiku.com/wenprise-alipay-payment-gateway-for-woocommerce
  * Description: Alipay Checkout For WooCommerce
  * Version: 1.0.1
  * Author: WenPrise Co., Ltd

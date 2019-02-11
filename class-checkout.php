@@ -159,12 +159,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'title'   => __('Description', 'wprs-wc-alipay'),
                 'type'    => 'textarea',
                 'default' => __('Pay securely using Alipay', 'wprs-wc-alipay'),
-                'css'     => 'max-width:350px;',
+                'css'     => 'max-width:400px;',
             ],
             'app_id'            => [
                 'title'       => __('App ID', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => __('Enter your Alipay APPID.（开放平台密钥中的"APPID"）', 'wprs-wc-alipay'),
+                'description' => __('Enter your Alipay APPID. 开放平台密钥中的"APPID"，授权回调地址：', 'wprs-wc-alipay') . home_url('wc-api/wprs-wc-alipay-notify/'),
             ],
             'private_key'       => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),

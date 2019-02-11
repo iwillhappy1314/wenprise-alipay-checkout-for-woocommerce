@@ -326,7 +326,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $total = round($total * $exchange_rate, 2);
 
-        // Remove cart.
+        // Empty cart.
         WC()->cart->empty_cart();
 
         do_action('wenprise_woocommerce_alipay_before_process_payment');
@@ -472,7 +472,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
                     $order->payment_complete($_REQUEST[ 'trade_no' ]);
 
-                    // Remove cart.
+                    // Empty cart.
                     WC()->cart->empty_cart();
 
                     // 添加订单备注

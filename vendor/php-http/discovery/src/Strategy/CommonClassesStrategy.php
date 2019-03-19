@@ -5,6 +5,7 @@ namespace Http\Discovery\Strategy;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Http\Client\HttpAsyncClient;
 use Http\Client\HttpClient;
+use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\MessageFactory;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\StreamFactory;
@@ -14,6 +15,7 @@ use Http\Message\UriFactory\GuzzleUriFactory;
 use Http\Message\MessageFactory\DiactorosMessageFactory;
 use Http\Message\StreamFactory\DiactorosStreamFactory;
 use Http\Message\UriFactory\DiactorosUriFactory;
+use Psr\Http\Client\ClientInterface as Psr18Client;
 use Zend\Diactoros\Request as DiactorosRequest;
 use Http\Message\MessageFactory\SlimMessageFactory;
 use Http\Message\StreamFactory\SlimStreamFactory;
@@ -28,10 +30,7 @@ use Http\Adapter\Buzz\Client as Buzz;
 use Http\Adapter\Cake\Client as Cake;
 use Http\Adapter\Zend\Client as Zend;
 use Http\Adapter\Artax\Client as Artax;
-use Nyholm\Psr7\Request as NyholmRequest;
-use Nyholm\Psr7\Factory\MessageFactory as NyholmMessageFactory;
-use Nyholm\Psr7\Factory\StreamFactory as NyholmStreamFactory;
-use Nyholm\Psr7\Factory\UriFactory as NyholmUriFactory;
+use Nyholm\Psr7\Factory\HttplugFactory as NyholmHttplugFactory;
 
 /**
  * @internal
@@ -45,19 +44,19 @@ final class CommonClassesStrategy implements DiscoveryStrategy
      */
     private static $classes = [
         MessageFactory::class => [
-            ['class' => NyholmMessageFactory::class, 'condition' => [NyholmRequest::class, NyholmMessageFactory::class]],
+            ['class' => NyholmHttplugFactory::class, 'condition' => [NyholmHttplugFactory::class]],
             ['class' => GuzzleMessageFactory::class, 'condition' => [GuzzleRequest::class, GuzzleMessageFactory::class]],
             ['class' => DiactorosMessageFactory::class, 'condition' => [DiactorosRequest::class, DiactorosMessageFactory::class]],
             ['class' => SlimMessageFactory::class, 'condition' => [SlimRequest::class, SlimMessageFactory::class]],
         ],
         StreamFactory::class => [
-            ['class' => NyholmStreamFactory::class, 'condition' => [NyholmRequest::class, NyholmStreamFactory::class]],
+            ['class' => NyholmHttplugFactory::class, 'condition' => [NyholmHttplugFactory::class]],
             ['class' => GuzzleStreamFactory::class, 'condition' => [GuzzleRequest::class, GuzzleStreamFactory::class]],
             ['class' => DiactorosStreamFactory::class, 'condition' => [DiactorosRequest::class, DiactorosStreamFactory::class]],
             ['class' => SlimStreamFactory::class, 'condition' => [SlimRequest::class, SlimStreamFactory::class]],
         ],
         UriFactory::class => [
-            ['class' => NyholmUriFactory::class, 'condition' => [NyholmRequest::class, NyholmUriFactory::class]],
+            ['class' => NyholmHttplugFactory::class, 'condition' => [NyholmHttplugFactory::class]],
             ['class' => GuzzleUriFactory::class, 'condition' => [GuzzleRequest::class, GuzzleUriFactory::class]],
             ['class' => DiactorosUriFactory::class, 'condition' => [DiactorosRequest::class, DiactorosUriFactory::class]],
             ['class' => SlimUriFactory::class, 'condition' => [SlimRequest::class, SlimUriFactory::class]],
@@ -77,6 +76,16 @@ final class CommonClassesStrategy implements DiscoveryStrategy
             ['class' => Cake::class, 'condition' => Cake::class],
             ['class' => Zend::class, 'condition' => Zend::class],
             ['class' => Artax::class, 'condition' => Artax::class],
+            [
+                'class' => [self::class, 'buzzInstantiate'],
+                'condition' => [\Buzz\Client\FileGetContents::class, \Buzz\Message\ResponseBuilder::class],
+            ],
+        ],
+        Psr18Client::class => [
+            [
+                'class' => [self::class, 'buzzInstantiate'],
+                'condition' => [\Buzz\Client\FileGetContents::class, \Buzz\Message\ResponseBuilder::class],
+            ],
         ],
     ];
 
@@ -85,10 +94,28 @@ final class CommonClassesStrategy implements DiscoveryStrategy
      */
     public static function getCandidates($type)
     {
+        if (Psr18Client::class === $type) {
+            $candidates = self::$classes[PSR18Client::class];
+
+            // HTTPlug 2.0 clients implements PSR18Client too.
+            foreach (self::$classes[HttpClient::class] as $c) {
+                if (is_subclass_of($c['class'], Psr18Client::class)) {
+                    $candidates[] = $c;
+                }
+            }
+
+            return $candidates;
+        }
+
         if (isset(self::$classes[$type])) {
             return self::$classes[$type];
         }
 
         return [];
+    }
+
+    public static function buzzInstantiate()
+    {
+        return new \Buzz\Client\FileGetContents(MessageFactoryDiscovery::find());
     }
 }

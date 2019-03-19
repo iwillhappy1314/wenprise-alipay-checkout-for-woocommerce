@@ -15,9 +15,8 @@
         }
     ],
     "require": {
-        "php": "^7.0",
+        "php": ">=5.4",
         "psr/http-message": "^1.0",
-        "psr/http-client": "^1.0",
         "php-http/promise": "^1.0"
     },
     "require-dev": {
@@ -35,7 +34,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev"
+            "dev-master": "1.1-dev"
         }
     }
 }

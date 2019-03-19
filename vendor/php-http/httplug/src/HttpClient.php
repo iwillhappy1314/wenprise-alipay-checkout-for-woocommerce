@@ -2,7 +2,6 @@
 
 namespace Http\Client;
 
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -13,13 +12,17 @@ use Psr\Http\Message\ResponseInterface;
  * @author Márk Sági-Kazár <mark.sagikazar@gmail.com>
  * @author David Buchmann <mail@davidbu.ch>
  */
-interface HttpClient extends ClientInterface
+interface HttpClient
 {
     /**
      * Sends a PSR-7 request.
      *
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     *
      * @throws \Http\Client\Exception If an error happens during processing the request.
      * @throws \Exception             If processing the request is impossible (eg. bad configuration).
      */
-    public function sendRequest(RequestInterface $request): ResponseInterface;
+    public function sendRequest(RequestInterface $request);
 }

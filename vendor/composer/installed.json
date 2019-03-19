@@ -244,17 +244,17 @@
     },
     {
         "name": "lokielse/omnipay-alipay",
-        "version": "v3.0.3",
-        "version_normalized": "3.0.3.0",
+        "version": "v3.0.5",
+        "version_normalized": "3.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/lokielse/omnipay-alipay.git",
-            "reference": "c4c5d4dad887e1f29f50f7d03f48012ea2271c59"
+            "reference": "39a017371c742d877bb18d74608bc1063b0d5c24"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/lokielse/omnipay-alipay/zipball/c4c5d4dad887e1f29f50f7d03f48012ea2271c59",
-            "reference": "c4c5d4dad887e1f29f50f7d03f48012ea2271c59",
+            "url": "https://api.github.com/repos/lokielse/omnipay-alipay/zipball/39a017371c742d877bb18d74608bc1063b0d5c24",
+            "reference": "39a017371c742d877bb18d74608bc1063b0d5c24",
             "shasum": ""
         },
         "require": {
@@ -265,7 +265,7 @@
             "omnipay/tests": "^3.0",
             "squizlabs/php_codesniffer": "3.*"
         },
-        "time": "2018-05-21T13:54:22+00:00",
+        "time": "2019-02-27T07:19:07+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -301,20 +301,21 @@
     },
     {
         "name": "moneyphp/money",
-        "version": "v3.2.0",
-        "version_normalized": "3.2.0.0",
+        "version": "v3.2.1",
+        "version_normalized": "3.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/moneyphp/money.git",
-            "reference": "53ce6e4b9a2aac6e5194a0a633b7a556a6b04b07"
+            "reference": "f6085de6c565e98d2f9a7311a605987b54e06d5e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/moneyphp/money/zipball/53ce6e4b9a2aac6e5194a0a633b7a556a6b04b07",
-            "reference": "53ce6e4b9a2aac6e5194a0a633b7a556a6b04b07",
+            "url": "https://api.github.com/repos/moneyphp/money/zipball/f6085de6c565e98d2f9a7311a605987b54e06d5e",
+            "reference": "f6085de6c565e98d2f9a7311a605987b54e06d5e",
             "shasum": ""
         },
         "require": {
+            "ext-json": "*",
             "php": ">=5.6"
         },
         "require-dev": {
@@ -342,7 +343,7 @@
             "florianv/swap": "Exchange rates library for PHP",
             "psr/cache-implementation": "Used for Currency caching"
         },
-        "time": "2018-12-05T12:17:01+00:00",
+        "time": "2019-02-07T18:01:35+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -467,26 +468,79 @@
         ]
     },
     {
-        "name": "php-http/discovery",
-        "version": "1.4.0",
-        "version_normalized": "1.4.0.0",
+        "name": "paragonie/random_compat",
+        "version": "v2.0.18",
+        "version_normalized": "2.0.18.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/php-http/discovery.git",
-            "reference": "9a6cb24de552bfe1aa9d7d1569e2d49c5b169a33"
+            "url": "https://github.com/paragonie/random_compat.git",
+            "reference": "0a58ef6e3146256cc3dc7cc393927bcc7d1b72db"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-http/discovery/zipball/9a6cb24de552bfe1aa9d7d1569e2d49c5b169a33",
-            "reference": "9a6cb24de552bfe1aa9d7d1569e2d49c5b169a33",
+            "url": "https://api.github.com/repos/paragonie/random_compat/zipball/0a58ef6e3146256cc3dc7cc393927bcc7d1b72db",
+            "reference": "0a58ef6e3146256cc3dc7cc393927bcc7d1b72db",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.*|5.*"
+        },
+        "suggest": {
+            "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+        },
+        "time": "2019-01-03T20:59:08+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "lib/random.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paragon Initiative Enterprises",
+                "email": "security@paragonie.com",
+                "homepage": "https://paragonie.com"
+            }
+        ],
+        "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+        "keywords": [
+            "csprng",
+            "polyfill",
+            "pseudorandom",
+            "random"
+        ]
+    },
+    {
+        "name": "php-http/discovery",
+        "version": "1.6.1",
+        "version_normalized": "1.6.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/php-http/discovery.git",
+            "reference": "684855f2c2e9d0a61868b8f8d6bd0295c8a4b651"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/php-http/discovery/zipball/684855f2c2e9d0a61868b8f8d6bd0295c8a4b651",
+            "reference": "684855f2c2e9d0a61868b8f8d6bd0295c8a4b651",
             "shasum": ""
         },
         "require": {
             "php": "^5.5 || ^7.0"
         },
+        "conflict": {
+            "nyholm/psr7": "<1.0"
+        },
         "require-dev": {
-            "henrikbjorn/phpspec-code-coverage": "^2.0.2",
-            "php-http/httplug": "^1.0",
+            "php-http/httplug": "^1.0 || ^2.0",
             "php-http/message-factory": "^1.0",
             "phpspec/phpspec": "^2.4",
             "puli/composer-plugin": "1.0.0-beta10"
@@ -495,11 +549,11 @@
             "php-http/message": "Allow to use Guzzle, Diactoros or Slim Framework factories",
             "puli/composer-plugin": "Sets up Puli which is recommended for Discovery to work. Check http://docs.php-http.org/en/latest/discovery.html for more details."
         },
-        "time": "2018-02-06T10:55:24+00:00",
+        "time": "2019-02-23T07:42:53+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.3-dev"
+                "dev-master": "1.5-dev"
             }
         },
         "installation-source": "dist",
@@ -532,40 +586,37 @@
     },
     {
         "name": "php-http/guzzle6-adapter",
-        "version": "v2.0.1",
-        "version_normalized": "2.0.1.0",
+        "version": "v1.1.1",
+        "version_normalized": "1.1.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-http/guzzle6-adapter.git",
-            "reference": "6074a4b1f4d5c21061b70bab3b8ad484282fe31f"
+            "reference": "a56941f9dc6110409cfcddc91546ee97039277ab"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-http/guzzle6-adapter/zipball/6074a4b1f4d5c21061b70bab3b8ad484282fe31f",
-            "reference": "6074a4b1f4d5c21061b70bab3b8ad484282fe31f",
+            "url": "https://api.github.com/repos/php-http/guzzle6-adapter/zipball/a56941f9dc6110409cfcddc91546ee97039277ab",
+            "reference": "a56941f9dc6110409cfcddc91546ee97039277ab",
             "shasum": ""
         },
         "require": {
             "guzzlehttp/guzzle": "^6.0",
-            "php": "^7.1",
-            "php-http/httplug": "^2.0",
-            "psr/http-client": "^1.0"
+            "php": ">=5.5.0",
+            "php-http/httplug": "^1.0"
         },
         "provide": {
             "php-http/async-client-implementation": "1.0",
-            "php-http/client-implementation": "1.0",
-            "psr/http-client-implementation": "1.0"
+            "php-http/client-implementation": "1.0"
         },
         "require-dev": {
             "ext-curl": "*",
-            "php-http/client-integration-tests": "^2.0",
-            "phpunit/phpunit": "^7.4"
+            "php-http/adapter-integration-tests": "^0.4"
         },
-        "time": "2018-12-16T14:44:03+00:00",
+        "time": "2016-05-10T06:13:32+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.x-dev"
+                "dev-master": "1.2-dev"
             }
         },
         "installation-source": "dist",
@@ -597,34 +648,33 @@
     },
     {
         "name": "php-http/httplug",
-        "version": "v2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "v1.1.0",
+        "version_normalized": "1.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-http/httplug.git",
-            "reference": "b3842537338c949f2469557ef4ad4bdc47b58603"
+            "reference": "1c6381726c18579c4ca2ef1ec1498fdae8bdf018"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-http/httplug/zipball/b3842537338c949f2469557ef4ad4bdc47b58603",
-            "reference": "b3842537338c949f2469557ef4ad4bdc47b58603",
+            "url": "https://api.github.com/repos/php-http/httplug/zipball/1c6381726c18579c4ca2ef1ec1498fdae8bdf018",
+            "reference": "1c6381726c18579c4ca2ef1ec1498fdae8bdf018",
             "shasum": ""
         },
         "require": {
-            "php": "^7.0",
+            "php": ">=5.4",
             "php-http/promise": "^1.0",
-            "psr/http-client": "^1.0",
             "psr/http-message": "^1.0"
         },
         "require-dev": {
             "henrikbjorn/phpspec-code-coverage": "^1.0",
             "phpspec/phpspec": "^2.4"
         },
-        "time": "2018-10-31T09:14:44+00:00",
+        "time": "2016-08-31T08:30:17+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.0.x-dev"
+                "dev-master": "1.1-dev"
             }
         },
         "installation-source": "dist",
@@ -833,57 +883,6 @@
         ]
     },
     {
-        "name": "psr/http-client",
-        "version": "1.0.0",
-        "version_normalized": "1.0.0.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/php-fig/http-client.git",
-            "reference": "496a823ef742b632934724bf769560c2a5c7c44e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/http-client/zipball/496a823ef742b632934724bf769560c2a5c7c44e",
-            "reference": "496a823ef742b632934724bf769560c2a5c7c44e",
-            "shasum": ""
-        },
-        "require": {
-            "php": "^7.0",
-            "psr/http-message": "^1.0"
-        },
-        "time": "2018-10-30T23:29:13+00:00",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "1.0.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Psr\\Http\\Client\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "PHP-FIG",
-                "homepage": "http://www.php-fig.org/"
-            }
-        ],
-        "description": "Common interface for HTTP clients",
-        "homepage": "https://github.com/php-fig/http-client",
-        "keywords": [
-            "http",
-            "http-client",
-            "psr",
-            "psr-18"
-        ]
-    },
-    {
         "name": "psr/http-message",
         "version": "1.0.1",
         "version_normalized": "1.0.1.0",
@@ -979,32 +978,32 @@
     },
     {
         "name": "symfony/http-foundation",
-        "version": "v4.2.1",
-        "version_normalized": "4.2.1.0",
+        "version": "v3.4.23",
+        "version_normalized": "3.4.23.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/http-foundation.git",
-            "reference": "1b31f3017fadd8cb05cf2c8aebdbf3b12a943851"
+            "reference": "9a96d77ceb1fd913c9d4a89e8a7e1be87604be8a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/1b31f3017fadd8cb05cf2c8aebdbf3b12a943851",
-            "reference": "1b31f3017fadd8cb05cf2c8aebdbf3b12a943851",
+            "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9a96d77ceb1fd913c9d4a89e8a7e1be87604be8a",
+            "reference": "9a96d77ceb1fd913c9d4a89e8a7e1be87604be8a",
             "shasum": ""
         },
         "require": {
-            "php": "^7.1.3",
-            "symfony/polyfill-mbstring": "~1.1"
+            "php": "^5.5.9|>=7.0.8",
+            "symfony/polyfill-mbstring": "~1.1",
+            "symfony/polyfill-php70": "~1.6"
         },
         "require-dev": {
-            "predis/predis": "~1.0",
-            "symfony/expression-language": "~3.4|~4.0"
+            "symfony/expression-language": "~2.8|~3.0|~4.0"
         },
-        "time": "2018-11-26T10:55:26+00:00",
+        "time": "2019-02-23T15:06:07+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.2-dev"
+                "dev-master": "3.4-dev"
             }
         },
         "installation-source": "dist",
@@ -1095,24 +1094,85 @@
         ]
     },
     {
-        "name": "yahnis-elsts/plugin-update-checker",
-        "version": "v4.4",
-        "version_normalized": "4.4.0.0",
+        "name": "symfony/polyfill-php70",
+        "version": "v1.10.0",
+        "version_normalized": "1.10.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/YahnisElsts/plugin-update-checker.git",
-            "reference": "da4286343601e1f5c01836e1d51e1c57cedb0f6d"
+            "url": "https://github.com/symfony/polyfill-php70.git",
+            "reference": "6b88000cdd431cd2e940caa2cb569201f3f84224"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/YahnisElsts/plugin-update-checker/zipball/da4286343601e1f5c01836e1d51e1c57cedb0f6d",
-            "reference": "da4286343601e1f5c01836e1d51e1c57cedb0f6d",
+            "url": "https://api.github.com/repos/symfony/polyfill-php70/zipball/6b88000cdd431cd2e940caa2cb569201f3f84224",
+            "reference": "6b88000cdd431cd2e940caa2cb569201f3f84224",
+            "shasum": ""
+        },
+        "require": {
+            "paragonie/random_compat": "~1.0|~2.0|~9.99",
+            "php": ">=5.3.3"
+        },
+        "time": "2018-09-21T06:26:08+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.9-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Php70\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ],
+            "classmap": [
+                "Resources/stubs"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill backporting some PHP 7.0+ features to lower PHP versions",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
+        "name": "yahnis-elsts/plugin-update-checker",
+        "version": "v4.5.1",
+        "version_normalized": "4.5.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/YahnisElsts/plugin-update-checker.git",
+            "reference": "57a25d905a9a4db2fdb60bc8f0b0f861cc3ee110"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/YahnisElsts/plugin-update-checker/zipball/57a25d905a9a4db2fdb60bc8f0b0f861cc3ee110",
+            "reference": "57a25d905a9a4db2fdb60bc8f0b0f861cc3ee110",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2.0"
         },
-        "time": "2017-12-22T10:39:11+00:00",
+        "time": "2019-01-04T17:13:39+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

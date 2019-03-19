@@ -2,8 +2,6 @@
 
 namespace Http\Client\Exception;
 
-use Psr\Http\Client\NetworkExceptionInterface as PsrNetworkException;
-
 /**
  * Thrown when the request cannot be completed because of network issues.
  *
@@ -11,6 +9,6 @@ use Psr\Http\Client\NetworkExceptionInterface as PsrNetworkException;
  *
  * @author Márk Sági-Kazár <mark.sagikazar@gmail.com>
  */
-class NetworkException extends RequestException implements PsrNetworkException
+class NetworkException extends RequestException
 {
 }

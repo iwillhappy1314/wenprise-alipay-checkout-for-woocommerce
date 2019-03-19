@@ -1,6 +1,9 @@
 {
     "require": {
         "lokielse/omnipay-alipay": "^3.0",
-        "yahnis-elsts/plugin-update-checker": "^4.4"
+        "symfony/http-foundation": "^3.4",
+        "php-http/guzzle6-adapter": "^1.1",
+        "yahnis-elsts/plugin-update-checker": "^4.4",
+        "paragonie/random_compat": "<9.99"
     }
 }

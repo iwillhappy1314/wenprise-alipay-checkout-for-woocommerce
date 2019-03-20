@@ -58,12 +58,6 @@ add_action('plugins_loaded', function ()
         return $methods;
     });
 
-    Puc_v4_Factory::buildUpdateChecker(
-        'https://api.wpcio.com/api/plugin/info/wenprise-alipay-for-woocommerce',
-        __FILE__,
-        'wenprise-alipay-for-woocommerce'
-    );
-
 }, 0);
 
 

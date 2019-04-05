@@ -3,7 +3,7 @@
  * Plugin Name: Wenprise Alipay Payment Gateway For WooCommerce
  * Plugin URI: https://www.wpzhiku.com/wenprise-alipay-payment-gateway-for-woocommerce
  * Description: Alipay Checkout For WooCommerce，WooCommerce 支付宝全功能支付网关
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: WenPrise Co., Ltd
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
@@ -14,7 +14,7 @@ if ( ! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-if (version_compare(phpversion(), '7.1.3', '<')) {
+if (version_compare(phpversion(), '5.6.0', '<')) {
 
     // 显示警告信息
     if (is_admin()) {
@@ -22,7 +22,7 @@ if (version_compare(phpversion(), '7.1.3', '<')) {
         {
             printf('<div class="error"><p>' . __('Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没有任何作用。',
                     'wprs') . '</p></div>',
-                '7.1.3', phpversion());
+                '5.6.0', phpversion());
         });
     }
 

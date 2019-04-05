@@ -110,14 +110,14 @@ class FileTest extends TestCase
 
     public function getFilenameFixtures()
     {
-        return [
-            ['original.gif', 'original.gif'],
-            ['..\\..\\original.gif', 'original.gif'],
-            ['../../original.gif', 'original.gif'],
-            ['файлfile.gif', 'файлfile.gif'],
-            ['..\\..\\файлfile.gif', 'файлfile.gif'],
-            ['../../файлfile.gif', 'файлfile.gif'],
-        ];
+        return array(
+            array('original.gif', 'original.gif'),
+            array('..\\..\\original.gif', 'original.gif'),
+            array('../../original.gif', 'original.gif'),
+            array('файлfile.gif', 'файлfile.gif'),
+            array('..\\..\\файлfile.gif', 'файлfile.gif'),
+            array('../../файлfile.gif', 'файлfile.gif'),
+        );
     }
 
     /**

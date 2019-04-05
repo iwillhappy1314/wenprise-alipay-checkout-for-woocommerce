@@ -24,7 +24,7 @@ class AcceptHeader
     /**
      * @var AcceptHeaderItem[]
      */
-    private $items = [];
+    private $items = array();
 
     /**
      * @var bool

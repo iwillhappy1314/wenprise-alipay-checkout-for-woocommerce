@@ -41,7 +41,7 @@ class Cookie
      */
     public static function fromString($cookie, $decode = false)
     {
-        $data = [
+        $data = array(
             'expires' => 0,
             'path' => '/',
             'domain' => null,
@@ -49,7 +49,7 @@ class Cookie
             'httponly' => false,
             'raw' => !$decode,
             'samesite' => null,
-        ];
+        );
         foreach (explode(';', $cookie) as $part) {
             if (false === strpos($part, '=')) {
                 $key = trim($part);
@@ -128,7 +128,7 @@ class Cookie
             $sameSite = strtolower($sameSite);
         }
 
-        if (!\in_array($sameSite, [self::SAMESITE_LAX, self::SAMESITE_STRICT, null], true)) {
+        if (!in_array($sameSite, array(self::SAMESITE_LAX, self::SAMESITE_STRICT, null), true)) {
             throw new \InvalidArgumentException('The "sameSite" parameter value is not valid.');
         }
 
@@ -145,12 +145,12 @@ class Cookie
         $str = ($this->isRaw() ? $this->getName() : urlencode($this->getName())).'=';
 
         if ('' === (string) $this->getValue()) {
-            $str .= 'deleted; expires='.gmdate('D, d-M-Y H:i:s T', time() - 31536001).'; Max-Age=0';
+            $str .= 'deleted; expires='.gmdate('D, d-M-Y H:i:s T', time() - 31536001).'; max-age=-31536001';
         } else {
             $str .= $this->isRaw() ? $this->getValue() : rawurlencode($this->getValue());
 
             if (0 !== $this->getExpiresTime()) {
-                $str .= '; expires='.gmdate('D, d-M-Y H:i:s T', $this->getExpiresTime()).'; Max-Age='.$this->getMaxAge();
+                $str .= '; expires='.gmdate('D, d-M-Y H:i:s T', $this->getExpiresTime()).'; max-age='.$this->getMaxAge();
             }
         }
 
@@ -224,9 +224,7 @@ class Cookie
      */
     public function getMaxAge()
     {
-        $maxAge = $this->expire - time();
-
-        return 0 >= $maxAge ? 0 : $maxAge;
+        return 0 !== $this->expire ? $this->expire - time() : 0;
     }
 
     /**
@@ -266,7 +264,7 @@ class Cookie
      */
     public function isCleared()
     {
-        return 0 !== $this->expire && $this->expire < time();
+        return $this->expire < time();
     }
 
     /**

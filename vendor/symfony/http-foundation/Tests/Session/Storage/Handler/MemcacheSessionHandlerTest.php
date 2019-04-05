@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Session\Storage\Handler\MemcacheSessionHand
 /**
  * @requires extension memcache
  * @group time-sensitive
- * @group legacy
  */
 class MemcacheSessionHandlerTest extends TestCase
 {
@@ -33,7 +32,7 @@ class MemcacheSessionHandlerTest extends TestCase
 
     protected function setUp()
     {
-        if (\defined('HHVM_VERSION')) {
+        if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('PHPUnit_MockObject cannot mock the Memcache class on HHVM. See https://github.com/sebastianbergmann/phpunit-mock-objects/pull/289');
         }
 
@@ -41,7 +40,7 @@ class MemcacheSessionHandlerTest extends TestCase
         $this->memcache = $this->getMockBuilder('Memcache')->getMock();
         $this->storage = new MemcacheSessionHandler(
             $this->memcache,
-            ['prefix' => self::PREFIX, 'expiretime' => self::TTL]
+            array('prefix' => self::PREFIX, 'expiretime' => self::TTL)
         );
     }
 
@@ -117,12 +116,12 @@ class MemcacheSessionHandlerTest extends TestCase
 
     public function getOptionFixtures()
     {
-        return [
-            [['prefix' => 'session'], true],
-            [['expiretime' => 100], true],
-            [['prefix' => 'session', 'expiretime' => 200], true],
-            [['expiretime' => 100, 'foo' => 'bar'], false],
-        ];
+        return array(
+            array(array('prefix' => 'session'), true),
+            array(array('expiretime' => 100), true),
+            array(array('prefix' => 'session', 'expiretime' => 200), true),
+            array(array('expiretime' => 100, 'foo' => 'bar'), false),
+        );
     }
 
     public function testGetConnection()

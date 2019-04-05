@@ -24,7 +24,7 @@ interface FlashBagInterface extends SessionBagInterface
      * Adds a flash message for type.
      *
      * @param string $type
-     * @param mixed  $message
+     * @param string $message
      */
     public function add($type, $message);
 
@@ -44,7 +44,7 @@ interface FlashBagInterface extends SessionBagInterface
      *
      * @return array
      */
-    public function peek($type, array $default = []);
+    public function peek($type, array $default = array());
 
     /**
      * Gets all flash messages.
@@ -61,7 +61,7 @@ interface FlashBagInterface extends SessionBagInterface
      *
      * @return array
      */
-    public function get($type, array $default = []);
+    public function get($type, array $default = array());
 
     /**
      * Gets and clears flashes from the stack.

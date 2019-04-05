@@ -14,7 +14,7 @@ namespace Symfony\Component\HttpFoundation\Tests\Session\Storage;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy;
@@ -56,7 +56,7 @@ class NativeSessionStorageTest extends TestCase
     /**
      * @return NativeSessionStorage
      */
-    protected function getStorage(array $options = [])
+    protected function getStorage(array $options = array())
     {
         $storage = new NativeSessionStorage($options);
         $storage->registerBag(new AttributeBag());
@@ -157,48 +157,29 @@ class NativeSessionStorageTest extends TestCase
     {
         $this->iniSet('session.cache_limiter', 'nocache');
 
-        $storage = new NativeSessionStorage(['cache_limiter' => 'public']);
+        $storage = new NativeSessionStorage(array('cache_limiter' => 'public'));
         $this->assertEquals('public', ini_get('session.cache_limiter'));
     }
 
     public function testCookieOptions()
     {
-        $options = [
+        $options = array(
             'cookie_lifetime' => 123456,
             'cookie_path' => '/my/cookie/path',
             'cookie_domain' => 'symfony.example.com',
             'cookie_secure' => true,
             'cookie_httponly' => false,
-        ];
+        );
 
         $this->getStorage($options);
         $temp = session_get_cookie_params();
-        $gco = [];
+        $gco = array();
 
         foreach ($temp as $key => $value) {
             $gco['cookie_'.$key] = $value;
         }
 
-        unset($gco['cookie_samesite']);
-
         $this->assertEquals($options, $gco);
-    }
-
-    public function testSessionOptions()
-    {
-        if (\defined('HHVM_VERSION')) {
-            $this->markTestSkipped('HHVM is not handled in this test case.');
-        }
-
-        $options = [
-            'url_rewriter.tags' => 'a=href',
-            'cache_expire' => '200',
-        ];
-
-        $this->getStorage($options);
-
-        $this->assertSame('a=href', ini_get('url_rewriter.tags'));
-        $this->assertSame('200', ini_get('session.cache_expire'));
     }
 
     /**
@@ -218,9 +199,9 @@ class NativeSessionStorageTest extends TestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy', $storage->getSaveHandler());
         $storage->setSaveHandler(null);
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy', $storage->getSaveHandler());
-        $storage->setSaveHandler(new SessionHandlerProxy(new NativeFileSessionHandler()));
+        $storage->setSaveHandler(new SessionHandlerProxy(new NativeSessionHandler()));
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy', $storage->getSaveHandler());
-        $storage->setSaveHandler(new NativeFileSessionHandler());
+        $storage->setSaveHandler(new NativeSessionHandler());
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy', $storage->getSaveHandler());
         $storage->setSaveHandler(new SessionHandlerProxy(new NullSessionHandler()));
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy', $storage->getSaveHandler());
@@ -274,9 +255,9 @@ class NativeSessionStorageTest extends TestCase
     public function testSetSessionOptionsOnceSessionStartedIsIgnored()
     {
         session_start();
-        $this->getStorage([
+        $this->getStorage(array(
             'name' => 'something-else',
-        ]);
+        ));
 
         // Assert no exception has been thrown by `getStorage()`
         $this->addToAssertionCount(1);

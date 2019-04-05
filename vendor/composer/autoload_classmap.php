@@ -6,11 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ArithmeticError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
-    'AssertionError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
     'Clue\\StreamFilter\\CallbackFilter' => $vendorDir . '/clue/stream-filter/src/CallbackFilter.php',
-    'DivisionByZeroError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
-    'Error' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/Error.php',
     'GuzzleHttp\\Client' => $vendorDir . '/guzzlehttp/guzzle/src/Client.php',
     'GuzzleHttp\\ClientInterface' => $vendorDir . '/guzzlehttp/guzzle/src/ClientInterface.php',
     'GuzzleHttp\\Cookie\\CookieJar' => $vendorDir . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -319,7 +315,6 @@ return array(
     'Omnipay\\Common\\Message\\ResponseInterface' => $vendorDir . '/omnipay/common/src/Common/Message/ResponseInterface.php',
     'Omnipay\\Common\\PaymentMethod' => $vendorDir . '/omnipay/common/src/Common/PaymentMethod.php',
     'Omnipay\\Omnipay' => $vendorDir . '/omnipay/common/src/Omnipay.php',
-    'ParseError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
     'Psr\\Http\\Message\\MessageInterface' => $vendorDir . '/psr/http-message/src/MessageInterface.php',
     'Psr\\Http\\Message\\RequestInterface' => $vendorDir . '/psr/http-message/src/RequestInterface.php',
     'Psr\\Http\\Message\\ResponseInterface' => $vendorDir . '/psr/http-message/src/ResponseInterface.php',
@@ -327,7 +322,6 @@ return array(
     'Psr\\Http\\Message\\StreamInterface' => $vendorDir . '/psr/http-message/src/StreamInterface.php',
     'Psr\\Http\\Message\\UploadedFileInterface' => $vendorDir . '/psr/http-message/src/UploadedFileInterface.php',
     'Psr\\Http\\Message\\UriInterface' => $vendorDir . '/psr/http-message/src/UriInterface.php',
-    'SessionUpdateTimestampHandlerInterface' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
     'Symfony\\Component\\HttpFoundation\\AcceptHeader' => $vendorDir . '/symfony/http-foundation/AcceptHeader.php',
     'Symfony\\Component\\HttpFoundation\\AcceptHeaderItem' => $vendorDir . '/symfony/http-foundation/AcceptHeaderItem.php',
     'Symfony\\Component\\HttpFoundation\\ApacheRequest' => $vendorDir . '/symfony/http-foundation/ApacheRequest.php',
@@ -373,9 +367,7 @@ return array(
     'Symfony\\Component\\HttpFoundation\\Session\\Flash\\FlashBagInterface' => $vendorDir . '/symfony/http-foundation/Session/Flash/FlashBagInterface.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Session' => $vendorDir . '/symfony/http-foundation/Session/Session.php',
     'Symfony\\Component\\HttpFoundation\\Session\\SessionBagInterface' => $vendorDir . '/symfony/http-foundation/Session/SessionBagInterface.php',
-    'Symfony\\Component\\HttpFoundation\\Session\\SessionBagProxy' => $vendorDir . '/symfony/http-foundation/Session/SessionBagProxy.php',
     'Symfony\\Component\\HttpFoundation\\Session\\SessionInterface' => $vendorDir . '/symfony/http-foundation/Session/SessionInterface.php',
-    'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\AbstractSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/AbstractSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\MemcacheSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/MemcacheSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\MemcachedSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/MemcachedSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\MongoDbSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/MongoDbSessionHandler.php',
@@ -383,7 +375,6 @@ return array(
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\NativeSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/NativeSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\NullSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/NullSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\PdoSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/PdoSessionHandler.php',
-    'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\StrictSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/StrictSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\Handler\\WriteCheckSessionHandler' => $vendorDir . '/symfony/http-foundation/Session/Storage/Handler/WriteCheckSessionHandler.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\MetadataBag' => $vendorDir . '/symfony/http-foundation/Session/Storage/MetadataBag.php',
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\MockArraySessionStorage' => $vendorDir . '/symfony/http-foundation/Session/Storage/MockArraySessionStorage.php',
@@ -396,6 +387,4 @@ return array(
     'Symfony\\Component\\HttpFoundation\\Session\\Storage\\SessionStorageInterface' => $vendorDir . '/symfony/http-foundation/Session/Storage/SessionStorageInterface.php',
     'Symfony\\Component\\HttpFoundation\\StreamedResponse' => $vendorDir . '/symfony/http-foundation/StreamedResponse.php',
     'Symfony\\Polyfill\\Mbstring\\Mbstring' => $vendorDir . '/symfony/polyfill-mbstring/Mbstring.php',
-    'Symfony\\Polyfill\\Php70\\Php70' => $vendorDir . '/symfony/polyfill-php70/Php70.php',
-    'TypeError' => $vendorDir . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
 );

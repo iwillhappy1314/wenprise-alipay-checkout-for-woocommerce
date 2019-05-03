@@ -4,8 +4,8 @@ Donate link: https://www.wpzhiku.com/
 Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支付宝, 支付宝支付, Alipay payment gateway, Wechat gateway, credit card, pay, online payment, shop, e-commerce, ecommerce
 Requires PHP: 5.6.0
 Requires at least: 3.9
-Tested up to: 5.0
-Stable tag: 1.0.2
+Tested up to: 5.1
+Stable tag: 1.0.3
 License: GPL-2.0+
 
 Alipay payment gateway for WooCommerce, WooCommerce 支付宝全功能支付网关。
@@ -16,9 +16,17 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝全功能支付网�
 * 支持所有 WooCommerce 产品类型
 * PC 端扫码或登录账户支付
 * 移动端调起支付宝 APP 或者登录 wap 版支付宝支付
+* 支持支付宝同步回调和异步回调
+* 支持主动查询支付宝订单完成状态的功能
 * 支持在 WooCommerce 订单中直接通过支付宝支付退款，退款原路返回
 * 由于支付宝在微信中被屏蔽掉了，支付宝支付在微信中自动隐藏
 * 货币不是人民币时，可以设置一个固定汇率
+
+插件设置方法及使用教程请参考：
+[Wenprise Alipay Gateway For WooCommerce 插件设置教程](https://www.wpzhiku.com/wenprise-alipay-gateway-for-woocommerce-document/)
+
+微信支付网关：
+[Wenprise WeChatPay Payment Gateway For WooCommerce](https://wordpress.org/plugins/wenprise-wechatpay-checkout-for-woocommerce/)
 
 ### Support 技术支持 ###
 
@@ -48,8 +56,12 @@ Email: amos@wpcio.com
 
 ## Changelog ##
 
+### 1.0.3 ###
+* 修改支付宝跳转方式为站内页面代理，以便在在新窗口中打开、同时弹出支付确认窗口
+* 增加主动查询功能、以便在其他验证方式不可用时，验证订单是否支付
+
 ### 1.0.2 ###
-* 降低版本需求
+* Bugfix
 
 ### 1.0 ###
 * 初次发布

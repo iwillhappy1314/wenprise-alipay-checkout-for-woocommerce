@@ -19,11 +19,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 {
 
     /**
-     * @var bool 日志是否启用
-     */
-    public $debug_active = false;
-
-    /**
      * @var WC_Logger Logger 实例
      */
     public $log = false;
@@ -36,17 +31,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * @var string
      */
-    public $app_id = '';
+    private $app_id = '';
 
     /**
      * @var string
      */
-    public $private_key = '';
+    private $private_key = '';
 
     /**
      * @var string
      */
-    public $alipay_public_key = '';
+    private $alipay_public_key = '';
 
     /**
      * @var string
@@ -62,6 +57,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      * @var string
      */
     public $exchange_rate = '';
+
+    /**
+     * @var bool 日志是否启用
+     */
+    public $is_debug_mod = 'no';
+
 
     /**
      * 网关支持的功能
@@ -93,8 +94,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             "data:image/svg+xml,%3Csvg t='1546482465278' class='icon' style='' viewBox='0 0 1024 1024' version='1.1' xmlns='http://www.w3.org/2000/svg' p-id='5719' xmlns:xlink='http://www.w3.org/1999/xlink' width='32' height='32'%3E%3Cdefs%3E%3Cstyle type='text/css'%3E%3C/style%3E%3C/defs%3E%3Cpath d='M991.67 689.448v-472.296c0-101.81-82.623-184.433-184.493-184.433h-590.414c-101.81 0-184.433 82.623-184.433 184.433v590.414c0 101.81 82.563 184.433 184.433 184.433h590.414c90.717 0 166.206-65.595 181.615-151.876-48.926-21.165-260.941-112.722-371.385-165.427-84.062 101.81-172.082 162.908-304.771 162.908s-221.248-81.724-210.636-181.735c7.015-65.655 52.044-172.981 247.629-154.574 103.069 9.653 150.257 28.9 234.319 56.661 21.765-39.873 39.813-83.763 53.543-130.47h-372.764v-36.935h184.433v-66.314h-224.965v-40.652h224.965v-95.694c0 0 2.039-14.99 18.587-14.99h92.216v110.684h239.835v40.652h-239.835v66.314h195.646c-17.988 73.209-45.269 140.483-79.446 199.243 56.841 20.566 315.503 99.652 315.503 99.652v0 0zM297.947 774.29c-140.183 0-162.368-88.499-154.933-125.494 7.375-36.815 47.967-84.842 125.914-84.842 89.578 0 169.803 22.904 266.097 69.792-67.633 88.079-150.736 140.543-237.077 140.543v0z' p-id='5720' fill='%232EA0E9'%3E%3C/path%3E%3C/svg%3E");
 
         $this->supports = ['products', 'refunds'];
-
-        $this->debug_active = false;
 
         $this->has_fields = false;
 
@@ -187,6 +186,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'title'       => __('Alipay Public Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
                 'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"，验证支付结果时使用）', 'wprs-wc-alipay'),
+            ],
+            'is_debug_mod'      => [
+                'title'       => __('Debug Mode', 'wprs-wc-wechatpay'),
+                'label'       => __('Enable debug mod', 'wprs-wc-wechatpay'),
+                'type'        => 'checkbox',
+                'description' => sprintf(__('If checked, plugin will show program errors in frontend.', 'wprs-wc-alipay')),
+                'default'     => 'no',
             ],
         ];
 
@@ -363,7 +369,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         do_action('woocommerce_wenprise_alipay_before_payment_redirect', $response);
 
-        update_post_meta($order_id, 'gateway_payment_url_' . $order_id, $response->getRedirectUrl());
+        update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
 
         // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
         if ($response->isRedirect()) {
@@ -378,9 +384,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
 
-            wc_add_notice($error, 'error');
-
-            $this->log($error);
+            if ($this->is_debug_mod == 'yes') {
+                $this->log($error);
+                wc_add_notice($error, 'error');
+            }
 
             return [
                 'result'   => 'failure',
@@ -400,18 +407,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function pay_for_order($order_id)
     {
-        $order = new WC_Order($order_id);
-        echo '<p>' . __('Redirecting to payment provider.', 'wprs-wc-alipay') . '</p>';
-        $order->add_order_note(__('Order placed and user redirected.', 'wprs-wc-alipay'));
-        $order->update_status('on-hold', __('Awaiting payment.', 'wprs-wc-alipay'));
-
         wc_empty_cart();
 
-        /**
-         * 已经跳转了页面的情况下
-         * 怎么获取支付 URL？
-         */
-        // return your form with the needed parameters
         echo '<form action="' . WC()->api_request_url('wprs-wc-payment-form') . '" method="post" target="_blank">
 
                 <div class="btn-submit-payment" style="display: none;">
@@ -427,9 +424,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                         </header>
                         <div class="rs-modal__content">
                             <div class="rs-alert rs-alert--warning">
-                                请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮。
+                                请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮查询。
                             </div>
-                            <p>如果支付成功后，订单依然显示未支付、请联系网站客服进行处理。</p>
+                            <p>如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。</p>
                         </div>
                         <footer class="rs-modal__footer">
                            <input type="button" id="js-alipay-success" class="button alt is-primary" value="支付成功" /> 
@@ -451,10 +448,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $order_id = $_POST[ 'order_id' ];
 
-        $redirect_url = get_post_meta($order_id, 'gateway_payment_url_' . $order_id, true);
-
-        // 跳转到支付宝后，应立即删除跳转 URL，避免 URL 被重复使用
-        delete_post_meta($order_id, 'gateway_payment_url_' . $order_id);
+        $redirect_url = get_post_meta($order_id, '_gateway_payment_url', true);
         wp_redirect($redirect_url);
     }
 
@@ -484,18 +478,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 /** @var \Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
                 $response = $request->send();
 
-                $this->log($response);
-
                 if ($response->isPaid()) {
 
                     // 添加订单备注
-                    if ($order->status != 'complete') {
-                        $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
-                    }
-
-                    wc_empty_cart();
-
-                    $order->payment_complete($_REQUEST[ 'trade_no' ]);
+                    $this->complete_order($order, $_REQUEST[ 'trade_no' ]);
 
                     if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
                         echo "success";
@@ -506,16 +492,18 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 } else {
 
                     $error = $response->getMessage();
+
                     $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
                     wc_add_notice($error, 'error');
                     $this->log($error);
+
                     wp_redirect(wc_get_checkout_url());
 
                 }
 
             } catch (\Exception $e) {
 
-                $this->log($e);
+                $this->log($e->getMessage());
 
             }
 
@@ -526,7 +514,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
-     * 查询支付宝订单支付状态
+     * 主动查询支付宝订单支付状态
      *
      * https://docs.open.alipay.com/api_1/alipay.trade.query
      */
@@ -538,35 +526,23 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $gateway = $this->get_gateway();
         $order   = wc_get_order($order_id);
 
-        /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
+        /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
         $request = $gateway->query();
 
         $request->setBizContent([
             'out_trade_no' => $order_id,
-            'trade_no'     => $order->get_transaction_id(),
         ]);
 
         try {
-            /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
+            /** @var \Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
             $response = $request->send();
-
-            dd($response->getData());
 
             if ($response->isSuccessful()) {
 
-                // 添加订单备注
-                if ($order->status != 'complete') {
-                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
-                }
+                $response_data = $response->getData()[ 'alipay_trade_query_response' ];
+                $this->complete_order($order, $response_data[ 'trade_no' ]);
 
-                wc_empty_cart();
-
-                $order->payment_complete($order->get_transaction_id());
-
-                delete_option('gateway_payment_url_' . $order->get_id());
-
-                // wp_send_json_success($order->get_checkout_order_received_url());
-                // wp_send_json_success();
+                wp_send_json_success($order->get_checkout_order_received_url());
             } else {
                 wp_send_json_error($order->get_checkout_payment_url());
             }
@@ -637,13 +613,34 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
+     * 完成支付、支付网关验证成功后调用此方法
+     *
+     * @param $order    \WC_Order
+     * @param $trade_no string
+     */
+    public function complete_order($order, $trade_no)
+    {
+        // 添加订单备注
+        if ($order->status == 'pending') {
+            $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $trade_no));
+        }
+
+        delete_post_meta($order->get_id(), '_gateway_payment_url');
+
+        wc_empty_cart();
+
+        $order->payment_complete($trade_no);
+    }
+
+
+    /**
      * Logger 辅助功能
      *
      * @param $message
      */
     public function log($message)
     {
-        if ($this->debug_active) {
+        if ($this->is_debug_mod) {
             if ( ! ($this->log)) {
                 $this->log = new WC_Logger();
             }

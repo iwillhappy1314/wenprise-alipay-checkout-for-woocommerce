@@ -9,7 +9,7 @@
 
 .rs-modal__header{
     padding: 0 1rem;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #eee;
     height: 3rem;
     line-height: 3rem;
     text-align: left;
@@ -21,14 +21,18 @@
 }
 
 .rs-modal__footer{
-    padding: .5rem 1rem;
-    border-top: 1px solid #ccc;
+    padding: .75rem 1rem;
+    border-top: 1px solid #eee;
     display: flex;
     justify-content: flex-end;
     text-align: right;
     position: absolute;
     width: 100%;
     bottom: 0;
+}
+
+.rs-modal__footer .button{
+    font-size: .875rem;
 }
 
 #js-alipay-success{

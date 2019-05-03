@@ -1,11 +1,11 @@
 (function($) {
   var loopCnt = 50;
-  var looptime = 500; //ms
+  var looptime = 1000; //ms
 
   /**
    * 点击提交支付表单
    */
-  //$('#alipay-submit-button').click();
+  $('#alipay-submit-button').click();
 
   $.blockUI({
     message: $('#js-alipay-confirm-modal'),
@@ -18,24 +18,18 @@
   /**
    * 支付成功后，如果没有自动跳转，点击按钮查询订单并跳转支付结果
    */
-  $('#js-alipay-success').click(function() {
-    $.blockUI({message: '<h1>订单查询中...</h1>'});
+  $('#js-alipay-success, #js-alipay-fail').click(function() {
+    $.blockUI({message: '<div style="padding: 1rem;">订单查询中...</div>'});
 
-    wprs_woo_alipay_query_order();
+    wprs_woo_alipay_query_order(true);
   });
 
-  /**
-   * 支付失败后，跳转到重新支付页面
-   */
-  $('#js-alipay-fail').click(function() {
-    wprs_woo_alipay_query_order();
-    $.unblockUI();
-  });
 
   /**
    * 查询订单支付结果
+   * @param manual 是否手动检查，手动检查时，无论拍支付是否成功，均需要跳转页面
    */
-  function wprs_woo_alipay_query_order() {
+  function wprs_woo_alipay_query_order(manual = false) {
     $.ajax({
       type   : 'POST',
       url    : WpWooAlipayData.query_url,
@@ -43,7 +37,7 @@
         order_id: $('input[name=order_id]').val(),
       },
       success: function(data) {
-        if (data && data.success === true) {
+        if (data && data.success === true || manual === true) {
           location.href = data.data;
         } else {
           if (loopCnt-- > 0) {
@@ -60,9 +54,5 @@
   }
 
   wprs_woo_alipay_query_order();
-
-  $('#js-wprs-alipay').bind('click', function() {
-    wprs_woo_alipay_query_order();
-  });
 
 })(jQuery);

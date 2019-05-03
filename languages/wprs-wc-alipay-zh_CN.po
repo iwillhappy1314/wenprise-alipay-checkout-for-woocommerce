@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2019-01-15 09:48+0800\n"
-"PO-Revision-Date: 2019-01-15 09:48+0800\n"
+"POT-Creation-Date: 2019-05-04 06:45+0800\n"
+"PO-Revision-Date: 2019-05-04 06:45+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.12\n"
+"X-Generator: Poedit 2.2.1\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
@@ -20,82 +20,82 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
 
-#: class-checkout.php:78 class-checkout.php:84 class-checkout.php:156
+#: class-checkout.php:83 class-checkout.php:89 class-checkout.php:167
 msgid "Alipay"
 msgstr "支付宝"
 
-#: class-checkout.php:81
+#: class-checkout.php:86
 msgid "Alipay Payment Gateway for WooCommerce"
 msgstr "WooCommerce 的支付宝支付网关"
 
-#: class-checkout.php:116
+#: class-checkout.php:121
 msgid "Proceed to Alipay"
 msgstr "到支付宝付款"
 
-#: class-checkout.php:139
+#: class-checkout.php:150
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: class-checkout.php:140
+#: class-checkout.php:151
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: class-checkout.php:154
+#: class-checkout.php:165
 msgid "Title"
 msgstr "标题"
 
-#: class-checkout.php:159
+#: class-checkout.php:170
 msgid "Description"
 msgstr "描述"
 
-#: class-checkout.php:161
+#: class-checkout.php:172
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付。"
 
-#: class-checkout.php:165
+#: class-checkout.php:176
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: class-checkout.php:167
-msgid "Enter your Alipay APPID.（开放平台密钥中的\"APPID\"）"
-msgstr "输入您的支付宝 APPID（开放平台密中中的“APPID”）"
+#: class-checkout.php:178
+msgid "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
+msgstr "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 
-#: class-checkout.php:170
+#: class-checkout.php:181
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: class-checkout.php:172
+#: class-checkout.php:183
 msgid ""
 "Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时"
 "使用)"
 msgstr "输入您的支付宝密钥(rsa_private_key.pem 文件的全部内容，创建订单时使用)"
 
-#: class-checkout.php:176
+#: class-checkout.php:187
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: class-checkout.php:178
+#: class-checkout.php:189
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\"，验证支付结果时使用）"
 
-#: class-checkout.php:185
+#: class-checkout.php:196
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: class-checkout.php:187
+#: class-checkout.php:198
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:201
+#: class-checkout.php:212
 msgid "Settings"
 msgstr "设置"
 
-#: class-checkout.php:245
+#: class-checkout.php:256
 #, php-format
 msgid ""
 "Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
@@ -105,65 +105,29 @@ msgstr ""
 "微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
 "币的汇率</a>。"
 
-#: class-checkout.php:340 class-checkout.php:341
+#: class-checkout.php:348 class-checkout.php:349
 msgid "Pay for order #"
 msgstr "支付订单"
 
-#: class-checkout.php:340 class-checkout.php:341
+#: class-checkout.php:348 class-checkout.php:349
 msgid " At "
 msgstr "在"
 
-#: class-checkout.php:431
-#, php-format
-msgid "Refunded %1$s"
-msgstr "退款 %1$s"
+#: class-checkout.php:404
+msgid "Awaiting payment."
+msgstr "等待支付。"
 
-#: class-checkout.php:479
+#: class-checkout.php:490 class-checkout.php:555
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"
 
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:395
-msgid "Check for updates"
-msgstr "檢查更新"
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:432
-msgid "View details"
-msgstr "查看详情"
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:455
+#: class-checkout.php:619
 #, php-format
-msgid "More information about %s"
-msgstr "有关 %s的更多信息"
+msgid "Refunded %1$s"
+msgstr "退款 %1$s"
 
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:548
-#, php-format
-msgctxt "the plugin title"
-msgid "The %s plugin is up to date."
-msgstr "插件 %s 已更新。"
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:550
-#, php-format
-msgctxt "the plugin title"
-msgid "A new version of the %s plugin is available."
-msgstr "您的插件 %s 有新版本可用。"
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:552
-#, php-format
-msgctxt "the plugin title"
-msgid "Could not determine if updates are available for %s."
-msgstr "无法确定%s是否有更新。"
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Plugin/UpdateChecker.php:558
-#, php-format
-msgid "Unknown update checker status \"%s\""
-msgstr "未知的更新检查程序状态 \"%s\""
-
-#: vendor/yahnis-elsts/plugin-update-checker/Puc/v4p4/Vcs/PluginUpdateChecker.php:98
-msgid "There is no changelog available."
-msgstr "没有可用的更新日志。"
-
-#: wenpirse-alipay-for-woocommerce.php:23
+#: wenprise-alipay-for-woocommerce.php:23
 #, php-format
 msgid ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
@@ -173,6 +137,36 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid "Enter your Alipay APPID.（开放平台密钥中的\"APPID\"）"
+#~ msgstr "输入您的支付宝 APPID（开放平台密中中的“APPID”）"
+
+#~ msgid "Check for updates"
+#~ msgstr "檢查更新"
+
+#~ msgid "View details"
+#~ msgstr "查看详情"
+
+#~ msgid "More information about %s"
+#~ msgstr "有关 %s的更多信息"
+
+#~ msgctxt "the plugin title"
+#~ msgid "The %s plugin is up to date."
+#~ msgstr "插件 %s 已更新。"
+
+#~ msgctxt "the plugin title"
+#~ msgid "A new version of the %s plugin is available."
+#~ msgstr "您的插件 %s 有新版本可用。"
+
+#~ msgctxt "the plugin title"
+#~ msgid "Could not determine if updates are available for %s."
+#~ msgstr "无法确定%s是否有更新。"
+
+#~ msgid "Unknown update checker status \"%s\""
+#~ msgstr "未知的更新检查程序状态 \"%s\""
+
+#~ msgid "There is no changelog available."
+#~ msgstr "没有可用的更新日志。"
 
 #~ msgid " Alipay Sanbox Mode"
 #~ msgstr "支付宝沙箱模式"

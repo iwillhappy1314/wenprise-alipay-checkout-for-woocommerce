@@ -1,4 +1,10 @@
 <?php
+/**
+ *
+ * trade_no | $order->get_transaction_id() :支付宝交易号，和商户订单号不能同时为空
+ * out_trade_no | $order_id | $order->get_order_number() | $order->get_id(): 网站交易号
+ *
+ */
 
 if ( ! defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -57,7 +63,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public $exchange_rate = '';
 
-
     /**
      * 网关支持的功能
      *
@@ -113,12 +118,15 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $this->init_settings();
 
         // 设置是否应该重命名按钮。
-        $this->order_button_text = apply_filters('woocommerce_Alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));
+        $this->order_button_text = apply_filters('woocommerce_alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));
 
         // 保存设置
         if (is_admin()) {
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
         }
+
+        // below is the hook you need for that purpose
+        add_action('woocommerce_receipt_' . $this->id, [$this, 'pay_for_order']);
 
         // 仪表盘通知
         add_action('admin_notices', [$this, 'requirement_checks']);
@@ -126,6 +134,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         // Hooks
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
+        add_action('woocommerce_api_wprs-wc-payment-form', [$this, 'listen_payment_form']);
+        add_action('woocommerce_api_wprs-wc-query-order', [$this, 'query_alipay_order']);
+
     }
 
 
@@ -326,9 +337,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $total = round($total * $exchange_rate, 2);
 
-        // Empty cart.
-        WC()->cart->empty_cart();
-
         do_action('wenprise_woocommerce_alipay_before_process_payment');
 
         // 调用响应的方法来处理支付
@@ -355,12 +363,14 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         do_action('woocommerce_wenprise_alipay_before_payment_redirect', $response);
 
+        update_post_meta($order_id, 'gateway_payment_url_' . $order_id, $response->getRedirectUrl());
+
         // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
         if ($response->isRedirect()) {
 
             return [
                 'result'   => 'success',
-                'redirect' => $response->getRedirectUrl(),
+                'redirect' => $order->get_checkout_payment_url(true),
             ];
 
         } else {
@@ -382,62 +392,70 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
-     * 处理退款
+     * 订单支付页面
      *
-     * If the gateway declares 'refunds' support, this will allow it to refund.
-     * a passed in amount.
+     * @param $order_id
      *
-     * @param  int    $order_id Order ID.
-     * @param  float  $amount   Refund amount.
-     * @param  string $reason   Refund reason.
-     *
-     * @return boolean True or false based on success, or a WP_Error object.
+     * @return string
      */
-    public function process_refund($order_id, $amount = null, $reason = '')
+    public function pay_for_order($order_id)
     {
-        $gateway = $this->get_gateway();
-        $order   = wc_get_order($order_id);
-        $total   = $this->get_order_total();
+        $order = new WC_Order($order_id);
+        echo '<p>' . __('Redirecting to payment provider.', 'wprs-wc-alipay') . '</p>';
+        $order->add_order_note(__('Order placed and user redirected.', 'wprs-wc-alipay'));
+        $order->update_status('on-hold', __('Awaiting payment.', 'wprs-wc-alipay'));
 
-        $exchange_rate = floatval($this->get_option('exchange_rate'));
-        if ($exchange_rate <= 0) {
-            $exchange_rate = 1;
-        }
+        wc_empty_cart();
 
-        $total         = round($total * $exchange_rate, 2);
-        $refund_amount = round($amount * $exchange_rate, 2);
+        /**
+         * 已经跳转了页面的情况下
+         * 怎么获取支付 URL？
+         */
+        // return your form with the needed parameters
+        echo '<form action="' . WC()->api_request_url('wprs-wc-payment-form') . '" method="post" target="_blank">
 
-        if ($refund_amount <= 0 || $refund_amount > $total) {
-            false;
-        }
+                <div class="btn-submit-payment" style="display: none;">
+                    <input type="hidden" name="order_id" value="' . $order_id . '">
+                    <button type="submit" id="alipay-submit-button"></button>
+                </div>
+                
+                <div id="js-alipay-confirm-modal" class="rs-confirm-modal" style="display: none;">
+                
+                    <div class="rs-modal">
+                        <header class="rs-modal__header">
+                          在线支付
+                        </header>
+                        <div class="rs-modal__content">
+                            <div class="rs-alert rs-alert--warning">
+                                请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮。
+                            </div>
+                            <p>如果支付成功后，订单依然显示未支付、请联系网站客服进行处理。</p>
+                        </div>
+                        <footer class="rs-modal__footer">
+                           <input type="button" id="js-alipay-success" class="button alt is-primary" value="支付成功" /> 
+                           <input type="button" id="js-alipay-fail" class="button" value="支付失败" /> 
+                        </footer>
+                    </div>
+                    
+                </div>
+                
+            </form>';
+    }
 
-        /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
-        $request = $gateway->refund();
 
-        $request->setBizContent([
-            'out_trade_no'   => $order_id,
-            'trade_no'       => $order->get_transaction_id(),
-            'refund_amount'  => $refund_amount,
-            'out_request_no' => date('YmdHis') . mt_rand(1000, 9999),
-        ]);
+    /**
+     * 跳转到支付宝支付，增加这一步是为了避免浏览器屏蔽弹出窗口
+     *
+     */
+    public function listen_payment_form()
+    {
+        $order_id = $_POST[ 'order_id' ];
 
+        $redirect_url = get_post_meta($order_id, 'gateway_payment_url_' . $order_id, true);
 
-        try {
-            /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
-            $response = $request->send();
-
-            if ($response->isSuccessful()) {
-                $order->add_order_note(
-                    sprintf(__('Refunded %1$s', 'woocommerce'), $amount)
-                );
-
-                return true;
-            }
-        } catch (\Exception $e) {
-            return false;
-        }
-
-        return false;
+        // 跳转到支付宝后，应立即删除跳转 URL，避免 URL 被重复使用
+        delete_post_meta($order_id, 'gateway_payment_url_' . $order_id);
+        wp_redirect($redirect_url);
     }
 
 
@@ -470,13 +488,14 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
                 if ($response->isPaid()) {
 
-                    $order->payment_complete($_REQUEST[ 'trade_no' ]);
-
-                    // Empty cart.
-                    WC()->cart->empty_cart();
-
                     // 添加订单备注
-                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
+                    if ($order->status != 'complete') {
+                        $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
+                    }
+
+                    wc_empty_cart();
+
+                    $order->payment_complete($_REQUEST[ 'trade_no' ]);
 
                     if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
                         echo "success";
@@ -496,13 +515,124 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             } catch (\Exception $e) {
 
-                file_put_contents(get_theme_file_path("error.log"), print_r($e, true));
+                $this->log($e);
 
             }
 
 
         }
 
+    }
+
+
+    /**
+     * 查询支付宝订单支付状态
+     *
+     * https://docs.open.alipay.com/api_1/alipay.trade.query
+     */
+    public function query_alipay_order()
+    {
+
+        $order_id = $_POST[ 'order_id' ];
+
+        $gateway = $this->get_gateway();
+        $order   = wc_get_order($order_id);
+
+        /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
+        $request = $gateway->query();
+
+        $request->setBizContent([
+            'out_trade_no' => $order_id,
+            'trade_no'     => $order->get_transaction_id(),
+        ]);
+
+        try {
+            /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
+            $response = $request->send();
+
+            dd($response->getData());
+
+            if ($response->isSuccessful()) {
+
+                // 添加订单备注
+                if ($order->status != 'complete') {
+                    $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $_REQUEST[ 'trade_no' ]));
+                }
+
+                wc_empty_cart();
+
+                $order->payment_complete($order->get_transaction_id());
+
+                delete_option('gateway_payment_url_' . $order->get_id());
+
+                // wp_send_json_success($order->get_checkout_order_received_url());
+                // wp_send_json_success();
+            } else {
+                wp_send_json_error($order->get_checkout_payment_url());
+            }
+        } catch (\Exception $e) {
+            wp_send_json_error($order->get_checkout_payment_url());
+        }
+
+    }
+
+
+    /**
+     * 处理退款
+     *
+     * If the gateway declares 'refunds' support, this will allow it to refund.
+     * a passed in amount.
+     *
+     * @param int    $order_id Order ID.
+     * @param float  $amount   Refund amount.
+     * @param string $reason   Refund reason.
+     *
+     * @return boolean True or false based on success, or a WP_Error object.
+     */
+    public function process_refund($order_id, $amount = null, $reason = '')
+    {
+        $gateway = $this->get_gateway();
+        $order   = wc_get_order($order_id);
+        $total   = $this->get_order_total();
+
+        $exchange_rate = floatval($this->get_option('exchange_rate'));
+        if ($exchange_rate <= 0) {
+            $exchange_rate = 1;
+        }
+
+        $total         = round($total * $exchange_rate, 2);
+        $refund_amount = round($amount * $exchange_rate, 2);
+
+        if ($refund_amount <= 0 || $refund_amount > $total) {
+            false;
+        }
+
+        /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
+        $request = $gateway->refund();
+
+        $request->setBizContent([
+            'out_trade_no'   => $order_id,
+            'trade_no'       => $order->get_transaction_id(),
+            'refund_amount'  => $refund_amount,
+            'out_request_no' => date('YmdHis') . mt_rand(1000, 9999),
+        ]);
+
+        try {
+            /** @var \Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
+            $response = $request->send();
+
+            if ($response->isSuccessful()) {
+                $order->add_order_note(
+                    sprintf(__('Refunded %1$s', 'woocommerce'), $amount)
+                );
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return false;
     }
 
 

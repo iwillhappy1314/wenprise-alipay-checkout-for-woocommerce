@@ -1,0 +1,67 @@
+.blockUI{
+    border: 0 !important;
+}
+
+.rs-modal,
+.rs-confirm-modal{
+    height: 100%;
+}
+
+.rs-modal__header{
+    padding: 0 1rem;
+    border-bottom: 1px solid #ccc;
+    height: 3rem;
+    line-height: 3rem;
+    text-align: left;
+}
+
+.rs-modal__content{
+    padding: 1rem;
+    text-align: left;
+}
+
+.rs-modal__footer{
+    padding: .5rem 1rem;
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: flex-end;
+    text-align: right;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+
+#js-alipay-success{
+    margin-right: .5rem;
+}
+
+.rs-alert {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    padding: .5rem 1rem;
+}
+
+.rs-alert--info{
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.rs-alert--warning{
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.rs-alert--success{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.rs-alert--danger{
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}

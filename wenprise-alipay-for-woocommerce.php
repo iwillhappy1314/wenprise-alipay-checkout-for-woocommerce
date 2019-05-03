@@ -35,6 +35,19 @@ define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
 define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-wc-alipay');
 define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL . 'assets/');
 
+
+add_action('wp_enqueue_scripts', function ()
+{
+    if (is_checkout() || is_checkout_pay_page()) {
+        wp_enqueue_style('wprs-wc-alipay-style', plugins_url('/assets/styles.css', __FILE__), [], null, false);
+        wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/assets/scripts.js', __FILE__), ['jquery', 'jquery-blockui'], null, true);
+
+        wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', [
+            'query_url'  => WC()->api_request_url('wprs-wc-query-order'),
+        ]);
+    }
+});
+
 add_action('plugins_loaded', function ()
 {
 

@@ -5,14 +5,14 @@
   /**
    * 点击提交支付表单
    */
-  $('#alipay-submit-button').click();
-
-  $.blockUI({
-    message: $('#js-alipay-confirm-modal'),
-    css    : {
-      width : '500px',
-      height: '300px',
-    },
+  $('#alipay-submit-button').click(function() {
+    $.blockUI({
+      message: $('#js-alipay-confirm-modal'),
+      css    : {
+        width : '500px',
+        height: '300px',
+      },
+    });
   });
 
   /**
@@ -23,7 +23,6 @@
 
     wprs_woo_alipay_query_order(true);
   });
-
 
   /**
    * 查询订单支付结果

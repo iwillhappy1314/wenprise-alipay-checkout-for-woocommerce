@@ -134,7 +134,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-payment-form', [$this, 'listen_payment_form']);
-        add_action('woocommerce_api_wprs-wc-query-order', [$this, 'query_alipay_order']);
+        add_action('woocommerce_api_wprs-wc-alipay-query', [$this, 'query_alipay_order']);
 
     }
 
@@ -411,9 +411,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         echo '<form action="' . WC()->api_request_url('wprs-wc-payment-form') . '" method="post" target="_blank">
 
-                <div class="btn-submit-payment" style="display: none;">
+                <div class="btn-submit-payment">
                     <input type="hidden" name="order_id" value="' . $order_id . '">
-                    <button type="submit" id="alipay-submit-button"></button>
+                    <button type="submit" class="button alt is-primary" id="alipay-submit-button">使用支付宝支付</button>
                 </div>
                 
                 <div id="js-alipay-confirm-modal" class="rs-confirm-modal" style="display: none;">

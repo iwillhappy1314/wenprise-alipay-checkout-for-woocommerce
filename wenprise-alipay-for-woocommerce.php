@@ -43,7 +43,7 @@ add_action('wp_enqueue_scripts', function ()
         wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/assets/scripts.js', __FILE__), ['jquery', 'jquery-blockui'], null, true);
 
         wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', [
-            'query_url'  => WC()->api_request_url('wprs-wc-query-order'),
+            'query_url'  => WC()->api_request_url('wprs-wc-alipay-query'),
         ]);
     }
 });

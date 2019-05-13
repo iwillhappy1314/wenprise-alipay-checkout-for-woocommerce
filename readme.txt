@@ -8,7 +8,7 @@ Tested up to: 5.1
 Stable tag: 1.0.4
 License: GPL-2.0+
 
-Alipay payment gateway for WooCommerce, WooCommerce 支付宝全功能支付网关。
+Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支付网关。
 
 ## Description ##
 **功能更全面的 WooCommerce 免费支付宝支付网关**，企业版，需要支付宝企业认证才可以使用。支持功能如下：

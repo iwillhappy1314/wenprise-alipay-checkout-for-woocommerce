@@ -1,0 +1,66 @@
+sudo: false
+dist: xenial
+
+language: php
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
+
+branches:
+  only:
+    - master
+    - /^[0-9]+.*$/
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+env:
+  matrix:
+    - WP_VERSION=latest WP_MULTISITE=0
+  global:
+    - PLUGIN_SLUG=wizhi-submenus
+    - SVN_REPO=https://plugins.svn.wordpress.org/$PLUGIN_SLUG/
+    - GIT_REPO=https://github.com/iwillhappy1314/$PLUGIN_SLUG.git
+    - MAINFILE="$PLUGIN_SLUG.php"
+    - secure: "vtHeGk3iX44ytvbete0oC274ion+mQ6YSqgvRt57b+uqQKmo9NwOXguxmAIuIrVuD9RMjegc2rllIIwbdzOm0qEedzS+p4i1uuydgKgdMHNHraCOb6o+i5xuVIRilZykoluBv/eez0syefqOeEGTnmibxwyrDVm+74KYIkdinVYmKYG6VKoBCIrz20/ZxcJOrOhfBLa3wI7+BXfXsYjDsIp/yLP8G+g+ruVyx5EyrLFVUr6D5EeNiMrChYSzR3uqApHpPOrMRk9KCJxqtWldbgw8s3Vx/1pFN33fLJHJ4RtSkiZnGoWE0G2gtQZ12SbYFtTv3Yd8hdJgP4OVbMONwskZMCNdQpHqaqFioa+aVXfN0rcIWaHIUEYzFKelTqd0wMbPQ0+HknTDdBoTdnfbgPe/6UOKa6tQofsWhfrunAujyJ4BSOtnFj6lSHstL/mNaQTrISBwDTDUBLSY05/ok4cGPBVo8HhwICp++rS4h05NxvnuUfp/LUXLMxJvNiKvOvCZCD1nLwlyQ1A0xswGtU2yGssjVO6q039F0Qlv+qdONypxCO1MxqoiBsbLXfPBSmM2UtxmBefxOIz9TzvYyTE1YXio4Dr9BbcR8fWRB4SQG9/wWEGRGitnAvtzUrYrP3MTwByzZ0uM7AfzpCTZZE65KKf8KGrCcIQdgiwjI18="
+
+matrix:
+  include:
+    - php: 7.0
+      env: WP_VERSION=latest WP_PULUGIN_DEPLOY=1
+      dist: xenial
+
+before_script:
+  - export PATH="$HOME/.composer/vendor/bin:$PATH"
+  - |
+    if [ -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini ]; then
+      phpenv config-rm xdebug.ini
+    else
+      echo "xdebug.ini does not exist"
+    fi
+  - |
+    if [[ ! -z "$WP_VERSION" ]] ; then
+      bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+      composer global require "phpunit/phpunit=4.8.*|5.7.*"
+    fi
+  - |
+    if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
+      composer global require wp-coding-standards/wpcs
+      phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
+    fi
+
+script:
+  - |
+    if [[ ! -z "$WP_VERSION" ]] ; then
+      phpunit
+      WP_MULTISITE=1 phpunit
+    fi
+  - |
+    if [[ "$WP_TRAVISCI" == "phpcs" ]] ; then
+      phpcs
+    fi
+
+after_success: curl -L https://raw.githubusercontent.com/iwillhappy1314/deploy2wporg/master/deploy.sh | sh

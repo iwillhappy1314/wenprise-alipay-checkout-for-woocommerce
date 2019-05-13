@@ -21,7 +21,7 @@ env:
   matrix:
     - WP_VERSION=latest WP_MULTISITE=0
   global:
-    - PLUGIN_SLUG=wizhi-submenus
+    - PLUGIN_SLUG=wenprise-alipay-checkout-for-woocommerce
     - SVN_REPO=https://plugins.svn.wordpress.org/$PLUGIN_SLUG/
     - GIT_REPO=https://github.com/iwillhappy1314/$PLUGIN_SLUG.git
     - MAINFILE="$PLUGIN_SLUG.php"

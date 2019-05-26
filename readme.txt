@@ -5,7 +5,7 @@ Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支�
 Requires PHP: 5.6.0
 Requires at least: 3.9
 Tested up to: 5.2
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPL-2.0+
 
 Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支付网关。
@@ -55,6 +55,9 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+
+### 1.0.5 ###
+* 修复某些情况下，图标不显示的问题
 
 ### 1.0.4 ###
 * 修复某些情况下未支付时，显示支付成功的 Bug

@@ -503,6 +503,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             } catch (\Exception $e) {
 
                 $this->log($e->getMessage());
+                wp_die($e->getMessage());
 
             }
 
@@ -547,6 +548,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             }
         } catch (\Exception $e) {
             wp_send_json_error($order->get_checkout_payment_url());
+
+            $this->log($e->getMessage());
+            wp_die($e->getMessage());
         }
 
     }

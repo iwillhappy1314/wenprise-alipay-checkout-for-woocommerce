@@ -56,6 +56,9 @@ Email: amos@wpcio.com
 
 ## Changelog ##
 
+### 1.0.7 ###
+* 防止 WooCommerce 禁用时报错
+
 ### 1.0.6 ###
 * 同步验证出错时，提示信息而不是显示空白页面
 

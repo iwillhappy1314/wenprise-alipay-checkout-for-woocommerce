@@ -69,3 +69,16 @@
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+
+
+@media screen and (max-width: 768px) {
+    .blockPage{
+        max-width: 500px !important;
+        width: auto !important;
+        left: 1rem !important;
+        right: 1rem !important;
+        top: 4rem !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}

@@ -56,7 +56,7 @@ Email: amos@wpcio.com
 
 ## Changelog ##
 
-### 1.0.7 ###
+### 1.0.8 ###
 * 修复 Block UI 弹窗在移动端显示不全的问题
 
 ### 1.0.7 ###

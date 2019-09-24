@@ -7,9 +7,9 @@
     /**
      * 点击提交支付表单
      */
-    $('#alipay-submit-button').click();
-
     if (confirm_modal.length !== 0) {
+        window.open(null,'alipay').location.href = $('#js-alipay-url').val();
+
         $.blockUI({
             message: confirm_modal,
             css: {

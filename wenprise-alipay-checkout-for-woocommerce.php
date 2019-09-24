@@ -20,8 +20,8 @@ if (version_compare(phpversion(), '5.6.0', '<')) {
     if (is_admin()) {
         add_action('admin_notices', function ()
         {
-            printf('<div class="error"><p>' . __('Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没有任何作用。',
-                    'wprs') . '</p></div>',
+            printf('<div class="error"><p>'.__('Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没有任何作用。',
+                    'wprs').'</p></div>',
                 '5.6.0', phpversion());
         });
     }
@@ -33,7 +33,7 @@ define('WENPRISE_ALIPAY_FILE_PATH', __FILE__);
 define('WENPRISE_ALIPAY_PATH', plugin_dir_path(__FILE__));
 define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
 define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-wc-alipay');
-define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL . 'frontend/');
+define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL.'frontend/');
 
 
 add_action('wp_enqueue_scripts', function ()
@@ -52,6 +52,31 @@ add_action('wp_enqueue_scripts', function ()
     }
 });
 
+
+/**
+ * 事先打开先窗口
+ */
+add_filter('woocommerce_order_button_text', function ($order_button_text)
+{
+    $chosen_payment_method = WC()->session->get('chosen_payment_method');
+
+    if ($chosen_payment_method == WENPRISE_ALIPAY_WOOCOMMERCE_ID) {?>
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $('#place_order').click(function () {
+                    // 添加跳转中页面，而不是空白页面
+                    if ($('input[name="payment_method"]:checked').val() === 'wprs-wc-alipay') {
+                        window.open("about:blank", "alipay");
+                    }
+                });
+            });
+        </script><?php
+    }
+
+    return $order_button_text;
+});
+
+
 add_action('plugins_loaded', function ()
 {
 
@@ -60,12 +85,12 @@ add_action('plugins_loaded', function ()
     }
 
     // 加载文件
-    require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
-    require WENPRISE_ALIPAY_PATH . 'helpers.php';
-    require WENPRISE_ALIPAY_PATH . 'class-checkout.php';
+    require WENPRISE_ALIPAY_PATH.'vendor/autoload.php';
+    require WENPRISE_ALIPAY_PATH.'helpers.php';
+    require WENPRISE_ALIPAY_PATH.'class-checkout.php';
 
     // 加载语言包
-    load_plugin_textdomain('wprs-wc-alipay', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('wprs-wc-alipay', false, dirname(plugin_basename(__FILE__)).'/languages');
 
     // 添加支付方法
     add_filter('woocommerce_payment_gateways', function ($methods)

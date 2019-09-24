@@ -132,7 +132,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         // Hooks
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
-        add_action('woocommerce_api_wprs-wc-payment-form', [$this, 'listen_payment_form']);
         add_action('woocommerce_api_wprs-wc-query-order', [$this, 'query_alipay_order']);
 
     }
@@ -408,7 +407,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         wc_empty_cart();
 
-        echo '<form action="' . WC()->api_request_url('wprs-wc-payment-form') . '" method="post" target="_blank">
+        echo '<form action="" method="post" target="_blank">
+
+                <input id="js-alipay-url" type="hidden" value="'. get_post_meta($order_id, '_gateway_payment_url', true) .'">
 
                 <div class="btn-submit-payment" style="display: none;">
                     <input type="hidden" name="order_id" value="' . $order_id . '">
@@ -436,19 +437,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 </div>
                 
             </form>';
-    }
-
-
-    /**
-     * 跳转到支付宝支付，增加这一步是为了避免浏览器屏蔽弹出窗口
-     *
-     */
-    public function listen_payment_form()
-    {
-        $order_id = $_POST[ 'order_id' ];
-
-        $redirect_url = get_post_meta($order_id, '_gateway_payment_url', true);
-        wp_redirect($redirect_url);
     }
 
 

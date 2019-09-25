@@ -365,6 +365,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         /** @var \Omnipay\Alipay\Responses\AopTradePagePayResponse $response */
         $response = $request->send();
 
+        // 生成订单后清空购物车，以免订单重复
+        WC()->cart->empty_cart();
+
         do_action('woocommerce_wenprise_alipay_before_payment_redirect', $response);
 
         update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
@@ -405,7 +408,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function pay_for_order($order_id)
     {
-        wc_empty_cart();
 
         echo '<form action="" method="post" target="_blank">
 

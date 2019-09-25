@@ -614,15 +614,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function complete_order($order, $trade_no)
     {
         // 添加订单备注
-        if ($order->status == 'pending') {
+        if ($order->get_status() == 'pending') {
             $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $trade_no));
+
+            $order->payment_complete($trade_no);
         }
 
         delete_post_meta($order->get_id(), '_gateway_payment_url');
-
-        wc_empty_cart();
-
-        $order->payment_complete($trade_no);
     }
 
 

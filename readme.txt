@@ -7,6 +7,8 @@ Requires at least: 3.9
 Tested up to: 5.2
 Stable tag: 1.0.9
 License: GPL-2.0+
+WC requires at least: 3.5
+WC tested up to: 3.7
 
 Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支付网关。
 

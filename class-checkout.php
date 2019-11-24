@@ -631,7 +631,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function log($message)
     {
-        if ($this->is_debug_mod) {
+        if ($this->is_debug_mod == 'yes') {
             if ( ! ($this->log)) {
                 $this->log = new WC_Logger();
             }

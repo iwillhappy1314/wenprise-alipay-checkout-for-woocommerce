@@ -404,41 +404,31 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      *
      * @param $order_id
      *
-     * @return string
      */
     public function pay_for_order($order_id)
     {
 
-        echo '<form action="" method="post" target="_blank">
+        $payment_url = get_post_meta($order_id, '_gateway_payment_url', true);
 
-                <input id="js-alipay-url" type="hidden" value="'. get_post_meta($order_id, '_gateway_payment_url', true) .'">
-
-                <div class="btn-submit-payment" style="display: none;">
-                    <input type="hidden" name="order_id" value="' . $order_id . '">
-                    <button type="submit" id="alipay-submit-button"></button>
-                </div>
-                
-                <div id="js-alipay-confirm-modal" class="rs-confirm-modal" style="display: none;">
-                
-                    <div class="rs-modal">
-                        <header class="rs-modal__header">
-                          在线支付
-                        </header>
-                        <div class="rs-modal__content">
-                            <div class="rs-alert rs-alert--warning">
-                                请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮查询。
-                            </div>
-                            <p>如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。</p>
+        echo '<form action="' . $payment_url . '" method="post" target="_blank" id="wprs-alipay-form"></form>
+            <div id="js-alipay-confirm-modal" data-order_id="'. $order_id .'" class="rs-confirm-modal" style="display: none;">
+                <div class="rs-modal">
+                    <header class="rs-modal__header">
+                      在线支付
+                    </header>
+                    <div class="rs-modal__content">
+                        <div class="rs-alert rs-alert--warning">
+                            请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮查询。
                         </div>
-                        <footer class="rs-modal__footer">
-                           <input type="button" id="js-alipay-success" class="button alt is-primary" value="支付成功" /> 
-                           <input type="button" id="js-alipay-fail" class="button" value="支付失败" /> 
-                        </footer>
+                        <p>如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。</p>
                     </div>
-                    
+                    <footer class="rs-modal__footer">
+                       <button type="button" id="js-alipay-success" class="button alt is-primary">支付成功</button>
+                       <button type="button" id="js-alipay-fail" class="button">支付失败</button>
+                    </footer>
                 </div>
-                
-            </form>';
+            </div>
+            ';
     }
 
 

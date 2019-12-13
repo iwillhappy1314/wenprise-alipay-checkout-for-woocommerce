@@ -4,12 +4,12 @@
     var wprs_woo_alipay_query_order;
     var confirm_modal = $('#js-alipay-confirm-modal');
 
+    $('#wprs-alipay-form').submit();
+
     /**
      * 点击提交支付表单
      */
     if (confirm_modal.length !== 0) {
-        window.open(null,'alipay').location.href = $('#js-alipay-url').val();
-
         $.blockUI({
             message: confirm_modal,
             css: {
@@ -35,7 +35,7 @@
             type: 'POST',
             url: WpWooAlipayData.query_url,
             data: {
-                order_id: $('input[name=order_id]').val(),
+                order_id: $('#js-alipay-confirm-modal').data('order_id'),
             },
             success: function (data) {
                 if (data && data.success === true || manual_trigger === true) {

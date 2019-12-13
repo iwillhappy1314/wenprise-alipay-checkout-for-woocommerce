@@ -53,33 +53,6 @@ add_action('wp_enqueue_scripts', function ()
 });
 
 
-/**
- * 事先打开先窗口
- */
-add_filter('woocommerce_order_button_text', 'wprs_wc_alipay_bridge_scripts');
-add_filter('woocommerce_pay_order_button_html', 'wprs_wc_alipay_bridge_scripts');
-function wprs_wc_alipay_bridge_scripts($order_button_text)
-{
-    $chosen_payment_method = WC()->session->get('chosen_payment_method');
-
-    if ($chosen_payment_method == WENPRISE_ALIPAY_WOOCOMMERCE_ID) { ?>
-        <script type="text/javascript">
-            jQuery(document).ready(function ($) {
-                $('#place_order').click(function () {
-                    // 添加跳转中页面，而不是空白页面
-                    var $bridge;
-                    if ($('input[name="payment_method"]:checked').val() === 'wprs-wc-alipay') {
-                        $bridge = window.open("about:blank", "alipay");
-                        $bridge.document.write("正在跳转到支付宝，请在跳转后继续支付。")
-                    }
-                });
-            });
-        </script><?php
-    }
-
-    return $order_button_text;
-}
-
 add_action('plugins_loaded', function ()
 {
 

@@ -26,7 +26,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * @var bool
      */
-    public $environment = false;
+    public $is_sandbox_mod = false;
 
     /**
      * @var string
@@ -61,7 +61,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * @var bool 日志是否启用
      */
-    public $is_debug_mod = 'no';
+    public $is_debug_mod = false;
 
 
     /**
@@ -74,41 +74,43 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /** @var string WC_API for the gateway - 作为回调 url 使用 */
     public $notify_url;
 
-    function __construct()
+    public function __construct()
     {
+        // 转换设置为变量以方便使用
+        foreach ($this->settings as $setting_key => $value) {
+            $this->$setting_key = $value;
+        }
 
         // 支付方法的全局 ID
         $this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
         // 支付网关页面显示的支付网关标题
-        $this->method_title = __("Alipay", 'wprs-wc-alipay');
+        $this->method_title = __('Alipay', 'wprs-wc-alipay');
 
         // 支付网关设置页面显示的支付网关标题
-        $this->method_description = __("Alipay Payment Gateway for WooCommerce", 'wprs-wc-alipay');
+        $this->method_description = __('Alipay Payment Gateway for WooCommerce', 'wprs-wc-alipay');
 
         // 前端显示的支付网关名称
-        $this->title = __("Alipay", 'wprs-wc-alipay');
+        $this->title = __('Alipay', 'wprs-wc-alipay');
 
         // 支付网关标题
-        $this->icon = apply_filters('omnipay_alipay_icon', WENPRISE_ALIPAY_ASSETS_URL . "alipay.png");
+        $this->icon = apply_filters('omnipay_alipay_icon', WENPRISE_ALIPAY_ASSETS_URL . 'alipay.png');
 
         $this->supports = ['products', 'refunds'];
 
         $this->has_fields = false;
 
+        $this->is_debug_mod = 'yes' === $this->get_option('is_debug_mod');
+
+        $this->is_sandbox_mod = 'yes' === $this->get_option('is_sandbox_mod');
+
         $this->description = $this->get_option('description');
 
         $this->current_currency = get_option('woocommerce_currency');
 
-        $this->multi_currency_enabled = in_array('woocommerce-multilingual/wpml-woocommerce.php',
-                apply_filters('active_plugins', get_option('active_plugins'))) && get_option('icl_enable_multi_currency') == 'yes';
+        $this->multi_currency_enabled = in_array('woocommerce-multilingual/wpml-woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')), true) && get_option('icl_enable_multi_currency') === 'yes';
 
         $this->exchange_rate = $this->get_option('exchange_rate');
-
-        // 转换设置为变量以方便使用
-        foreach ($this->settings as $setting_key => $value) {
-            $this->$setting_key = $value;
-        }
 
         // 被 init_settings() 加载的基础设置
         $this->init_form_fields();
@@ -149,15 +151,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'type'    => 'checkbox',
                 'default' => 'no',
             ],
-            // 'environment'       => [
-            //     'title'       => __(' Alipay Sanbox Mode', 'wprs-wc-alipay'),
-            //     'label'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
-            //     'type'        => 'checkbox',
-            //     'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>',
-            //         'wprs-wc-alipay'),
-            //         'https://sandbox.Alipay.com'),
-            //     'default'     => 'no',
-            // ],
+            'is_sandbox_mod'    => [
+                'title'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
+                'label'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
+                'type'        => 'checkbox',
+                'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>', 'wprs-wc-alipay'), 'https://sandbox.Alipay.com'),
+                'default'     => 'no',
+            ],
             'title'             => [
                 'title'   => __('Title', 'wprs-wc-alipay'),
                 'type'    => 'text',
@@ -199,7 +199,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $this->form_fields[ 'exchange_rate' ] = [
                 'title'       => __('Exchange Rate', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => sprintf(__("Please set the %s against Chinese Yuan exchange rate, eg if your currency is US Dollar, then you should enter 6.19",
+                'description' => sprintf(__('Please set the %s against Chinese Yuan exchange rate, eg if your currency is US Dollar, then you should enter 6.19',
                     'wprs-wc-alipay'), $this->current_currency),
             ];
 
@@ -224,39 +224,14 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
-     * 是否为测试模式
-     *
-     * @return bool
-     */
-    public function is_test_mode()
-    {
-        return $this->environment == "yes";
-    }
-
-
-    /**
-     * 是否为测试模式
-     * to the payment parameter before redirecting offsite to 2co for payment.
-     *
-     * This filter controls enabling testing via sandbox account.
-     *
-     * @return bool
-     */
-    public function is_sandbox_test()
-    {
-        return apply_filters('woocommerce_wenprise_alipay_enable_sandbox', true);
-    }
-
-
-    /**
      * 检查是否满足需求
      *
      * @access public
      * @return void
      */
-    function requirement_checks()
+    public function requirement_checks()
     {
-        if ( ! in_array($this->current_currency, ['RMB', 'CNY']) && ! $this->exchange_rate) {
+        if ( ! $this->exchange_rate && ! in_array($this->current_currency, ['RMB', 'CNY'])) {
             echo '<div class="error"><p>' . sprintf(__('Alipay is enabled, but the store currency is ·not set to Chinese Yuan. Please <a href="%1s">set the %2s against the Chinese Yuan exchange rate</a>.',
                     'wprs-wc-alipay'), admin_url('admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate'),
                     $this->current_currency) . '</p></div>';
@@ -272,13 +247,13 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     function is_available()
     {
 
-        $is_available = ('yes' === $this->enabled) ? true : false;
+        $is_available = 'yes' === $this->enabled;
 
         if ($this->multi_currency_enabled) {
-            if ( ! in_array(get_woocommerce_currency(), ['RMB', 'CNY']) && ! $this->exchange_rate) {
+            if ( ! $this->exchange_rate && ! in_array(get_woocommerce_currency(), ['RMB', 'CNY'])) {
                 $is_available = false;
             }
-        } elseif ( ! in_array($this->current_currency, ['RMB', 'CNY']) && ! $this->exchange_rate) {
+        } elseif ( ! $this->exchange_rate && ! in_array($this->current_currency, ['RMB', 'CNY'])) {
             $is_available = false;
         }
 
@@ -315,6 +290,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
         $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
 
+        if ($this->is_sandbox_mod) {
+            $gateway->sandbox();
+        }
+
         return $gateway;
     }
 
@@ -334,7 +313,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $order_no = $order->get_order_number();
         $total    = $this->get_order_total();
 
-        $exchange_rate = floatval($this->get_option('exchange_rate'));
+        $exchange_rate = (float)$this->get_option('exchange_rate');
         if ($exchange_rate <= 0) {
             $exchange_rate = 1;
         }
@@ -385,7 +364,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
 
-            if ($this->is_debug_mod == 'yes') {
+            if ($this->is_debug_mod) {
                 $this->log($error);
                 wc_add_notice($error, 'error');
             }
@@ -410,8 +389,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $payment_url = get_post_meta($order_id, '_gateway_payment_url', true);
 
-        echo '<form action="' . $payment_url . '" method="post" target="_blank" id="wprs-alipay-form"></form>
-            <div id="js-alipay-confirm-modal" data-order_id="'. $order_id .'" class="rs-confirm-modal" style="display: none;">
+        echo '<form action="' . $payment_url . '" method="post" target="_blank" id="wprs-alipay-form"> </form>
+            <div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
                 <div class="rs-modal">
                     <header class="rs-modal__header">
                       在线支付
@@ -462,8 +441,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                     // 添加订单备注
                     $this->complete_order($order, $_REQUEST[ 'trade_no' ]);
 
-                    if ($_SERVER[ 'REQUEST_METHOD' ] == 'POST') {
-                        echo "success";
+                    if ($_SERVER[ 'REQUEST_METHOD' ] === 'POST') {
+                        echo 'success';
                     } else {
                         wp_redirect($this->get_return_url($order));
                     }
@@ -573,7 +552,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'out_trade_no'   => $order_id,
             'trade_no'       => $order->get_transaction_id(),
             'refund_amount'  => $refund_amount,
-            'out_request_no' => date('YmdHis') . mt_rand(1000, 9999),
+            'out_request_no' => date('YmdHis') . wp_rand(1000, 9999),
         ]);
 
         try {
@@ -604,7 +583,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function complete_order($order, $trade_no)
     {
         // 添加订单备注
-        if ($order->get_status() == 'pending') {
+        if ($order->get_status() === 'pending') {
             $order->add_order_note(sprintf(__('Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay'), $trade_no));
 
             $order->payment_complete($trade_no);
@@ -621,7 +600,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function log($message)
     {
-        if ($this->is_debug_mod == 'yes') {
+        if ($this->is_debug_mod) {
             if ( ! ($this->log)) {
                 $this->log = new WC_Logger();
             }

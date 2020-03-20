@@ -152,8 +152,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'default' => 'no',
             ],
             'is_sandbox_mod'    => [
-                'title'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
-                'label'       => __('Enable Alipay Sanbox Mode', 'wprs-wc-alipay'),
+                'title'       => __('Enable Alipay Sandbox Mode', 'wprs-wc-alipay'),
+                'label'       => __('Enable Alipay Sandbox Mode', 'wprs-wc-alipay'),
                 'type'        => 'checkbox',
                 'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>', 'wprs-wc-alipay'), 'https://sandbox.Alipay.com'),
                 'default'     => 'no',

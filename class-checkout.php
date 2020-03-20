@@ -76,11 +76,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
     public function __construct()
     {
-        // 转换设置为变量以方便使用
-        foreach ($this->settings as $setting_key => $value) {
-            $this->$setting_key = $value;
-        }
-
         // 支付方法的全局 ID
         $this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
@@ -89,6 +84,16 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         // 支付网关设置页面显示的支付网关标题
         $this->method_description = __('Alipay Payment Gateway for WooCommerce', 'wprs-wc-alipay');
+
+        // 被 init_settings() 加载的基础设置
+        $this->init_form_fields();
+
+        $this->init_settings();
+
+        // 转换设置为变量以方便使用
+        foreach ($this->settings as $setting_key => $value) {
+            $this->$setting_key = $value;
+        }
 
         // 前端显示的支付网关名称
         $this->title = __('Alipay', 'wprs-wc-alipay');
@@ -111,11 +116,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $this->multi_currency_enabled = in_array('woocommerce-multilingual/wpml-woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')), true) && get_option('icl_enable_multi_currency') === 'yes';
 
         $this->exchange_rate = $this->get_option('exchange_rate');
-
-        // 被 init_settings() 加载的基础设置
-        $this->init_form_fields();
-
-        $this->init_settings();
 
         // 设置是否应该重命名按钮。
         $this->order_button_text = apply_filters('woocommerce_alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));

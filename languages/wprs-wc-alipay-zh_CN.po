@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-03-17 20:33+0800\n"
-"PO-Revision-Date: 2020-03-17 20:33+0800\n"
+"POT-Creation-Date: 2020-04-10 15:28+0800\n"
+"PO-Revision-Date: 2020-04-10 15:28+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
 
-#: class-checkout.php:88 class-checkout.php:94 class-checkout.php:164
+#: class-checkout.php:88 class-checkout.php:104 class-checkout.php:169
 msgid "Alipay"
 msgstr "支付宝"
 
@@ -28,23 +28,23 @@ msgstr "支付宝"
 msgid "Alipay Payment Gateway for WooCommerce"
 msgstr "WooCommerce 的支付宝支付网关"
 
-#: class-checkout.php:121
+#: class-checkout.php:126
 msgid "Proceed to Alipay"
 msgstr "到支付宝付款"
 
-#: class-checkout.php:149
+#: class-checkout.php:154
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: class-checkout.php:150
+#: class-checkout.php:155
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: class-checkout.php:155 class-checkout.php:156
-msgid "Enable Alipay Sanbox Mode"
-msgstr "启用支付宝沙箱模式"
+#: class-checkout.php:160 class-checkout.php:161
+msgid "Enable Alipay Sandbox Mode"
+msgstr "启用支付宝沙盒模式"
 
-#: class-checkout.php:158
+#: class-checkout.php:163
 #, php-format
 msgid ""
 "Alipay sandbox can be used to test payments. Sign up for an account <a "
@@ -52,74 +52,86 @@ msgid ""
 msgstr ""
 "支付宝沙盒可用于测试付款。<a target=\"_blank\" href=\"%s\">在此处</a>注册帐户"
 
-#: class-checkout.php:162
+#: class-checkout.php:167
 msgid "Title"
 msgstr "标题"
 
-#: class-checkout.php:167
+#: class-checkout.php:172
 msgid "Description"
 msgstr "描述"
 
-#: class-checkout.php:169
+#: class-checkout.php:174
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付。"
 
-#: class-checkout.php:173
+#: class-checkout.php:178
+msgid "Order Number Prefix"
+msgstr "订单号前缀"
+
+#: class-checkout.php:180
+msgid "Only alphabet or number Allowed"
+msgstr "仅允许字母或数字"
+
+#: class-checkout.php:181
+msgid "WC-"
+msgstr "WC-"
+
+#: class-checkout.php:184
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: class-checkout.php:175
+#: class-checkout.php:186
 msgid "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 msgstr "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 
-#: class-checkout.php:178
+#: class-checkout.php:189
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: class-checkout.php:180
+#: class-checkout.php:191
 msgid ""
 "Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时"
 "使用)"
 msgstr "输入您的支付宝密钥(rsa_private_key.pem 文件的全部内容，创建订单时使用)"
 
-#: class-checkout.php:184
+#: class-checkout.php:195
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: class-checkout.php:186
+#: class-checkout.php:197
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\"，验证支付结果时使用）"
 
-#: class-checkout.php:189
+#: class-checkout.php:200
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: class-checkout.php:190
+#: class-checkout.php:201
 msgid "Enable debug mod"
 msgstr "启用调试模式"
 
-#: class-checkout.php:192
+#: class-checkout.php:203
 msgid "If checked, plugin will show program errors in frontend."
 msgstr "如果启用，会在前端显示详情的错误信息。"
 
-#: class-checkout.php:200
+#: class-checkout.php:211
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: class-checkout.php:202
+#: class-checkout.php:213
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:216
+#: class-checkout.php:227
 msgid "Settings"
 msgstr "设置"
 
-#: class-checkout.php:235
+#: class-checkout.php:246
 #, php-format
 msgid ""
 "Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
@@ -129,20 +141,20 @@ msgstr ""
 "微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
 "币的汇率</a>。"
 
-#: class-checkout.php:331 class-checkout.php:332
+#: class-checkout.php:356 class-checkout.php:357
 msgid "Pay for order #"
 msgstr "支付订单"
 
-#: class-checkout.php:331 class-checkout.php:332
+#: class-checkout.php:356 class-checkout.php:357
 msgid " At "
 msgstr "在"
 
-#: class-checkout.php:564
+#: class-checkout.php:601
 #, php-format
 msgid "Refunded %1$s"
 msgstr "退款 %1$s"
 
-#: class-checkout.php:587
+#: class-checkout.php:624
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"
@@ -157,6 +169,9 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid "Enable Alipay Sanbox Mode"
+#~ msgstr "启用支付宝沙箱模式"
 
 #~ msgid "Awaiting payment."
 #~ msgstr "等待支付。"

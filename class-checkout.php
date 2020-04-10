@@ -31,6 +31,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * @var string
      */
+    private $order_prefix = '';
+
+    /**
+     * @var string
+     */
     private $app_id = '';
 
     /**
@@ -169,6 +174,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'default' => __('Pay securely using Alipay', 'wprs-wc-alipay'),
                 'css'     => 'max-width:400px;',
             ],
+            'order_prefix'      => [
+                'title'       => __('Order Number Prefix', 'wprs-wc-alipay'),
+                'type'        => 'text',
+                'description' => __('Only alphabet or number Allowed', 'wprs-wc-alipay'),
+                'default'     => __('WC-', 'wprs-wc-alipay'),
+            ],
             'app_id'            => [
                 'title'       => __('App ID', 'wprs-wc-alipay'),
                 'type'        => 'text',
@@ -240,11 +251,24 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
+     * 获取订单号
+     *
+     * @param $order_id
+     *
+     * @return string
+     */
+    public function get_order_number($order_id)
+    {
+        return $this->order_prefix . ltrim($order_id, '#');
+    }
+
+
+    /**
      * 检查是否可用
      *
      * @return bool
      */
-    function is_available()
+    public function is_available()
     {
 
         $is_available = 'yes' === $this->enabled;
@@ -309,8 +333,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $order    = wc_get_order($order_id);
-        $order_no = $order->get_order_number();
+        $order = wc_get_order($order_id);
+        // $order_no = $order->get_order_number();
+        $order_no = $this->get_order_number($order_id);
         $total    = $this->get_order_total();
 
         $exchange_rate = (float)$this->get_option('exchange_rate');
@@ -420,7 +445,19 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         if (isset($_REQUEST[ 'out_trade_no' ]) && ! empty($_REQUEST[ 'out_trade_no' ])) {
 
-            $order   = wc_get_order($_REQUEST[ 'out_trade_no' ]);
+            $out_trade_no = $_REQUEST[ 'out_trade_no' ];
+
+            if (is_numeric($out_trade_no)) {
+                if ( ! empty($this->order_prefix)) {
+                    $order_id = (int)str_replace($this->order_prefix, '', $out_trade_no);
+                } else {
+                    $order_id = (int)$out_trade_no;
+                }
+            } else {
+                $order_id = (int)str_replace($this->order_prefix, '', $out_trade_no);
+            }
+
+            $order   = wc_get_order($order_id);
             $gateway = $this->get_gateway();
 
             /**
@@ -489,7 +526,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $request = $gateway->query();
 
         $request->setBizContent([
-            'out_trade_no' => $order_id,
+            'out_trade_no' => $this->get_order_number($order_id),
         ]);
 
         try {
@@ -549,7 +586,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $request = $gateway->refund();
 
         $request->setBizContent([
-            'out_trade_no'   => $order_id,
+            'out_trade_no'   => $this->get_order_number($order_id),
             'trade_no'       => $order->get_transaction_id(),
             'refund_amount'  => $refund_amount,
             'out_request_no' => date('YmdHis') . wp_rand(1000, 9999),

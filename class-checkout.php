@@ -68,7 +68,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public $is_debug_mod = false;
 
-
     /**
      * 网关支持的功能
      *
@@ -334,7 +333,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function process_payment($order_id)
     {
         $order = wc_get_order($order_id);
-        // $order_no = $order->get_order_number();
         $order_no = $this->get_order_number($order_id);
         $total    = $this->get_order_total();
 
@@ -465,7 +463,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
              */
             /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
             $request = $gateway->completePurchase();
-            // $request->setParams(array_map('stripslashes', array_merge($_POST, $_GET)));
             $request->setParams(stripslashes_deep(array_merge($_POST, $_GET)));
 
             try {

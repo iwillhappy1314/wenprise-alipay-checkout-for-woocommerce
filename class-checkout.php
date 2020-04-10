@@ -332,7 +332,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function process_payment($order_id)
     {
-        $order = wc_get_order($order_id);
+        $order    = wc_get_order($order_id);
         $order_no = $this->get_order_number($order_id);
         $total    = $this->get_order_total();
 
@@ -378,8 +378,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         if ($response->isRedirect()) {
 
             return [
-                'result'   => 'success',
-                'redirect' => $order->get_checkout_payment_url(true),
+                'result'      => 'success',
+                'redirect'    => $order->get_checkout_payment_url(true),
+                'payment_url' => $response->getRedirectUrl(),
             ];
 
         } else {
@@ -428,9 +429,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                        <button type="button" id="js-alipay-success" class="button alt is-primary">支付成功</button>
                        <button type="button" id="js-alipay-fail" class="button">支付失败</button>
                     </footer>
-                </div>
-            </div>
-            ';
+                </div>  
+            </div>';
     }
 
 

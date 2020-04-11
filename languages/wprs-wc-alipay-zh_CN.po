@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-04-10 18:39+0800\n"
-"PO-Revision-Date: 2020-04-10 18:39+0800\n"
+"POT-Creation-Date: 2020-04-11 17:11+0800\n"
+"PO-Revision-Date: 2020-04-11 17:11+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -142,12 +142,9 @@ msgstr ""
 "币的汇率</a>。"
 
 #: class-checkout.php:354 class-checkout.php:355
-msgid "Pay for order #"
-msgstr "支付订单"
-
-#: class-checkout.php:354 class-checkout.php:355
-msgid " At "
-msgstr "在"
+#, php-format
+msgid "Pay for order %1$s at %2$s"
+msgstr "支付网站「%2$s」中的订单：%1$s "
 
 #: class-checkout.php:598
 #, php-format
@@ -169,6 +166,12 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid "Pay for order #"
+#~ msgstr "支付订单"
+
+#~ msgid " At "
+#~ msgstr "在"
 
 #~ msgid "Enable Alipay Sanbox Mode"
 #~ msgstr "启用支付宝沙箱模式"

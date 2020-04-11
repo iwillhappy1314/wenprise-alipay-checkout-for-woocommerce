@@ -3,7 +3,7 @@
  * Plugin Name: Wenprise Alipay Payment Gateway For WooCommerce
  * Plugin URI: https://www.wpzhiku.com/wenprise-alipay-payment-gateway-for-woocommerce
  * Description: Alipay Checkout For WooCommerce，WooCommerce 支付宝全功能支付网关
- * Version: 1.0.9
+ * Version: 1.1.0
  * Author: WordPress 智库
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
@@ -32,7 +32,7 @@ if (PHP_VERSION_ID < 50600) {
 
 define('WENPRISE_ALIPAY_FILE_PATH', __FILE__);
 define('WENPRISE_ALIPAY_PATH', plugin_dir_path(__FILE__));
-define('WENPRISE_ALIPAY_VERSION', '1.0.9');
+define('WENPRISE_ALIPAY_VERSION', '1.1.0');
 define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
 define('WENPRISE_ALIPAY_WOOCOMMERCE_ID', 'wprs-wc-alipay');
 define('WENPRISE_ALIPAY_ASSETS_URL', WENPRISE_ALIPAY_URL . 'frontend/');
@@ -46,7 +46,7 @@ add_action('wp_enqueue_scripts', function ()
 
     if (is_checkout() || is_checkout_pay_page()) {
         wp_enqueue_style('wprs-wc-alipay-style', plugins_url('/frontend/styles.css', __FILE__), [], WENPRISE_ALIPAY_VERSION, false);
-        wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/frontend/scripts.js', __FILE__), ['jquery', 'jquery-blockui'], WENPRISE_ALIPAY_VERSION, true);
+        wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/frontend/scripts.js', __FILE__), ['jquery', 'jquery-blockui', 'wc-checkout'], WENPRISE_ALIPAY_VERSION, true);
 
         wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', [
             'query_url' => WC()->api_request_url('wprs-wc-query-order'),

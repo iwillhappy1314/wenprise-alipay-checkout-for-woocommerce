@@ -75,6 +75,14 @@
 
         $form.addClass('processing');
 
+        $form.block({
+            message: null,
+            overlayCSS: {
+                background: '#fff',
+                opacity: 0.6
+            }
+        });
+
         $.ajax({
             type    : 'POST',
             url     : wc_checkout_params.checkout_url,

@@ -5,7 +5,7 @@ Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支�
 Requires PHP: 5.6.0
 Requires at least: 3.9
 Tested up to: 5.4
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 License: GPL-2.0+
 WC requires at least: 3.5
 WC tested up to: 4.0
@@ -58,6 +58,10 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+
+### 1.0.9 ###
+* 通过 checkout.js triggerHandler 方法解决支付宝弹窗被屏蔽的问题。
+* 添加订单号前缀功能
 
 ### 1.0.9 ###
 * 修复电脑网站支付弹窗被屏蔽的问题

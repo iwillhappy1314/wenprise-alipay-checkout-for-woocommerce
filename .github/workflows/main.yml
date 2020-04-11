@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Build
-        run: |
-          composer install --no-dev
-          composer dump-autoload -o
+#      - name: Build
+#        run: |
+#          composer install --no-dev
+#          composer dump-autoload -o
       - name: WordPress Plugin Deploy
         uses: iwillhappy1314/action-wordpress-plugin-deploy@master
         env:

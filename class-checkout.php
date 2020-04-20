@@ -280,7 +280,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $is_available = false;
         }
 
-        if (wprs_is_wechat()) {
+        if (wprs_wc_alipay_is_wechat()) {
             $is_available = false;
         }
 

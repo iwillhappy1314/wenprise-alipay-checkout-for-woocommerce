@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-04-11 17:11+0800\n"
-"PO-Revision-Date: 2020-04-11 17:11+0800\n"
+"POT-Creation-Date: 2020-04-20 15:41+0800\n"
+"PO-Revision-Date: 2020-04-20 17:22+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -90,9 +90,9 @@ msgstr "应用私钥"
 
 #: class-checkout.php:190
 msgid ""
-"Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时"
-"使用)"
-msgstr "输入您的支付宝密钥(rsa_private_key.pem 文件的全部内容，创建订单时使用)"
+"Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使"
+"用)"
+msgstr "输入应用私钥，(rsa_private_key.pem 文件的全部内容)"
 
 #: class-checkout.php:194
 msgid "Alipay Public Key"
@@ -102,7 +102,7 @@ msgstr "支付宝公钥"
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
-msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\"，验证支付结果时使用）"
+msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\""
 
 #: class-checkout.php:199
 msgid "Debug Mode"
@@ -166,6 +166,12 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid ""
+#~ "Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订"
+#~ "单时使用)"
+#~ msgstr ""
+#~ "输入您的支付宝密钥(rsa_private_key.pem 文件的全部内容，创建订单时使用)"
 
 #~ msgid "Pay for order #"
 #~ msgstr "支付订单"

@@ -187,7 +187,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'private_key'       => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
-                'description' => __('Enter your Alipay secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wprs-wc-alipay'),
+                'description' => __('Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wprs-wc-alipay'),
                 'css'         => 'height:300px',
             ],
             'alipay_public_key' => [

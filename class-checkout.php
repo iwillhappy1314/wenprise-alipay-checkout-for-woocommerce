@@ -387,8 +387,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         } else {
             $error = $response->getMessage();
 
-            $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
-
             if ($this->is_debug_mod) {
                 $this->log($error);
                 wc_add_notice($error, 'error');
@@ -605,7 +603,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
             if ($response->isSuccessful()) {
                 $order->add_order_note(
-                    sprintf(__('Refunded %1$s', 'woocommerce'), $amount)
+                    sprintf(__('Refunded %1$s', 'wprs-wc-alipay'), $amount)
                 );
 
                 return true;

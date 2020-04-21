@@ -555,7 +555,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function alipay_bridge()
     {
-        wp_die(__('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'), __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'),);
+        wp_die(__('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'), __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'));
     }
 
 

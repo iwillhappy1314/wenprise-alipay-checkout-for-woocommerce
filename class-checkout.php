@@ -139,6 +139,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-query-order', [$this, 'query_alipay_order']);
+        add_action('woocommerce_api_wprs-wc-alipay-bridge', [$this, 'alipay_bridge']);
 
     }
 
@@ -417,17 +418,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             <div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
                 <div class="rs-modal">
                     <header class="rs-modal__header">
-                      在线支付
+                      '. __('Online Payment', 'wprs-wc-alipay') .'
                     </header>
                     <div class="rs-modal__content">
                         <div class="rs-alert rs-alert--warning">
-                            请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下面按钮查询。
+                        '. __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay') .'
                         </div>
-                        <p>如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。</p>
+                        <p>'. __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay')  .'</p>
                     </div>
                     <footer class="rs-modal__footer">
-                       <button type="button" id="js-alipay-success" class="button alt is-primary">支付成功</button>
-                       <button type="button" id="js-alipay-fail" class="button">支付失败</button>
+                       <button type="button" id="js-alipay-success" class="button alt is-primary">'. __('payment successful', 'wprs-wc-alipay') .'</button>
+                       <button type="button" id="js-alipay-fail" class="button">'. __('Payment failed', 'wprs-wc-alipay') .'</button>
                     </footer>
                 </div>  
             </div>';
@@ -546,6 +547,15 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             wp_die($e->getMessage());
         }
 
+    }
+
+
+    /**
+     * 支付宝跳转中间页面
+     */
+    public function alipay_bridge()
+    {
+        wp_die(__('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'), __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'),);
     }
 
 

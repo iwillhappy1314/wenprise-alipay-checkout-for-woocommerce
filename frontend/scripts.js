@@ -99,6 +99,9 @@ jQuery(document).ready(function($) {
 
             var $form = $(this);
 
+            // 事先打开一个窗口，Ajax 成功后替换 location, 以解决弹出窗口被屏蔽的问题
+            var alipay_window = window.open(WpWooAlipayData.bridge_url, '_blank');
+
             $form.addClass('processing');
 
             wc_alipay_checkout.blockOnSubmit($form);
@@ -119,14 +122,14 @@ jQuery(document).ready(function($) {
                         if ('success' === result.result) {
                             if (-1 === result.redirect.indexOf('https://') || -1 ===
                                 result.redirect.indexOf('http://')) {
-                                var alipay_window = window.open(result.payment_url, '_blank');
+                                alipay_window.location = result.payment_url;
                                 alipay_window.focus();
 
                                 window.location = result.redirect;
 
                                 return false;
                             } else {
-                                var alipay_window = window.open(decodeURI(result.payment_url), '_blank');
+                                alipay_window.location = decodeURI(result.payment_url);
                                 alipay_window.focus();
 
                                 window.location = decodeURI(result.redirect);

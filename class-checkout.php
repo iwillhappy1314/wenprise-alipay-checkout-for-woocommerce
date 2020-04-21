@@ -376,18 +376,23 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
 
         // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
-        if ($response->isRedirect()) {
+        if ($response->isSuccessful()) {
 
-            return [
-                'result'      => 'success',
-                'redirect'    => $order->get_checkout_payment_url(true),
-                'payment_url' => $response->getRedirectUrl(),
-            ];
+            if ($response->isRedirect()) {
+
+                return [
+                    'result'      => 'success',
+                    'redirect'    => $order->get_checkout_payment_url(true),
+                    'payment_url' => $response->getRedirectUrl(),
+                ];
+
+            }
 
         } else {
-            $error = $response->getMessage();
 
             if ($this->is_debug_mod) {
+                $error = $response->getMessage();
+
                 $this->log($error);
                 wc_add_notice($error, 'error');
             }
@@ -396,6 +401,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'result'   => 'failure',
                 'messages' => $response->getMessage(),
             ];
+
         }
 
     }
@@ -416,17 +422,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             <div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
                 <div class="rs-modal">
                     <header class="rs-modal__header">
-                      '. __('Online Payment', 'wprs-wc-alipay') .'
+                      ' . __('Online Payment', 'wprs-wc-alipay') . '
                     </header>
                     <div class="rs-modal__content">
                         <div class="rs-alert rs-alert--warning">
-                        '. __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay') .'
+                        ' . __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay') . '
                         </div>
-                        <p>'. __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay')  .'</p>
+                        <p>' . __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay') . '</p>
                     </div>
                     <footer class="rs-modal__footer">
-                       <button type="button" id="js-alipay-success" class="button alt is-primary">'. __('payment successful', 'wprs-wc-alipay') .'</button>
-                       <button type="button" id="js-alipay-fail" class="button">'. __('Payment failed', 'wprs-wc-alipay') .'</button>
+                       <button type="button" id="js-alipay-success" class="button alt is-primary">' . __('payment successful', 'wprs-wc-alipay') . '</button>
+                       <button type="button" id="js-alipay-fail" class="button">' . __('Payment failed', 'wprs-wc-alipay') . '</button>
                     </footer>
                 </div>  
             </div>';

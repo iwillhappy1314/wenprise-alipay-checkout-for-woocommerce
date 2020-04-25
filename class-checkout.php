@@ -51,6 +51,26 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * @var string
      */
+    private $cert_type;
+
+    /**
+     * @var string
+     */
+    private $alipay_cert_public_key_rsa2;
+
+    /**
+     * @var string
+     */
+    private $alipay_root_cert;
+
+    /**
+     * @var string
+     */
+    private $app_cert_publicKey;
+
+    /**
+     * @var string
+     */
     public $current_currency = '';
 
     /**
@@ -150,53 +170,78 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function init_form_fields()
     {
         $this->form_fields = [
-            'enabled'           => [
+            'enabled'                     => [
                 'title'   => __('Enable / Disable', 'wprs-wc-alipay'),
                 'label'   => __('Enable this payment gateway', 'wprs-wc-alipay'),
                 'type'    => 'checkbox',
                 'default' => 'no',
             ],
-            'is_sandbox_mod'    => [
+            'is_sandbox_mod'              => [
                 'title'       => __('Enable Alipay Sandbox Mode', 'wprs-wc-alipay'),
                 'label'       => __('Enable Alipay Sandbox Mode', 'wprs-wc-alipay'),
                 'type'        => 'checkbox',
                 'description' => sprintf(__('Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>', 'wprs-wc-alipay'), 'https://sandbox.Alipay.com'),
                 'default'     => 'no',
             ],
-            'title'             => [
+            'title'                       => [
                 'title'   => __('Title', 'wprs-wc-alipay'),
                 'type'    => 'text',
                 'default' => __('Alipay', 'wprs-wc-alipay'),
             ],
-            'description'       => [
+            'description'                 => [
                 'title'   => __('Description', 'wprs-wc-alipay'),
                 'type'    => 'textarea',
                 'default' => __('Pay securely using Alipay', 'wprs-wc-alipay'),
                 'css'     => 'max-width:400px;',
             ],
-            'order_prefix'      => [
+            'order_prefix'                => [
                 'title'       => __('Order Number Prefix', 'wprs-wc-alipay'),
                 'type'        => 'text',
                 'description' => __('Only alphabet or number Allowed', 'wprs-wc-alipay'),
                 'default'     => __('WC-', 'wprs-wc-alipay'),
             ],
-            'app_id'            => [
+            'app_id'                      => [
                 'title'       => __('App ID', 'wprs-wc-alipay'),
                 'type'        => 'text',
                 'description' => __('Enter your Alipay APPID. 开放平台密钥中的"APPID"，授权回调地址：', 'wprs-wc-alipay') . home_url('wc-api/wprs-wc-alipay-notify/'),
             ],
-            'private_key'       => [
+            'private_key'                 => [
                 'title'       => __('Private Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
                 'description' => __('Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wprs-wc-alipay'),
                 'css'         => 'height:300px',
             ],
-            'alipay_public_key' => [
+            'cert_type'                   => [
+                'title'       => __('signing mode', 'wprs-wc-alipay'),
+                'type'        => 'select',
+                'description' => __('Select the signing mode。', 'wprs-wc-alipay'),
+                'default'     => 'public_key',
+                'options'     => [
+                    'public_key'             => __('Public Key', 'wprs-wc-alipay'),
+                    'public_key_certificate' => __('Public Key Certificate', 'wprs-wc-alipay'),
+                ],
+            ],
+            'alipay_public_key'           => [
                 'title'       => __('Alipay Public Key', 'wprs-wc-alipay'),
                 'type'        => 'textarea',
                 'description' => __('Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"，验证支付结果时使用）', 'wprs-wc-alipay'),
             ],
-            'is_debug_mod'      => [
+            'alipay_cert_public_key_rsa2' => [
+                'title'       => __('alipayCertPublicKey_RSA2.crt Path', 'wprs-wc-alipay'),
+                'type'        => 'text',
+                'description' => sprintf(__('The absolute path of alipayCertPublicKey_RSA2.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+            ],
+            'alipay_root_cert'            => [
+                'title'       => __('alipayRootCert.crt Path', 'wprs-wc-alipay'),
+                'type'        => 'text',
+                'description' => sprintf(__('The absolute path of alipayRootCert.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+            ],
+            'app_cert_publicKey'          => [
+                'title'       => __('appCertPublicKey.crt Path', 'wprs-wc-alipay'),
+                'type'        => 'text',
+                'description' => sprintf(__('The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+            ],
+            'is_debug_mod'                => [
                 'title'       => __('Debug Mode', 'wprs-wc-wechatpay'),
                 'label'       => __('Enable debug mod', 'wprs-wc-wechatpay'),
                 'type'        => 'checkbox',
@@ -307,12 +352,20 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $gateway = Omnipay::create('Alipay_AopPage');
         }
 
-        $gateway->setSignType('RSA2');
         $gateway->setAppId($this->app_id);
+        $gateway->setSignType('RSA2');
         $gateway->setPrivateKey($this->private_key);
-        $gateway->setAlipayPublicKey($this->alipay_public_key);
         $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
         $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
+
+        if ($this->cert_type === 'public_key_certificate') {
+            $gateway->setAlipayRootCert($this->alipay_root_cert);
+            $gateway->setAlipayPublicCert($this->alipay_cert_public_key_rsa2);
+            $gateway->setAppCert($this->app_cert_publicKey);
+            $gateway->setCheckAlipayPublicCert(true);
+        } else {
+            $gateway->setAlipayPublicKey($this->alipay_public_key);
+        }
 
         if ($this->is_sandbox_mod) {
             $gateway->sandbox();
@@ -415,11 +468,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function pay_for_order($order_id)
     {
-
-        $payment_url = get_post_meta($order_id, '_gateway_payment_url', true);
-
-        echo '<form action="' . $payment_url . '" method="post" target="_blank" id="wprs-alipay-form"> </form>
-            <div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
+        echo '<div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
                 <div class="rs-modal">
                     <header class="rs-modal__header">
                       ' . __('Online Payment', 'wprs-wc-alipay') . '
@@ -489,9 +538,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 } else {
 
                     $error = $response->getMessage();
-
-                    $order->add_order_note(sprintf("%s Payments Failed: '%s'", $this->method_title, $error));
-                    wc_add_notice($error, 'error');
                     $this->log($error);
 
                     wp_redirect(wc_get_checkout_url());
@@ -519,7 +565,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function query_alipay_order()
     {
 
-        $order_id = $_POST[ 'order_id' ];
+        $order_id = isset($_POST[ 'order_id' ]) ? (int)$_POST[ 'order_id' ] : false;
+
+        if ( ! $order_id) {
+            return;
+        }
 
         $gateway = $this->get_gateway();
         $order   = wc_get_order($order_id);
@@ -548,7 +598,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             wp_send_json_error($order->get_checkout_payment_url());
 
             $this->log($e->getMessage());
-            wp_die($e->getMessage());
         }
 
     }

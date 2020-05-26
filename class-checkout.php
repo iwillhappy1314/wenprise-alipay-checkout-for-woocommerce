@@ -229,17 +229,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'alipay_cert_public_key_rsa2' => [
                 'title'       => __('alipayCertPublicKey_RSA2.crt Path', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => sprintf(__('The absolute path of alipayCertPublicKey_RSA2.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+                'description' => sprintf(__('Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
             ],
             'alipay_root_cert'            => [
                 'title'       => __('alipayRootCert.crt Path', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => sprintf(__('The absolute path of alipayRootCert.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+                'description' => sprintf(__('Enter The absolute path of alipayRootCert.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
             ],
             'app_cert_publicKey'          => [
                 'title'       => __('appCertPublicKey.crt Path', 'wprs-wc-alipay'),
                 'type'        => 'text',
-                'description' => sprintf(__('The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
+                'description' => sprintf(__('Enter The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
             ],
             'is_debug_mod'                => [
                 'title'       => __('Debug Mode', 'wprs-wc-wechatpay'),
@@ -366,6 +366,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         } else {
             $gateway->setAlipayPublicKey($this->alipay_public_key);
         }
+
+        $gateway->setAlipayPublicKey($this->alipay_public_key);
+
+        // dd($gateway);
 
         if ($this->is_sandbox_mod) {
             $gateway->sandbox();

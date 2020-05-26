@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-04-25 09:14+0800\n"
-"PO-Revision-Date: 2020-04-25 09:15+0800\n"
+"POT-Creation-Date: 2020-04-25 10:03+0800\n"
+"PO-Revision-Date: 2020-04-25 10:03+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -20,31 +20,31 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
 
-#: class-checkout.php:87 class-checkout.php:103 class-checkout.php:169
+#: class-checkout.php:107 class-checkout.php:123 class-checkout.php:189
 msgid "Alipay"
 msgstr "支付宝"
 
-#: class-checkout.php:90
+#: class-checkout.php:110
 msgid "Alipay Payment Gateway for WooCommerce"
 msgstr "WooCommerce 的支付宝支付网关"
 
-#: class-checkout.php:125
+#: class-checkout.php:145
 msgid "Proceed to Alipay"
 msgstr "到支付宝付款"
 
-#: class-checkout.php:154
+#: class-checkout.php:174
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: class-checkout.php:155
+#: class-checkout.php:175
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: class-checkout.php:160 class-checkout.php:161
+#: class-checkout.php:180 class-checkout.php:181
 msgid "Enable Alipay Sandbox Mode"
 msgstr "启用支付宝沙盒模式"
 
-#: class-checkout.php:163
+#: class-checkout.php:183
 #, php-format
 msgid ""
 "Alipay sandbox can be used to test payments. Sign up for an account <a "
@@ -52,135 +52,136 @@ msgid ""
 msgstr ""
 "支付宝沙盒可用于测试付款。<a target=\"_blank\" href=\"%s\">在此处</a>注册帐户"
 
-#: class-checkout.php:167
+#: class-checkout.php:187
 msgid "Title"
 msgstr "标题"
 
-#: class-checkout.php:172
+#: class-checkout.php:192
 msgid "Description"
 msgstr "描述"
 
-#: class-checkout.php:174
+#: class-checkout.php:194
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付"
 
-#: class-checkout.php:178
+#: class-checkout.php:198
 msgid "Order Number Prefix"
 msgstr "订单号前缀"
 
-#: class-checkout.php:180
+#: class-checkout.php:200
 msgid "Only alphabet or number Allowed"
 msgstr "仅允许字母或数字"
 
-#: class-checkout.php:181
+#: class-checkout.php:201
 msgid "WC-"
 msgstr "WC-"
 
-#: class-checkout.php:184
+#: class-checkout.php:204
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: class-checkout.php:186
+#: class-checkout.php:206
 msgid "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 msgstr "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 
-#: class-checkout.php:189
+#: class-checkout.php:209
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: class-checkout.php:191
+#: class-checkout.php:211
 msgid ""
 "Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使"
 "用)"
 msgstr "输入应用私钥，(rsa_private_key.pem 文件的全部内容)"
 
-#: class-checkout.php:195
+#: class-checkout.php:215
 msgid "signing mode"
 msgstr "加签模式"
 
-#: class-checkout.php:197
+#: class-checkout.php:217
 msgid "Select the signing mode。"
 msgstr "选择加签模式。"
 
-#: class-checkout.php:200
+#: class-checkout.php:220
 msgid "Public Key"
 msgstr "公钥"
 
-#: class-checkout.php:201
+#: class-checkout.php:221
 msgid "Public Key Certificate"
 msgstr "公钥证书"
 
-#: class-checkout.php:205
+#: class-checkout.php:225
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: class-checkout.php:207
+#: class-checkout.php:227
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\""
 
-#: class-checkout.php:210
+#: class-checkout.php:230
 msgid "alipayCertPublicKey_RSA2.crt Path"
 msgstr "alipayCertPublicKey_RSA2.crt 证书"
 
-#: class-checkout.php:212
+#: class-checkout.php:232
 #, php-format
 msgid ""
-"The absolute path of alipayCertPublicKey_RSA2.crt, this is your website root "
-"path: %s"
-msgstr "alipayCertPublicKey_RSA2.crt 文件的绝对路径, 你网站的根目录路径为：%s"
+"Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your "
+"website root path: %s"
+msgstr ""
+"请输入alipayCertPublicKey_RSA2.crt 路径的绝对路径，这是您的网站根路径：%s"
 
-#: class-checkout.php:215
+#: class-checkout.php:235
 msgid "alipayRootCert.crt Path"
 msgstr "alipayRootCert.crt 证书"
 
-#: class-checkout.php:217
+#: class-checkout.php:237
 #, php-format
 msgid ""
-"The absolute path of alipayRootCert.crt, this is your website root path: %s"
-msgstr "alipayRootCert.crt.crt 文件的绝对路径, 你网站的根目录路径为： %s"
+"Enter The absolute path of alipayRootCert.crt, this is your website root "
+"path: %s"
+msgstr "请输入alipayRootCert.crt 文件的绝对路径, 你网站的根目录路径为： %s"
 
-#: class-checkout.php:220
+#: class-checkout.php:240
 msgid "appCertPublicKey.crt Path"
 msgstr "appCertPublicKey.crt 证书"
 
-#: class-checkout.php:222
+#: class-checkout.php:242
 #, php-format
 msgid ""
-"The absolute path of appCertPublicKey.crt, this is your website root path: %s"
-msgstr ""
-"The absolute path of appCertPublicKey.crt.crt, this is your website root "
+"Enter The absolute path of appCertPublicKey.crt, this is your website root "
 "path: %s"
+msgstr "请输入 appCertPublicKey.crt 的绝对路径，这是您的网站根路径：%s"
 
-#: class-checkout.php:225
+#: class-checkout.php:245
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: class-checkout.php:226
+#: class-checkout.php:246
 msgid "Enable debug mod"
 msgstr "启用调试模式"
 
-#: class-checkout.php:228
+#: class-checkout.php:248
 msgid "If checked, plugin will show program errors in frontend."
 msgstr "如果启用，会在前端显示详情的错误信息。"
 
-#: class-checkout.php:236
+#: class-checkout.php:256
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: class-checkout.php:238
+#: class-checkout.php:258
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:252
+#: class-checkout.php:272
 msgid "Settings"
 msgstr "设置"
 
-#: class-checkout.php:271
+#: class-checkout.php:291
 #, php-format
 msgid ""
 "Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
@@ -190,16 +191,16 @@ msgstr ""
 "微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
 "币的汇率</a>。"
 
-#: class-checkout.php:387 class-checkout.php:388
+#: class-checkout.php:408 class-checkout.php:409
 #, php-format
 msgid "Pay for order %1$s at %2$s"
 msgstr "支付网站「%2$s」中的订单：%1$s "
 
-#: class-checkout.php:457
+#: class-checkout.php:474
 msgid "Online Payment"
 msgstr "在线支付"
 
-#: class-checkout.php:461
+#: class-checkout.php:478
 msgid ""
 "Please complete the payment on the newly opened Alipay page. If the page "
 "does not automatically jump, click the button below to inquire according to "
@@ -208,34 +209,34 @@ msgstr ""
 "请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下"
 "面按钮查询。"
 
-#: class-checkout.php:463
+#: class-checkout.php:480
 msgid ""
 "If payment is successful, but the order still shows unpaid, please contact "
 "us."
 msgstr "如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。"
 
-#: class-checkout.php:466
+#: class-checkout.php:483
 msgid "payment successful"
 msgstr "支付成功"
 
-#: class-checkout.php:467
+#: class-checkout.php:484
 msgid "Payment failed"
 msgstr "支付失败"
 
-#: class-checkout.php:598
+#: class-checkout.php:611
 msgid "Redirecting to alipay..., please wait a moment"
 msgstr "正在重定向到支付宝，请稍候…"
 
-#: class-checkout.php:598
+#: class-checkout.php:611
 msgid "Redirecting to alipay, please wait a moment..."
 msgstr "正在重定向到支付宝，请稍候…"
 
-#: class-checkout.php:648
+#: class-checkout.php:661
 #, php-format
 msgid "Refunded %1$s"
 msgstr "退款 %1$s"
 
-#: class-checkout.php:671
+#: class-checkout.php:684
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"
@@ -250,6 +251,25 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#, php-format
+#~ msgid ""
+#~ "The absolute path of alipayCertPublicKey_RSA2.crt, this is your website "
+#~ "root path: %s"
+#~ msgstr ""
+#~ "alipayCertPublicKey_RSA2.crt 文件的绝对路径, 你网站的根目录路径为：%s"
+
+#, php-format
+#~ msgid ""
+#~ "The absolute path of alipayRootCert.crt, this is your website root path: "
+#~ "%s"
+#~ msgstr "alipayRootCert.crt 文件的绝对路径, 你网站的根目录路径为： %s"
+
+#, php-format
+#~ msgid ""
+#~ "The absolute path of appCertPublicKey.crt, this is your website root "
+#~ "path: %s"
+#~ msgstr "appCertPublicKey.crt 的绝对路径，这是您的网站根路径：%s"
 
 #~ msgid "Select the signing mode"
 #~ msgstr "选择加签模式"

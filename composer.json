@@ -1,7 +1,7 @@
 {
   "require": {
     "lokielse/omnipay-alipay": "^3.1",
-    "symfony/http-foundation": "3.3.*",
+    "symfony/http-foundation": "3.4.*",
     "paragonie/random_compat": "<9.99"
   },
   "config": {

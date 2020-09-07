@@ -21,9 +21,10 @@ jQuery(document).ready(function($) {
      * 重新支付页面的支付按钮
      */
     $('#place_order').click(function() {
-        var wc_alipay_payment_url = $(this).parent().find('input[name="wc-alipay-payment-url"]').val();
+        var wc_alipay_payment_url = $(this).parent().find('input[name="wc-alipay-payment-url"]').val(),
+            wprs_wc_payment_method = $('input[name="payment_method"]:checked').val();
 
-        if (typeof wc_alipay_payment_url !== 'undefined') {
+        if (typeof wc_alipay_payment_url !== 'undefined' && wprs_wc_payment_method === 'wprs-wc-alipay') {
             var alipay_window = window.open(wc_alipay_payment_url, '_blank');
             alipay_window.focus();
         }

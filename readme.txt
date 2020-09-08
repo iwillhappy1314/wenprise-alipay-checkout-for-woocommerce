@@ -4,11 +4,11 @@ Donate link: https://www.wpzhiku.com/
 Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支付宝, 支付宝支付, Alipay payment gateway, Wechat gateway, credit card, pay, online payment, shop, e-commerce, ecommerce
 Requires PHP: 5.6.0
 Requires at least: 3.9
-Tested up to: 5.4
-Stable tag: 1.1.2
+Tested up to: 5.5
+Stable tag: 1.1.3
 License: GPL-2.0+
 WC requires at least: 3.5
-WC tested up to: 4.0
+WC tested up to: 4.4
 
 Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支付网关。
 
@@ -58,6 +58,9 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+### 1.1.3 ###
+* 修复重新支付页面中，选择其他支付方法也会打开微信支付页面的 Bug
+
 ### 1.1.2 ###
 * 增加支付跳转中间页面
 

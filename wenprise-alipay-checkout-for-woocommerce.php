@@ -90,6 +90,19 @@ add_action('plugins_loaded', function ()
 }, 0);
 
 
+/**
+ * 插件插件设置链接
+ */
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
+{
+    $url = admin_url('admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay');
+    $url = '<a href="' . esc_url($url) . '">' . __('Settings', 'wprs-wc-wechatpay') . '</a>';
+    array_unshift($links, $url);
+
+    return $links;
+});
+
+
 add_filter('woocommerce_pay_order_button_html', function ($html)
 {
     global $wp;

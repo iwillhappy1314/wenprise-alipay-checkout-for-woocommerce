@@ -51,11 +51,19 @@ add_action('wp_enqueue_scripts', function ()
     if (is_checkout() || is_checkout_pay_page()) {
         wp_enqueue_style('wprs-wc-alipay-style', plugins_url('/frontend/styles.css', __FILE__), [], WENPRISE_ALIPAY_VERSION, false);
         wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/frontend/scripts.js', __FILE__), ['jquery', 'jquery-blockui', 'wc-checkout'], WENPRISE_ALIPAY_VERSION, true);
+        wp_enqueue_script('qrcode', WC()->plugin_url() . '/assets/js/jquery-qrcode/jquery.qrcode.js', ['jquery'], WENPRISE_WECHATPAY_VERSION);
 
-        wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', [
-            'query_url'  => WC()->api_request_url('wprs-wc-query-order'),
-            'bridge_url' => WC()->api_request_url('wprs-wc-alipay-bridge'),
-        ]);
+        $gateway = new Wenprise_Alipay_Gateway();
+
+        $js_data = [
+            'query_url' => WC()->api_request_url('wprs-wc-query-order'),
+        ];
+
+        if ($gateway->enabled_f2f !== 'yes') {
+            $js_data[ 'bridge_url' ] = WC()->api_request_url('wprs-wc-alipay-bridge');
+        }
+
+        wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', $js_data);
     }
 });
 

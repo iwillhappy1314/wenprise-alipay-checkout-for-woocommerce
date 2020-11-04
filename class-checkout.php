@@ -24,6 +24,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public $log = false;
 
     /**
+     * enabled_f2f
+     */
+    public $enabled_f2f = 'no';
+
+    /**
      * @var bool
      */
     public $is_sandbox_mod = false;
@@ -150,7 +155,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         // below is the hook you need for that purpose
-        add_action('woocommerce_receipt_' . $this->id, [$this, 'pay_for_order']);
+        add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 
         // 仪表盘通知
         add_action('admin_notices', [$this, 'requirement_checks']);
@@ -173,6 +178,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             'enabled'                     => [
                 'title'   => __('Enable / Disable', 'wprs-wc-alipay'),
                 'label'   => __('Enable this payment gateway', 'wprs-wc-alipay'),
+                'type'    => 'checkbox',
+                'default' => 'no',
+            ],
+            'enabled_f2f'                 => [
+                'title'   => __('Enable Face2Face Payment', 'wprs-wc-alipay'),
+                'label'   => __('Enable Face2Face Payment on PC', 'wprs-wc-alipay'),
                 'type'    => 'checkbox',
                 'default' => 'no',
             ],
@@ -349,13 +360,21 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         if (wp_is_mobile()) {
             $gateway = Omnipay::create('Alipay_AopWap');
         } else {
-            $gateway = Omnipay::create('Alipay_AopPage');
+            if ($this->enabled_f2f === 'yes') {
+                $gateway = Omnipay::create('Alipay_AopF2F');
+            } else {
+                $gateway = Omnipay::create('Alipay_AopPage');
+            }
         }
 
         $gateway->setAppId($this->app_id);
         $gateway->setSignType('RSA2');
         $gateway->setPrivateKey($this->private_key);
-        $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
+
+        if ($this->enabled_f2f !== 'yes') {
+            $gateway->setReturnUrl(WC()->api_request_url('wprs-wc-alipay-return'));
+        }
+
         $gateway->setNotifyUrl(WC()->api_request_url('wprs-wc-alipay-notify'));
 
         if ($this->cert_type === 'public_key_certificate') {
@@ -368,8 +387,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         $gateway->setAlipayPublicKey($this->alipay_public_key);
-
-        // dd($gateway);
 
         if ($this->is_sandbox_mod) {
             $gateway->sandbox();
@@ -412,17 +429,20 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'subject'      => sprintf(__('Pay for order %1$s at %2$s', 'wprs-wc-alipay'), $order_no, get_bloginfo('name')),
                 'body'         => sprintf(__('Pay for order %1$s at %2$s', 'wprs-wc-alipay'), $order_no, get_bloginfo('name')),
                 'total_amount' => $total,
-                'product_code' => 'FAST_INSTANT_TRADE_PAY',
                 'show_url'     => get_permalink(),
             ]
         );
+
+        if ($this->enabled_f2f !== 'yes') {
+            $order_data[ 'product_code' ] = 'FAST_INSTANT_TRADE_PAY';
+        }
 
         // 生成订单并发送支付
         /** @var \Omnipay\Alipay\Requests\AbstractAopRequest $request */
         $request = $gateway->purchase();
         $request->setBizContent($order_data);
 
-        /** @var \Omnipay\Alipay\Responses\AopTradePagePayResponse $response */
+        /** @var \Omnipay\Alipay\Responses\AopTradePagePayResponse|\Omnipay\Alipay\Responses\AopTradePreCreateResponse $response */
         $response = $request->send();
 
         // 生成订单后清空购物车，以免订单重复
@@ -432,8 +452,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
 
-        // 返回支付连接，由 Woo Commerce 跳转到支付宝支付
+        // 返回支付连接，由 WooCommerce 跳转到支付宝支付
         if ($response->isSuccessful()) {
+
+            if ($this->enabled_f2f === 'yes') {
+                update_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', $response->getQrCode());
+
+                return [
+                    'result'   => 'success',
+                    'redirect' => $order->get_checkout_payment_url(true),
+                ];
+            }
 
             if ($response->isRedirect()) {
 
@@ -470,25 +499,54 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      * @param $order_id
      *
      */
-    public function pay_for_order($order_id)
+    public function receipt_page($order_id)
     {
-        echo '<div id="js-alipay-confirm-modal" data-order_id="' . $order_id . '" class="rs-confirm-modal" style="display: none;">
-                <div class="rs-modal">
-                    <header class="rs-modal__header">
-                      ' . __('Online Payment', 'wprs-wc-alipay') . '
-                    </header>
-                    <div class="rs-modal__content">
+        $code_url = get_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', true);
+
+        ?>
+
+        <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal" style="display: none;">
+            <div class="rs-modal">
+                <header class="rs-modal__header">
+                    <?= __('Online Payment', 'wprs-wc-alipay'); ?>
+                </header>
+
+                <div class="rs-modal__content">
+
+                    <?php if ($this->enabled_f2f === 'yes') : ?>
+
+                        <div id="wprs_wc_alipay_f2f_qrcode"></div>
+
+                        <script>
+                            jQuery(document).ready(function($) {
+                                $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
+                            });
+                        </script>
+
+                    <?php else: ?>
+
                         <div class="rs-alert rs-alert--warning">
-                        ' . __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay') . '
+                            <?= __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay'); ?>
                         </div>
-                        <p>' . __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay') . '</p>
-                    </div>
-                    <footer class="rs-modal__footer">
-                       <button type="button" id="js-alipay-success" class="button alt is-primary">' . __('payment successful', 'wprs-wc-alipay') . '</button>
-                       <button type="button" id="js-alipay-fail" class="button">' . __('Payment failed', 'wprs-wc-alipay') . '</button>
-                    </footer>
-                </div>  
-            </div>';
+
+                        <p><?= __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay'); ?></p>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <footer class="rs-modal__footer">
+                    <button type="button" id="js-alipay-success" class="button alt is-primary">
+                        <?= __('payment successful', 'wprs-wc-alipay'); ?>
+                    </button>
+                    <button type="button" id="js-alipay-fail" class="button">
+                        <?= __('Payment failed', 'wprs-wc-alipay'); ?>
+                    </button>
+                </footer>
+            </div>
+        </div>
+
+        <?php
     }
 
 

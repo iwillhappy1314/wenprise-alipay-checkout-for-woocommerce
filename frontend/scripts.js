@@ -232,5 +232,8 @@ jQuery(document).ready(function($) {
 
     };
 
-    wc_alipay_checkout.init();
+    if('bridge_url' in WpWooAlipayData){
+        wc_alipay_checkout.init();
+    }
+
 });

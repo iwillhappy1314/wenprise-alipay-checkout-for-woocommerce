@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-11-09 10:54+0800\n"
-"PO-Revision-Date: 2020-11-09 10:55+0800\n"
+"POT-Creation-Date: 2020-11-12 13:44+0800\n"
+"PO-Revision-Date: 2020-11-12 13:44+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -185,7 +185,7 @@ msgid ""
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:283
+#: class-checkout.php:283 wenprise-alipay-checkout-for-woocommerce.php:126
 msgid "Settings"
 msgstr "设置"
 

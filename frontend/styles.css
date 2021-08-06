@@ -1,41 +1,45 @@
-.blockUI{
+.blockUI {
     border: 0 !important;
 }
 
 .rs-modal,
-.rs-confirm-modal{
+.rs-confirm-modal {
     height: 100%;
 }
 
-.rs-modal__header{
+.rs-modal__header {
     padding: 0 1rem;
     border-bottom: 1px solid #eee;
     height: 3rem;
     line-height: 3rem;
-    text-align: left;
+    text-align: center;
 }
 
-.rs-modal__content{
+.rs-modal__content {
     padding: 1rem;
     text-align: left;
 }
 
-.rs-modal__footer{
+.rs-modal__footer {
     padding: .75rem 1rem;
     border-top: 1px solid #eee;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     text-align: right;
     position: absolute;
     width: 100%;
     bottom: 0;
 }
 
-.rs-modal__footer .button{
+.rs-modal__footer .button {
     font-size: .875rem;
 }
 
-#js-alipay-success{
+#wprs_wc_alipay_f2f_qrcode canvas:nth-child(2) {
+    display: none;
+}
+
+#js-alipay-success {
     margin-right: .5rem;
 }
 
@@ -46,33 +50,43 @@
     padding: .5rem 1rem;
 }
 
-.rs-alert--info{
+.rs-alert--info {
     color: #31708f;
     background-color: #d9edf7;
     border-color: #bce8f1;
 }
 
-.rs-alert--warning{
+.rs-alert--warning {
     color: #8a6d3b;
     background-color: #fcf8e3;
     border-color: #faebcc;
 }
 
-.rs-alert--success{
+.rs-alert--success {
     color: #3c763d;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }
 
-.rs-alert--danger{
+.rs-alert--danger {
     color: #a94442;
     background-color: #f2dede;
     border-color: #ebccd1;
 }
 
+.wprs-qrcode canvas {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wprs-qrcode p {
+    text-align: center;
+    margin-bottom: 12px;
+}
 
 @media screen and (max-width: 768px) {
-    .blockPage{
+    .blockPage {
         max-width: 500px !important;
         width: auto !important;
         left: 1rem !important;

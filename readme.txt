@@ -16,8 +16,8 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支�
 **功能更全面的 WooCommerce 免费支付宝支付网关**，企业版，需要支付宝企业认证才可以使用。支持功能如下：
 
 * 支持所有 WooCommerce 产品类型
-* PC 端扫码或登录账户支付
-* 移动端调起支付宝 APP 或者登录 wap 版支付宝支付
+* PC端扫码或登录账户支付
+* 移动端调起支付宝APP、登录wap版支付宝支付
 * 支持支付宝同步回调和异步回调
 * 支持主动查询支付宝订单完成状态的功能
 * 支持在 WooCommerce 订单中直接通过支付宝支付退款，退款原路返回
@@ -58,6 +58,9 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+### 1.1.4 ###
+* 支持当面付
+
 ### 1.1.3 ###
 * 修复重新支付页面中，选择其他支付方法也会打开微信支付页面的 Bug
 

@@ -515,12 +515,18 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
                     <?php if ($this->enabled_f2f === 'yes') : ?>
 
-                        <div id="wprs_wc_alipay_f2f_qrcode"></div>
+                        <div class='rs-alert rs-alert--warning'>
+                            <?= __('Please open alipay and scan this qrcode.', 'wprs-wc-alipay'); ?>
+                        </div>
+
+                        <div class="wprs-qrcode">
+                            <div id="wprs_wc_alipay_f2f_qrcode"></div>
+                        </div>
 
                         <script>
-                            jQuery(document).ready(function($) {
-                                $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
-                            });
+                          jQuery(document).ready(function($) {
+                            $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
+                          });
                         </script>
 
                     <?php else: ?>
@@ -543,6 +549,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                         <?= __('Payment failed', 'wprs-wc-alipay'); ?>
                     </button>
                 </footer>
+
             </div>
         </div>
 
@@ -670,7 +677,12 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function alipay_bridge()
     {
-        wp_die(__('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'), __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'));
+        wp_die(
+            __('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'),
+            __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'),
+            ['response' => 200]
+        );
+
     }
 
 
@@ -701,7 +713,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $refund_amount = round($amount * $exchange_rate, 2);
 
         if ($refund_amount <= 0 || $refund_amount > $total) {
-            false;
+            return false;
         }
 
         /** @var \Omnipay\Alipay\Requests\AopTradeRefundRequest $request */

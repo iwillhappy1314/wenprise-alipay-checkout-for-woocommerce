@@ -3,16 +3,16 @@
  * Plugin Name: Wenprise Alipay Payment Gateway For WooCommerce
  * Plugin URI: https://www.wpzhiku.com/wenprise-alipay-payment-gateway-for-woocommerce
  * Description: Alipay Checkout For WooCommerce，WooCommerce 支付宝全功能支付网关
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: WordPress 智库
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
  * Domain Path: /languages
  * Requires PHP: 5.6.0
  * Requires at least: 4.7
- * Tested up to: 5.5
+ * Tested up to: 5.8
  * WC requires at least: 3.5
- * WC tested up to: 4.4
+ * WC tested up to: 5.5
  */
 
 if ( ! defined('ABSPATH')) {
@@ -51,7 +51,6 @@ add_action('wp_enqueue_scripts', function ()
     if (is_checkout() || is_checkout_pay_page()) {
         wp_enqueue_style('wprs-wc-alipay-style', plugins_url('/frontend/styles.css', __FILE__), [], WENPRISE_ALIPAY_VERSION, false);
         wp_enqueue_script('wprs-wc-alipay-script', plugins_url('/frontend/scripts.js', __FILE__), ['jquery', 'jquery-blockui', 'wc-checkout'], WENPRISE_ALIPAY_VERSION, true);
-        wp_enqueue_script('qrcode', WC()->plugin_url() . '/assets/js/jquery-qrcode/jquery.qrcode.js', ['jquery'], WENPRISE_WECHATPAY_VERSION);
 
         $gateway = new Wenprise_Alipay_Gateway();
 
@@ -61,6 +60,8 @@ add_action('wp_enqueue_scripts', function ()
 
         if ($gateway->enabled_f2f !== 'yes') {
             $js_data[ 'bridge_url' ] = WC()->api_request_url('wprs-wc-alipay-bridge');
+        } else {
+            wp_enqueue_script('qrcode', WC()->plugin_url() . '/assets/js/jquery-qrcode/jquery.qrcode.js', ['jquery'], WENPRISE_ALIPAY_VERSION);
         }
 
         wp_localize_script('wprs-wc-alipay-script', 'WpWooAlipayData', $js_data);

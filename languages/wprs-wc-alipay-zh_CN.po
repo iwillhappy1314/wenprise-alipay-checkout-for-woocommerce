@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2020-11-12 13:44+0800\n"
-"PO-Revision-Date: 2020-11-12 13:44+0800\n"
+"POT-Creation-Date: 2021-08-06 11:33+0800\n"
+"PO-Revision-Date: 2021-08-06 11:34+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -208,7 +208,11 @@ msgstr "支付网站「%2$s」中的订单：%1$s "
 msgid "Online Payment"
 msgstr "在线支付"
 
-#: class-checkout.php:529
+#: class-checkout.php:519
+msgid "Please open alipay and scan this qrcode."
+msgstr "请打开支付宝并扫描此二维码。"
+
+#: class-checkout.php:535
 msgid ""
 "Please complete the payment on the newly opened Alipay page. If the page "
 "does not automatically jump, click the button below to inquire according to "
@@ -217,34 +221,34 @@ msgstr ""
 "请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下"
 "面按钮查询。"
 
-#: class-checkout.php:532
+#: class-checkout.php:538
 msgid ""
 "If payment is successful, but the order still shows unpaid, please contact "
 "us."
 msgstr "如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。"
 
-#: class-checkout.php:540
+#: class-checkout.php:546
 msgid "payment successful"
 msgstr "支付成功"
 
-#: class-checkout.php:543
+#: class-checkout.php:549
 msgid "Payment failed"
 msgstr "支付失败"
 
-#: class-checkout.php:673
+#: class-checkout.php:681
 msgid "Redirecting to alipay..., please wait a moment"
 msgstr "正在重定向到支付宝，请稍候…"
 
-#: class-checkout.php:673
+#: class-checkout.php:682
 msgid "Redirecting to alipay, please wait a moment..."
 msgstr "正在重定向到支付宝，请稍候…"
 
-#: class-checkout.php:723
+#: class-checkout.php:735
 #, php-format
 msgid "Refunded %1$s"
 msgstr "退款 %1$s"
 
-#: class-checkout.php:746
+#: class-checkout.php:758
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"

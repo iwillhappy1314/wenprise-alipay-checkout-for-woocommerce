@@ -701,8 +701,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function process_refund($order_id, $amount = null, $reason = '')
     {
         $gateway = $this->get_gateway();
-        $order   = wc_get_order($order_id);
-        $total   = $this->get_order_total();
+        $order = wc_get_order($order_id);
+        $total = (float) $order->get_total();
 
         $exchange_rate = (float)$this->get_option('exchange_rate');
         if ($exchange_rate <= 0) {

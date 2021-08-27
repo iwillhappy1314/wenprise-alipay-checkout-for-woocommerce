@@ -128,7 +128,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         $this->title = __('Alipay', 'wprs-wc-alipay');
 
         // 支付网关标题
-        $this->icon = apply_filters('omnipay_alipay_icon', WENPRISE_ALIPAY_ASSETS_URL . 'alipay.png');
+        $this->icon = apply_filters('omnipay_alipay_icon', WENPRISE_ALIPAY_ASSETS_URL . 'alipay.svg');
 
         $this->supports = ['products', 'refunds'];
 

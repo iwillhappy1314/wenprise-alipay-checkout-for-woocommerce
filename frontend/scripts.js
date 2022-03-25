@@ -103,17 +103,13 @@ jQuery(document).ready(function($) {
     $checkout_form: $('form.checkout'),
 
     init: function() {
-      this.$checkout_form.on('checkout_place_order_wprs-wc-alipay',
-          this.to_alipay);
+      this.$checkout_form.on('checkout_place_order_wprs-wc-alipay', this.to_alipay);
     },
 
     to_alipay: function() {
       event.preventDefault();
 
       var $form = $(this);
-
-      // 事先打开一个窗口，Ajax 成功后替换 location, 以解决弹出窗口被屏蔽的问题
-      var alipay_window = window.open(WpWooAlipayData.bridge_url, '_blank');
 
       $form.addClass('processing');
 
@@ -133,8 +129,10 @@ jQuery(document).ready(function($) {
 
           try {
             if ('success' === result.result) {
-              if (-1 === result.redirect.indexOf('https://') || -1 ===
-                  result.redirect.indexOf('http://')) {
+              // 事先打开一个窗口，Ajax 成功后替换 location, 以解决弹出窗口被屏蔽的问题
+              var alipay_window = window.open(WpWooAlipayData.bridge_url, '_blank');
+
+              if (-1 === result.redirect.indexOf('https://') || -1 === result.redirect.indexOf('http://')) {
                 alipay_window.location = result.payment_url;
                 alipay_window.focus();
 
@@ -228,12 +226,9 @@ jQuery(document).ready(function($) {
     submit_error: function(error_message) {
       $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message').
           remove();
-      wc_alipay_checkout.$checkout_form.prepend(
-          '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
-          error_message + '</div>'); // eslint-disable-line max-len
+      wc_alipay_checkout.$checkout_form.prepend('<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' + error_message + '</div>'); // eslint-disable-line max-len
       wc_alipay_checkout.$checkout_form.removeClass('processing').unblock();
-      wc_alipay_checkout.$checkout_form.find(
-          '.input-text, select, input:checkbox').trigger('validate').blur();
+      wc_alipay_checkout.$checkout_form.find('.input-text, select, input:checkbox').trigger('validate').blur();
       wc_alipay_checkout.scroll_to_notices();
       $(document.body).trigger('checkout_error');
     },

@@ -8,7 +8,7 @@
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
  * Domain Path: /languages
- * Requires PHP: 7.3
+ * Requires PHP: 7.1
  * Requires at least: 4.7
  * Tested up to: 5.9
  * WC requires at least: 3.6

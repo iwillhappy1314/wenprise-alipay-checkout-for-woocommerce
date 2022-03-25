@@ -58,8 +58,9 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
-### 1.1.4 ###
+### 1.2.0 ###
 * 支持当面付
+* bugfix
 
 ### 1.1.3 ###
 * 修复重新支付页面中，选择其他支付方法也会打开微信支付页面的 Bug

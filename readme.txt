@@ -26,14 +26,14 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支�
 * 支持设置订单前缀
 
 ### 插件设置方法及使用教程 ###
-[Wenprise Alipay Gateway For WooCommerce 插件设置教程](https://www.wpzhiku.com/wenprise-alipay-gateway-for-woocommerce-document/){:target="_blank"}
+[Wenprise Alipay Gateway For WooCommerce 插件设置教程](https://www.wpzhiku.com/wenprise-alipay-gateway-for-woocommerce-document/)
 
 ### 付费设置服务 ###
 如果你不想自己动手设置，或者自己设置有困难，可以购买我们的付费设置服务。
-[WooCommerce支付宝插件设置服务](https://www.wpzhiku.com/product/woocommerce-alipay-service/){:target="_blank"}
+[WooCommerce支付宝插件设置服务](https://www.wpzhiku.com/product/woocommerce-alipay-service/)
 
 ### 微信支付网关 ###
-[Wenprise WeChatPay Payment Gateway For WooCommerce](https://wordpress.org/plugins/wenprise-wechatpay-checkout-for-woocommerce/){:target="_blank"}
+[Wenprise WeChatPay Payment Gateway For WooCommerce](https://wordpress.org/plugins/wenprise-wechatpay-checkout-for-woocommerce/)
 
 ### Support 技术支持 ###
 

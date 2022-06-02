@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'af06104228d3da0032d447eedf92c090a91661c2',
+        'reference' => 'a40ba98928fef56971af793bad406bcef8417a01',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'af06104228d3da0032d447eedf92c090a91661c2',
+            'reference' => 'a40ba98928fef56971af793bad406bcef8417a01',
             'dev_requirement' => false,
         ),
         'clue/stream-filter' => array(
@@ -29,12 +29,12 @@
             'dev_requirement' => false,
         ),
         'guzzlehttp/guzzle' => array(
-            'pretty_version' => '6.5.5',
-            'version' => '6.5.5.0',
+            'pretty_version' => '6.5.6',
+            'version' => '6.5.6.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../guzzlehttp/guzzle',
             'aliases' => array(),
-            'reference' => '9d4290de1cfd701f38099ef7e183b64b4b7b0c5e',
+            'reference' => 'f092dd734083473658de3ee4bef093ed77d2689c',
             'dev_requirement' => false,
         ),
         'guzzlehttp/promises' => array(

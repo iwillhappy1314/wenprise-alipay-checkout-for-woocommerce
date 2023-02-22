@@ -125,7 +125,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         // 前端显示的支付网关名称
-        $this->title = __('Alipay', 'wprs-wc-alipay');
+        $this->title = $this->get_option('title');
 
         // 支付网关标题
         $this->icon = apply_filters('omnipay_alipay_icon', WENPRISE_ALIPAY_ASSETS_URL . 'alipay.svg');
@@ -701,8 +701,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function process_refund($order_id, $amount = null, $reason = '')
     {
         $gateway = $this->get_gateway();
-        $order = wc_get_order($order_id);
-        $total = (float) $order->get_total();
+        $order   = wc_get_order($order_id);
+        $total   = (float)$order->get_total();
 
         $exchange_rate = (float)$this->get_option('exchange_rate');
         if ($exchange_rate <= 0) {
@@ -775,7 +775,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             if ( ! ($this->log)) {
                 $this->log = new WC_Logger();
             }
-            $this->log->add('woocommerce_wprs-wc-alipay', $message);
+            $this->log->add('woocommerce_wprs-wc-alipay', var_export($message, true));
         }
     }
 

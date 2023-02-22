@@ -280,7 +280,10 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     public function admin_options()
     { ?>
 
-        <h3><?php echo ( ! empty($this->method_title)) ? $this->method_title : __('Settings', 'wprs-wc-alipay'); ?></h3>
+        <h3>
+            <?php echo ( ! empty($this->method_title)) ? $this->method_title : __('Settings', 'wprs-wc-alipay'); ?>
+            <?php wc_back_link( __( 'Return to payments', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>
+        </h3>
 
         <?php echo ( ! empty($this->method_description)) ? wpautop($this->method_description) : ''; ?>
 

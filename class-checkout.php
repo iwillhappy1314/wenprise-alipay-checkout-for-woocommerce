@@ -316,7 +316,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      *
      * @return string
      */
-    public function get_order_number($order_id)
+    public function get_order_number($order_id): string
     {
         return $this->order_prefix . ltrim($order_id, '#');
     }
@@ -327,7 +327,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      *
      * @return bool
      */
-    public function is_available()
+    public function is_available(): bool
     {
 
         $is_available = 'yes' === $this->enabled;
@@ -351,7 +351,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     /**
      * 获取支付网关
      *
-     * @return mixed
+     * @return \Omnipay\Alipay\AopPageGateway|\omnipay\Alipay\AopWapGateway|\Omnipay\Common\GatewayInterface
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function get_gateway()
     {
@@ -453,13 +454,17 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         do_action('woocommerce_wenprise_alipay_before_payment_redirect', $response);
 
-        update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
+        $order->update_meta_data('_gateway_payment_url', $response->getRedirectUrl());
+        $order->save();
+        // update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
 
         // 返回支付连接，由 WooCommerce 跳转到支付宝支付
         if ($response->isSuccessful()) {
 
             if ($this->enabled_f2f === 'yes') {
-                update_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', $response->getQrCode());
+                // update_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', $response->getQrCode());
+                $order->update_meta_data('wprs_wc_alipay_f2f_qrcode',$response->getQrCode());
+                $order->save();
 
                 return [
                     'result'   => 'success',
@@ -504,7 +509,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      */
     public function receipt_page($order_id)
     {
-        $code_url = get_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', true);
+        $order = wc_get_order($order_id);
+        $code_url = $order->get_meta('wprs_wc_alipay_f2f_qrcode',true);
+        // $code_url = get_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', true);
 
         ?>
 
@@ -588,7 +595,14 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
              * 获取支付宝返回的参数
              */
             /** @var \Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
-            $request = $gateway->completePurchase();
+
+            try {
+                $request = $gateway->completePurchase();
+            } catch ( \Exception $e ) {
+                $this->log($e->getMessage());
+                wp_die($e->getMessage());
+            }
+
             $request->setParams(stripslashes_deep(array_merge($_POST, $_GET)));
 
             try {
@@ -701,7 +715,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      *
      * @return boolean True or false based on success, or a WP_Error object.
      */
-    public function process_refund($order_id, $amount = null, $reason = '')
+    public function process_refund($order_id, $amount = null, $reason = ''): bool
     {
         $gateway = $this->get_gateway();
         $order   = wc_get_order($order_id);
@@ -754,7 +768,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      * @param $order    \WC_Order
      * @param $trade_no string
      */
-    public function complete_order($order, $trade_no)
+    public function complete_order(WC_Order $order, $trade_no)
     {
         // 添加订单备注
         if ($order->get_status() === 'pending') {
@@ -763,7 +777,9 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $order->payment_complete($trade_no);
         }
 
-        delete_post_meta($order->get_id(), '_gateway_payment_url');
+        $order->delete_meta_data('_gateway_payment_url');
+        $order->save();
+        // delete_post_meta($order->get_id(), '_gateway_payment_url');
     }
 
 

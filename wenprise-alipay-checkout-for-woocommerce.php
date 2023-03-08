@@ -108,7 +108,9 @@ add_filter('woocommerce_pay_order_button_html', function ($html)
     global $wp;
 
     $order_id    = $wp->query_vars[ 'order-pay' ];
-    $payment_url = get_post_meta($order_id, '_gateway_payment_url', true);
+    $order = wc_get_order($order_id);
+    $payment_url = $order->get_meta('_gateway_payment_url');
+    // $payment_url = get_post_meta($order_id, '_gateway_payment_url', true);
 
     if ($payment_url) {
         $html .= '<input type="hidden" name="wc-alipay-payment-url" value="' . $payment_url . '">';

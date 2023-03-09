@@ -408,6 +408,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
      * @param int $order_id
      *
      * @return mixed
+     * @throws \Omnipay\Common\Exception\InvalidRequestException
      */
     public function process_payment($order_id)
     {

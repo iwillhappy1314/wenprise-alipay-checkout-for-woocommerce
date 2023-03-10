@@ -127,6 +127,8 @@ jQuery(document).ready(function($) {
           // Detach the unload handler that prevents a reload / redirect
           wc_alipay_checkout.detachUnloadEventsOnSubmit();
 
+          console.log(result);
+
           try {
             if ('success' === result.result) {
               // 事先打开一个窗口，Ajax 成功后替换 location, 以解决弹出窗口被屏蔽的问题

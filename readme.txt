@@ -5,7 +5,7 @@ Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, æ”¯ä»
 Requires PHP: 7.1
 Requires at least: 3.9
 Tested up to: 6.2
-Stable tag: 1.2.5
+Stable tag: 1.3.0
 License: GPL-2.0+
 WC requires at least: 3.6
 WC tested up to: 7.6

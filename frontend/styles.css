@@ -1,18 +1,48 @@
-.blockUI {
-    border: 0 !important;
-}
-
-.rs-modal,
-.rs-confirm-modal {
-    height: 100%;
-}
-
 .rs-modal__header {
     padding: 0 1rem;
     border-bottom: 1px solid #eee;
     height: 3rem;
     line-height: 3rem;
     text-align: center;
+}
+
+.rs-flex{
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+}
+
+.rs-justify-center{
+    justify-content: center;
+}
+
+.rs-ml-4{
+    margin-left: 16px;
+}
+
+.rs-mt-4{
+    margin-top: 16px;
+}
+
+.rs-instruction-box{
+    margin-top: 48px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.rs-instruction-box__title{
+    font-size: 24px;
+}
+
+.rs-instruction-box svg{
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.rs-action-block{
+    margin-top: 32px;
 }
 
 .rs-modal__content {

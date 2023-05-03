@@ -5,25 +5,6 @@ jQuery(document).ready(function($) {
   var confirm_modal = $('#js-alipay-confirm-modal');
 
   /**
-   * 点击提交支付表单
-   */
-  if (confirm_modal.length !== 0) {
-    var modal_height = '460px';
-
-    if ('bridge_url' in WpWooAlipayData) {
-      modal_height = '290px';
-    }
-
-    $.blockUI({
-      message: confirm_modal,
-      css    : {
-        width : '500px',
-        height: modal_height,
-      },
-    });
-  }
-
-  /**
    * 重新支付页面的支付按钮
    */
   $('#place_order').click(function() {
@@ -68,7 +49,7 @@ jQuery(document).ready(function($) {
           }
         }
       },
-      error  : function(data) {
+      error  : function() {
         if (loop_count-- > 0) {
           setTimeout(wprs_woo_alipay_query_order, loop_time);
         }
@@ -86,170 +67,5 @@ jQuery(document).ready(function($) {
   });
 
   wprs_woo_alipay_query_order();
-
-  /**
-   *
-   * @type {{
-   * to_alipay : (function() : boolean),
-   * init : init,
-   * $checkout_form : (jQuery|HTMLElement),
-   * submit_error : submit_error,
-   * blockOnSubmit : blockOnSubmit,
-   * scroll_to_notices : scroll_to_notices,
-   * detachUnloadEventsOnSubmit : detachUnloadEventsOnSubmit,
-   * attachUnloadEventsOnSubmit : attachUnloadEventsOnSubmit}}
-   */
-  var wc_alipay_checkout = {
-    $checkout_form: $('form.checkout'),
-
-    init: function() {
-      this.$checkout_form.on('checkout_place_order_wprs-wc-alipay', this.to_alipay);
-    },
-
-    to_alipay: function() {
-      event.preventDefault();
-
-      var $form = $(this);
-
-      $form.addClass('processing');
-
-      wc_alipay_checkout.blockOnSubmit($form);
-
-      // Attach event to block reloading the page when the form has been submitted
-      wc_alipay_checkout.attachUnloadEventsOnSubmit();
-
-      $.ajax({
-        type    : 'POST',
-        url     : wc_checkout_params.checkout_url,
-        data    : $form.serialize(),
-        dataType: 'json',
-        success : function(result) {
-          // Detach the unload handler that prevents a reload / redirect
-          wc_alipay_checkout.detachUnloadEventsOnSubmit();
-
-          console.log(result);
-
-          try {
-            if ('success' === result.result) {
-              // 事先打开一个窗口，Ajax 成功后替换 location, 以解决弹出窗口被屏蔽的问题
-              var alipay_window = window.open(WpWooAlipayData.bridge_url, '_blank');
-
-              if (-1 === result.redirect.indexOf('https://') || -1 === result.redirect.indexOf('http://')) {
-                alipay_window.location = result.payment_url;
-                alipay_window.focus();
-
-                window.location = result.redirect;
-
-                return false;
-              } else {
-                alipay_window.location = decodeURI(result.payment_url);
-                alipay_window.focus();
-
-                window.location = decodeURI(result.redirect);
-              }
-            } else if ('failure' === result.result) {
-              throw 'Result failure';
-            } else {
-              throw 'Invalid response';
-            }
-          } catch (err) {
-            // Reload page
-            if (true === result.reload) {
-              window.location.reload();
-              return;
-            }
-
-            // Trigger update in case we need a fresh nonce
-            if (true === result.refresh) {
-              $(document.body).trigger('update_checkout');
-            }
-
-            // Add new errors
-            if (result.messages) {
-              wc_alipay_checkout.submit_error(result.messages);
-            } else {
-              wc_alipay_checkout.submit_error(
-                  '<div class="woocommerce-error">' +
-                  wc_checkout_params.i18n_checkout_error +
-                  '</div>'); // eslint-disable-line max-len
-            }
-          }
-        },
-        error   : function(jqXHR, textStatus, errorThrown) {
-          // Detach the unload handler that prevents a reload / redirect
-          wc_alipay_checkout.detachUnloadEventsOnSubmit();
-
-          wc_alipay_checkout.submit_error(
-              '<div class="woocommerce-error">' + errorThrown + '</div>');
-        },
-      });
-
-      return false;
-    },
-
-    blockOnSubmit: function($form) {
-      var form_data = $form.data();
-
-      if (1 !== form_data['blockUI.isBlocked']) {
-        $form.block({
-          message   : null,
-          overlayCSS: {
-            background: '#fff',
-            opacity   : 0.6,
-          },
-        });
-      }
-    },
-
-    attachUnloadEventsOnSubmit: function() {
-      $(window).on('beforeunload', this.handleUnloadEvent);
-    },
-
-    detachUnloadEventsOnSubmit: function() {
-      $(window).unbind('beforeunload', this.handleUnloadEvent);
-    },
-
-    handleUnloadEvent: function(e) {
-      // Modern browsers have their own standard generic messages that they will display.
-      // Confirm, alert, prompt or custom message are not allowed during the unload event
-      // Browsers will display their own standard messages
-
-      // Check if the browser is Internet Explorer
-      if ((navigator.userAgent.indexOf('MSIE') !== -1) ||
-          (!!document.documentMode)) {
-        // IE handles unload events differently than modern browsers
-        e.preventDefault();
-        return undefined;
-      }
-
-      return true;
-    },
-
-    submit_error: function(error_message) {
-      $('.woocommerce-NoticeGroup-checkout, .woocommerce-error, .woocommerce-message').
-          remove();
-      wc_alipay_checkout.$checkout_form.prepend('<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' + error_message + '</div>'); // eslint-disable-line max-len
-      wc_alipay_checkout.$checkout_form.removeClass('processing').unblock();
-      wc_alipay_checkout.$checkout_form.find('.input-text, select, input:checkbox').trigger('validate').blur();
-      wc_alipay_checkout.scroll_to_notices();
-      $(document.body).trigger('checkout_error');
-    },
-
-    scroll_to_notices: function() {
-      var scrollElement = $(
-          '.woocommerce-NoticeGroup-updateOrderReview, .woocommerce-NoticeGroup-checkout');
-
-      if (!scrollElement.length) {
-        scrollElement = $('.form.checkout');
-      }
-
-      $.scroll_to_notices(scrollElement);
-    },
-
-  };
-
-  if ('bridge_url' in WpWooAlipayData) {
-    wc_alipay_checkout.init();
-  }
 
 });

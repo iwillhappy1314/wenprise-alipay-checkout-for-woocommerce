@@ -147,9 +147,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $this->exchange_rate = $this->get_option('exchange_rate');
 
-        // 设置是否应该重命名按钮。
-        $this->order_button_text = apply_filters('woocommerce_alipay_button_text', __('Proceed to Alipay', 'wprs-wc-alipay'));
-
         // 保存设置
         if (is_admin()) {
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
@@ -165,7 +162,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         add_action('woocommerce_api_wprs-wc-alipay-return', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-alipay-notify', [$this, 'listen_return_notify']);
         add_action('woocommerce_api_wprs-wc-query-order', [$this, 'query_alipay_order']);
-        add_action('woocommerce_api_wprs-wc-alipay-bridge', [$this, 'alipay_bridge']);
 
     }
 
@@ -254,8 +250,8 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
                 'description' => sprintf(__('Enter The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wprs-wc-alipay'), ABSPATH),
             ],
             'is_debug_mod'                => [
-                'title'       => __('Debug Mode', 'wprs-wc-wechatpay'),
-                'label'       => __('Enable debug mod', 'wprs-wc-wechatpay'),
+                'title'       => __('Debug Mode', 'wprs-wc-alipay'),
+                'label'       => __('Enable debug mod', 'wprs-wc-alipay'),
                 'type'        => 'checkbox',
                 'description' => __('If checked, plugin will show program errors in frontend.', 'wprs-wc-alipay'),
                 'default'     => 'no',
@@ -458,13 +454,11 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $order->update_meta_data('_gateway_payment_url', $response->getRedirectUrl());
         $order->save();
-        // update_post_meta($order_id, '_gateway_payment_url', $response->getRedirectUrl());
 
         // 返回支付连接，由 WooCommerce 跳转到支付宝支付
         if ($response->isSuccessful()) {
 
             if ($this->enabled_f2f === 'yes') {
-                // update_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', $response->getQrCode());
                 $order->update_meta_data('wprs_wc_alipay_f2f_qrcode', $response->getQrCode());
                 $order->save();
 
@@ -513,54 +507,48 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $order    = wc_get_order($order_id);
         $code_url = $order->get_meta('wprs_wc_alipay_f2f_qrcode', true);
-        // $code_url = get_post_meta($order_id, 'wprs_wc_alipay_f2f_qrcode', true);
-
         ?>
 
-        <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal" style="display: none;">
-            <div class="rs-modal">
-                <header class="rs-modal__header">
-                    <?= __('Online Payment', 'wprs-wc-alipay'); ?>
-                </header>
+        <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal">
+            <div class="rs-payment-box">
 
-                <div class="rs-modal__content">
+                <?php if ($this->enabled_f2f === 'yes') : ?>
 
-                    <?php if ($this->enabled_f2f === 'yes') : ?>
+                    <div class='rs-alert rs-alert--warning'>
+                        <?= __('Please open alipay and scan this qrcode.', 'wprs-wc-alipay'); ?>
+                    </div>
 
-                        <div class='rs-alert rs-alert--warning'>
-                            <?= __('Please open alipay and scan this qrcode.', 'wprs-wc-alipay'); ?>
-                        </div>
+                    <div class="wprs-qrcode">
+                        <div id="wprs_wc_alipay_f2f_qrcode"></div>
+                    </div>
 
-                        <div class="wprs-qrcode">
-                            <div id="wprs_wc_alipay_f2f_qrcode"></div>
-                        </div>
+                    <script>
+                      jQuery(document).ready(function($) {
+                        $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
+                      });
+                    </script>
 
-                        <script>
-                          jQuery(document).ready(function($) {
-                            $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
-                          });
-                        </script>
+                <?php else: ?>
 
-                    <?php else: ?>
+                    <div class="rs-instruction-box">
+                        <svg t="1682582744808" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="6584" width="64" height="64"><path d="M512 960C264.577 960 64 759.424 64 512S264.577 64 512 64s448 200.576 448 448-200.577 448-448 448z m246.632-610.632c-12.491-12.491-32.742-12.491-45.233 0L456 606.767 310.601 461.368c-12.491-12.491-32.742-12.491-45.233 0s-12.491 32.742 0 45.233l167.703 167.703c0.104 0.107 0.191 0.223 0.297 0.328 6.249 6.249 14.441 9.372 22.632 9.368 8.191 0.004 16.383-3.118 22.632-9.368 0.106-0.105 0.193-0.222 0.297-0.328l279.703-279.703c12.491-12.491 12.491-32.742 0-45.233z" p-id="6585" fill="#16a34a"></path></svg>
 
-                        <div class="rs-alert rs-alert--warning">
-                            <?= __('Please complete the payment on the newly opened Alipay page. If the page does not automatically jump, click the button below to inquire according to the payment result.', 'wprs-wc-alipay'); ?>
-                        </div>
+                        <div class="rs-instruction-box__title">订单提交成功！</div>
 
-                        <p><?= __('If payment is successful, but the order still shows unpaid, please contact us.', 'wprs-wc-alipay'); ?></p>
+                        <p>请核实上面的支付信息后，点击下面的按钮去支付宝支付。</p>
+                    </div>
 
-                    <?php endif; ?>
+                <?php endif; ?>
 
+                <div class="rs-flex rs-justify-center rs-mt-4 rs-action-block">
+                    <a target="_blank" class="button alt rs-flex" href="<?= $order->get_meta('_gateway_payment_url'); ?>">
+                        <svg t="1682581409962" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="2628" width="24" height="24"><path d="M789 610.3c-38.7-12.9-90.7-32.7-148.5-53.6 34.8-60.3 62.5-129 80.7-203.6H530.5v-68.6h233.6v-38.3H530.5V132h-95.4c-16.7 0-16.7 16.5-16.7 16.5v97.8H182.2v38.3h236.3v68.6H223.4v38.3h378.4a667.18 667.18 0 0 1-54.5 132.9c-122.8-40.4-253.8-73.2-336.1-53-52.6 13-86.5 36.1-106.5 60.3-91.4 111-25.9 279.6 167.2 279.6C386 811.2 496 747.6 581.2 643 708.3 704 960 808.7 960 808.7V659.4s-31.6-2.5-171-49.1zM253.9 746.6c-150.5 0-195-118.3-120.6-183.1 24.8-21.9 70.2-32.6 94.4-35 89.4-8.8 172.2 25.2 269.9 72.8-68.8 89.5-156.3 145.3-243.7 145.3z" p-id="2629" fill="#ffffff"></path></svg>
+                        支付宝支付
+                    </a>
+                    <a href="#" id="js-alipay-fail" class="button rs-flex alt2 rs-ml-4">
+                        <?= __('查询支付结果', 'wprs-wc-alipay'); ?>
+                    </a>
                 </div>
-
-                <footer class="rs-modal__footer">
-                    <button type="button" id="js-alipay-success" class="button alt is-primary">
-                        <?= __('payment successful', 'wprs-wc-alipay'); ?>
-                    </button>
-                    <button type="button" id="js-alipay-fail" class="button">
-                        <?= __('Payment failed', 'wprs-wc-alipay'); ?>
-                    </button>
-                </footer>
 
             </div>
         </div>
@@ -705,20 +693,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
 
     /**
-     * 支付宝跳转中间页面
-     */
-    public function alipay_bridge()
-    {
-        wp_die(
-            __('Redirecting to alipay..., please wait a moment', 'wprs-wc-alipay'),
-            __('Redirecting to alipay, please wait a moment...', 'wprs-wc-alipay'),
-            ['response' => 200]
-        );
-
-    }
-
-
-    /**
      * 处理退款
      *
      * If the gateway declares 'refunds' support, this will allow it to refund.
@@ -735,7 +709,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
     {
         $gateway = $this->get_gateway();
         $order   = wc_get_order($order_id);
-        $total   = (float)$order->get_total();
+        $total   = $order->get_total();
 
         $exchange_rate = (float)$this->get_option('exchange_rate');
         if ($exchange_rate <= 0) {
@@ -795,7 +769,6 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $order->delete_meta_data('_gateway_payment_url');
         $order->save();
-        // delete_post_meta($order->get_id(), '_gateway_payment_url');
     }
 
 

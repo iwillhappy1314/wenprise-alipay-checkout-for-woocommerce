@@ -719,6 +719,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
 
         $total         = round($total * $exchange_rate, get_option('woocommerce_price_num_decimals'));
         $refund_amount = round($amount * $exchange_rate, get_option('woocommerce_price_num_decimals'));
+        $refund_amount = number_format($refund_amount,get_option('woocommerce_price_num_decimals'),'.','');
 
         if ($refund_amount <= 0 || $refund_amount > $total) {
             return false;

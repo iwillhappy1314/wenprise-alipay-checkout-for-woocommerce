@@ -39,7 +39,7 @@ if (PHP_VERSION_ID < 70100) {
 const WENPRISE_ALIPAY_FILE_PATH = __FILE__;
 define('WENPRISE_ALIPAY_PATH', plugin_dir_path(__FILE__));
 define('WENPRISE_ALIPAY_URL', plugin_dir_url(__FILE__));
-const WENPRISE_ALIPAY_VERSION = '1.1.0';
+const WENPRISE_ALIPAY_VERSION        = '1.1.0';
 const WENPRISE_ALIPAY_WOOCOMMERCE_ID = 'wprs-wc-alipay';
 const WENPRISE_ALIPAY_ASSETS_URL     = WENPRISE_ALIPAY_URL . 'frontend/';
 
@@ -103,7 +103,7 @@ add_filter('woocommerce_pay_order_button_html', function ($html)
     global $wp;
 
     $order_id    = $wp->query_vars[ 'order-pay' ];
-    $order = wc_get_order($order_id);
+    $order       = wc_get_order($order_id);
     $payment_url = $order->get_meta('_gateway_payment_url');
 
     if ($payment_url) {
@@ -127,8 +127,17 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 });
 
 
-add_action( 'before_woocommerce_init', function () {
-    if ( class_exists( FeaturesUtil::class ) ) {
-        FeaturesUtil::declare_compatibility( 'custom_order_tables', WENPRISE_ALIPAY_FILE_PATH, true );
+add_action('before_woocommerce_init', function ()
+{
+    if (class_exists(FeaturesUtil::class)) {
+        FeaturesUtil::declare_compatibility('custom_order_tables', WENPRISE_ALIPAY_FILE_PATH, true);
     }
-} );
+});
+
+
+add_filter('trp_no_translate_selectors', function ($selectors_array, $language)
+{
+    $selectors_array[] = '.rs-payment-url';
+
+    return $selectors_array;
+}, 10, 2);

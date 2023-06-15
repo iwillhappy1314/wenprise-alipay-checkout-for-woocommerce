@@ -419,6 +419,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
         }
 
         $total = round($total * $exchange_rate, get_option('woocommerce_price_num_decimals'));
+        $total = number_format($total,get_option('woocommerce_price_num_decimals'),'.','');
 
         do_action('wenprise_woocommerce_alipay_before_process_payment');
 

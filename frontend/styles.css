@@ -115,6 +115,10 @@
     margin-bottom: 12px;
 }
 
+.woocommerce .button.rswc-button{
+    line-height: 24px;
+}
+
 @media screen and (max-width: 768px) {
     .blockPage {
         max-width: 500px !important;

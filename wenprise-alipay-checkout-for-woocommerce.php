@@ -141,3 +141,15 @@ add_filter('trp_no_translate_selectors', function ($selectors_array, $language)
 
     return $selectors_array;
 }, 10, 2);
+
+
+/**
+ * 避免 TranslatePress 插件翻译签名字符串
+ */
+add_filter('option_trp_advanced_settings', function ($options)
+{
+    $options[ 'exclude_gettext_strings' ][ 'string' ][] = 'Pay for order %1$s at %2$s';
+    $options[ 'exclude_gettext_strings' ][ 'domain' ][] = 'wprs-wc-alipay';
+
+    return $options;
+});

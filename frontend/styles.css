@@ -117,6 +117,7 @@
 
 .woocommerce .button.rswc-button{
     line-height: 24px;
+    text-decoration: none !important;
 }
 
 @media screen and (max-width: 768px) {

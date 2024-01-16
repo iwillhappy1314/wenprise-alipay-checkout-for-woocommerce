@@ -9,6 +9,11 @@
     "symfony/polyfill-intl-normalizer": "1.20.0",
     "symfony/polyfill-mbstring": "1.20.0"
   },
+  "autoload": {
+    "psr-4": {
+      "Wenprise\\Alipay\\": "src/"
+    }
+  },
   "config": {
     "preferred-install": {
       "*": "dist"

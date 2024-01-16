@@ -1,0 +1,20 @@
+{
+  "name": "wenpirse-wc-alipay",
+  "title": "Alipay payment gateway for WooCommerce by Wenprise",
+  "version": "5.8.1",
+  "author": "Tunbosun Ayinla",
+  "license": "GPL-3.0+",
+  "keywords": [],
+  "engines": {
+    "npm": ">=8.15.0",
+    "node": ">=16.17.0"
+  },
+  "devDependencies": {
+    "@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
+    "@wordpress/scripts": "^26.10.0"
+  },
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  }
+}

@@ -1,4 +1,6 @@
 <?php
+namespace Wenprise\Alipay;
+
 /**
  *
  * trade_no | $order->get_transaction_id() :支付宝交易号，和商户订单号不能同时为空
@@ -16,11 +18,11 @@ use Omnipay\Omnipay;
 /**
  * Gateway class
  */
-class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
+class PaymentGateway extends \WC_Payment_Gateway
 {
 
     /**
-     * @var WC_Logger Logger 实例
+     * @var \WC_Logger Logger 实例
      */
     public $log = false;
 
@@ -337,7 +339,7 @@ class Wenprise_Alipay_Gateway extends \WC_Payment_Gateway
             $is_available = false;
         }
 
-        if (wprs_wc_alipay_is_wechat()) {
+        if (Helpers::is_wechat()) {
             $is_available = false;
         }
 

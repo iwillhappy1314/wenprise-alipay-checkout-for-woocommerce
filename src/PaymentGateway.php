@@ -762,7 +762,7 @@ class PaymentGateway extends \WC_Payment_Gateway
      * @param $order    \WC_Order
      * @param $trade_no string
      */
-    public function complete_order(WC_Order $order, string $trade_no)
+    public function complete_order(\WC_Order $order, string $trade_no)
     {
         // 添加订单备注
         if ($order->get_status() === 'pending') {

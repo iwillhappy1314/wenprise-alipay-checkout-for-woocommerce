@@ -2,13 +2,13 @@
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
 Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支付宝, 支付宝支付, Alipay payment gateway, Wechat gateway, credit card, pay, online payment, shop, e-commerce, ecommerce
-Requires PHP: 7.1
+Requires PHP: 7.2
 Requires at least: 3.9
-Tested up to: 6.2
+Tested up to: 6.4
 Stable tag: 1.3.2
 License: GPL-2.0+
 WC requires at least: 3.6
-WC tested up to: 7.8
+WC tested up to: 8.5
 
 Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支付网关。
 

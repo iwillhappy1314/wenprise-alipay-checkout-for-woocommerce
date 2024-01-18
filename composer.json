@@ -1,7 +1,8 @@
 {
   "require": {
     "php": ">=7.1",
-    "omnipay/common": "3.0.*",
+    "omnipay/common": "^3.0",
+    "moneyphp/money": "^3.1",
     "lokielse/omnipay-alipay": "^3.1",
     "symfony/http-foundation": "3.4.*",
     "paragonie/random_compat": "<9.99",
@@ -17,6 +18,9 @@
   "config": {
     "preferred-install": {
       "*": "dist"
+    },
+    "allow-plugins": {
+      "php-http/discovery": true
     }
   }
 }

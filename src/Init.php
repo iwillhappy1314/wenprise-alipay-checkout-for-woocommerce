@@ -17,7 +17,7 @@ class Init {
 		add_filter( 'trp_no_translate_selectors', [ $this, 'ignore_translate_elements' ], 10, 2 );
 
 		add_filter( 'woocommerce_pay_order_button_html', [ $this, 'modify_pay_button_html' ] );
-		add_filter( 'plugin_action_links_' . WENPRISE_ALIPAY_BASE_NAME, [ $this, 'add_settings_link' ] );
+		add_filter( 'plugin_action_links_' . WENPRISE_ALIPAY_BASE_FILE, [ $this, 'add_settings_link' ] );
 	}
 
 
@@ -39,7 +39,7 @@ class Init {
 
 	function add_custom_table_support() {
 		if ( class_exists( FeaturesUtil::class ) ) {
-			FeaturesUtil::declare_compatibility( 'custom_order_tables', WENPRISE_ALIPAY_FILE_PATH, true );
+			FeaturesUtil::declare_compatibility( 'custom_order_tables', WENPRISE_ALIPAY_FILE_PATH );
 		}
 	}
 

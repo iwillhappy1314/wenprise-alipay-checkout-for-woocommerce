@@ -35,11 +35,11 @@ if ( PHP_VERSION_ID < 70200 ) {
 	return;
 }
 
-const WENPRISE_ALIPAY_FILE_PATH = __FILE__;
 define( 'WENPRISE_ALIPAY_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WENPRISE_ALIPAY_URL', plugin_dir_url( __FILE__ ) );
-define( 'WENPRISE_ALIPAY_BASE_NAME', plugin_basename( __FILE__ ) );
-const WENPRISE_ALIPAY_VERSION        = '1.1.0';
+define( 'WENPRISE_ALIPAY_BASE_FILE', plugin_basename( __FILE__ ) );
+const WENPRISE_ALIPAY_FILE_PATH      = __FILE__;
+const WENPRISE_ALIPAY_VERSION        = '2.0.0';
 const WENPRISE_ALIPAY_WOOCOMMERCE_ID = 'wprs-wc-alipay';
 const WENPRISE_ALIPAY_ASSETS_URL     = WENPRISE_ALIPAY_URL . 'frontend/';
 

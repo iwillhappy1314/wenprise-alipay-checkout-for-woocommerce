@@ -26,7 +26,7 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支�
 * 货币不是人民币时，可以设置一个固定汇率
 * 支持设置订单前缀
 * 兼容高性能存储功能
-* 支持结账区块
+* 支持结账区块页面
 
 ### 插件设置方法及使用教程 ###
 [Wenprise Alipay Gateway For WooCommerce 插件设置教程](https://www.wpzhiku.com/wenprise-alipay-gateway-for-woocommerce-document/)
@@ -34,6 +34,10 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支�
 ### 付费设置服务 ###
 如果你不想自己动手设置，或者自己设置有困难，可以购买我们的付费设置服务。
 [WooCommerce支付宝插件设置服务](https://www.wpzhiku.com/product/woocommerce-alipay-service/)
+
+### WordPress插件定制开发服务 ###
+如果你不想自己动手设置，或者自己设置有困难，可以购买我们的付费设置服务。
+[WordPress插件定制开发服务](https://www.wpzhiku.com/service/plugin/)
 
 ### 微信支付网关 ###
 [Wenprise WeChatPay Payment Gateway For WooCommerce](https://wordpress.org/plugins/wenprise-wechatpay-checkout-for-woocommerce/)

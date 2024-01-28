@@ -25,6 +25,8 @@ Alipay payment gateway for WooCommerce, WooCommerce 支付宝免费全功能支�
 * 由于支付宝在微信中被屏蔽掉了，支付宝支付在微信中自动隐藏
 * 货币不是人民币时，可以设置一个固定汇率
 * 支持设置订单前缀
+* 兼容高性能存储功能
+* 支持结账区块
 
 ### 插件设置方法及使用教程 ###
 [Wenprise Alipay Gateway For WooCommerce 插件设置教程](https://www.wpzhiku.com/wenprise-alipay-gateway-for-woocommerce-document/)

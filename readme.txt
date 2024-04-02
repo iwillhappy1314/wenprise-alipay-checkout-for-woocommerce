@@ -1,7 +1,7 @@
 ﻿# Wenprise Alipay Gateway For WooCommerce #
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
-Tags: Alipay, WooCommerce, woocommerce, payment, payment gateway, gateway, 支付宝, 支付宝支付, Alipay payment gateway, Wechat gateway, credit card, pay, online payment, shop, e-commerce, ecommerce
+Tags: Alipay, WooCommerce, Woocommerce Payment Gateway, 支付宝支付, Alipay Payment Gateway, Alipay
 Requires PHP: 7.2
 Requires at least: 4.7
 Tested up to: 6.4

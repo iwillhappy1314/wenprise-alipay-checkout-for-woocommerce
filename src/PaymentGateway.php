@@ -802,7 +802,7 @@ class PaymentGateway extends \WC_Payment_Gateway
     {
         if ($this->is_debug_mod) {
             if ( ! ($this->log)) {
-                $this->log = new WC_Logger();
+                $this->log = new \WC_Logger();
             }
             $this->log->add('woocommerce_wprs-wc-alipay', var_export($message, true));
         }

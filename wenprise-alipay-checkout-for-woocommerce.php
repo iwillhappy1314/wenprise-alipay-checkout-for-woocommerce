@@ -52,6 +52,7 @@ add_action( 'plugins_loaded', function ()
 	}
 
 	// 加载文件
+	require WENPRISE_ALIPAY_PATH . 'build/autoload.php';
 	require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
 
 	// 加载语言包

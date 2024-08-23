@@ -1,0 +1,14 @@
+{
+  "name": "brianhenryie/strauss-config-test",
+  "autoload": {
+    "psr-4": {
+      "BrianHenryIE\\Strauss\\": ["src","includes"]
+    },
+    "classmap": [
+      "classes"
+    ],
+    "files": [
+      "functions.php"
+    ]
+  }
+}

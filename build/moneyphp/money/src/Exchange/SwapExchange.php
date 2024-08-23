@@ -1,0 +1,47 @@
+<?php
+/**
+ * @license MIT
+ *
+ * Modified by __root__ on 23-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ */
+
+namespace Wenprise\Alipay\Money\Exchange;
+
+use Exchanger\Exception\Exception as ExchangerException;
+use Wenprise\Alipay\Money\Currency;
+use Wenprise\Alipay\Money\CurrencyPair;
+use Wenprise\Alipay\Money\Exception\UnresolvableCurrencyPairException;
+use Wenprise\Alipay\Money\Exchange;
+use Swap\Swap;
+
+/**
+ * Provides a way to get exchange rate from a third-party source and return a currency pair.
+ *
+ * @author Márk Sági-Kazár <mark.sagikazar@gmail.com>
+ */
+final class SwapExchange implements Exchange
+{
+    /**
+     * @var Swap
+     */
+    private $swap;
+
+    public function __construct(Swap $swap)
+    {
+        $this->swap = $swap;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function quote(Currency $baseCurrency, Currency $counterCurrency)
+    {
+        try {
+            $rate = $this->swap->latest($baseCurrency->getCode().'/'.$counterCurrency->getCode());
+        } catch (ExchangerException $e) {
+            throw UnresolvableCurrencyPairException::createFromCurrencies($baseCurrency, $counterCurrency);
+        }
+
+        return new CurrencyPair($baseCurrency, $counterCurrency, $rate->getValue());
+    }
+}

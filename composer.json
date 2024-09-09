@@ -1,7 +1,6 @@
 {
   "require": {
-    "php": "^7.4 || ^8.0",
-    "lokielse/omnipay-alipay": "^3.1"
+    "php": "^7.4 || ^8.0"
   },
   "autoload": {
     "psr-4": {
@@ -17,50 +16,5 @@
     }
   },
   "require-dev": {
-    "brianhenryie/strauss": "*"
-  },
-  "extra": {
-    "strauss": {
-      "target_directory": "build",
-      "namespace_prefix": "\\Wenprise\\Alipay\\",
-      "classmap_prefix": "Wenprise_Alipay_",
-      "constant_prefix": "WENPRISE_ALIPAY_",
-      "packages": [
-      ],
-      "update_call_sites": false,
-      "override_autoload": {
-      },
-      "exclude_from_copy": {
-        "packages": [
-        ],
-        "namespaces": [
-        ],
-        "file_patterns": [
-        ]
-      },
-      "exclude_from_prefix": {
-        "packages": [
-        ],
-        "namespaces": [
-        ],
-        "file_patterns": [
-        ]
-      },
-      "namespace_replacement_patterns": {
-      },
-      "delete_vendor_packages": true,
-      "delete_vendor_files": true
-    }
-  },
-  "scripts": {
-    "prefix-namespaces": [
-      "strauss"
-    ],
-    "post-install-cmd": [
-      "@prefix-namespaces"
-    ],
-    "post-update-cmd": [
-      "@prefix-namespaces"
-    ]
   }
 }

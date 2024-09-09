@@ -1,58 +1,59 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2021-08-06 11:33+0800\n"
-"PO-Revision-Date: 2021-08-06 11:34+0800\n"
+"POT-Creation-Date: 2024-09-09 09:40+0800\n"
+"PO-Revision-Date: 2024-09-09 09:47+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
+"X-Poedit-SearchPathExcluded-1: *.js\n"
 
-#: class-checkout.php:112 class-checkout.php:128 class-checkout.php:200
+#: src/Init.php:110 src/PaymentGateway.php:277
+msgid "Settings"
+msgstr "设置"
+
+#: src/PaymentGateway.php:111 src/PaymentGateway.php:194
 msgid "Alipay"
 msgstr "支付宝"
 
-#: class-checkout.php:115
+#: src/PaymentGateway.php:114
 msgid "Alipay Payment Gateway for WooCommerce"
 msgstr "WooCommerce 的支付宝支付网关"
 
-#: class-checkout.php:150
-msgid "Proceed to Alipay"
-msgstr "到支付宝付款"
-
-#: class-checkout.php:179
+#: src/PaymentGateway.php:173
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: class-checkout.php:180
+#: src/PaymentGateway.php:174
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: class-checkout.php:185
+#: src/PaymentGateway.php:179
 msgid "Enable Face2Face Payment"
 msgstr "启用当面付"
 
-#: class-checkout.php:186
+#: src/PaymentGateway.php:180
 msgid "Enable Face2Face Payment on PC"
 msgstr "在PC端启用当面付"
 
-#: class-checkout.php:191 class-checkout.php:192
+#: src/PaymentGateway.php:185 src/PaymentGateway.php:186
 msgid "Enable Alipay Sandbox Mode"
 msgstr "启用支付宝沙盒模式"
 
-#: class-checkout.php:194
+#: src/PaymentGateway.php:188
 #, php-format
 msgid ""
 "Alipay sandbox can be used to test payments. Sign up for an account <a "
@@ -60,79 +61,79 @@ msgid ""
 msgstr ""
 "支付宝沙盒可用于测试付款。<a target=\"_blank\" href=\"%s\">在此处</a>注册帐户"
 
-#: class-checkout.php:198
+#: src/PaymentGateway.php:192
 msgid "Title"
 msgstr "标题"
 
-#: class-checkout.php:203
+#: src/PaymentGateway.php:197
 msgid "Description"
 msgstr "描述"
 
-#: class-checkout.php:205
+#: src/PaymentGateway.php:199
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付"
 
-#: class-checkout.php:209
+#: src/PaymentGateway.php:203
 msgid "Order Number Prefix"
 msgstr "订单号前缀"
 
-#: class-checkout.php:211
+#: src/PaymentGateway.php:205
 msgid "Only alphabet or number Allowed"
 msgstr "仅允许字母或数字"
 
-#: class-checkout.php:212
+#: src/PaymentGateway.php:206
 msgid "WC-"
 msgstr "WC-"
 
-#: class-checkout.php:215
+#: src/PaymentGateway.php:209
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: class-checkout.php:217
+#: src/PaymentGateway.php:211
 msgid "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 msgstr "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 
-#: class-checkout.php:220
+#: src/PaymentGateway.php:214
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: class-checkout.php:222
+#: src/PaymentGateway.php:216
 msgid ""
 "Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使"
 "用)"
 msgstr "输入应用私钥，(rsa_private_key.pem 文件的全部内容)"
 
-#: class-checkout.php:226
+#: src/PaymentGateway.php:220
 msgid "signing mode"
 msgstr "加签模式"
 
-#: class-checkout.php:228
+#: src/PaymentGateway.php:222
 msgid "Select the signing mode。"
 msgstr "选择加签模式。"
 
-#: class-checkout.php:231
+#: src/PaymentGateway.php:225
 msgid "Public Key"
 msgstr "公钥"
 
-#: class-checkout.php:232
+#: src/PaymentGateway.php:226
 msgid "Public Key Certificate"
 msgstr "公钥证书"
 
-#: class-checkout.php:236
+#: src/PaymentGateway.php:230
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: class-checkout.php:238
+#: src/PaymentGateway.php:232
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\""
 
-#: class-checkout.php:241
+#: src/PaymentGateway.php:235
 msgid "alipayCertPublicKey_RSA2.crt Path"
 msgstr "alipayCertPublicKey_RSA2.crt 证书"
 
-#: class-checkout.php:243
+#: src/PaymentGateway.php:237
 #, php-format
 msgid ""
 "Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your "
@@ -140,56 +141,56 @@ msgid ""
 msgstr ""
 "请输入alipayCertPublicKey_RSA2.crt 路径的绝对路径，这是您的网站根路径：%s"
 
-#: class-checkout.php:246
+#: src/PaymentGateway.php:240
 msgid "alipayRootCert.crt Path"
 msgstr "alipayRootCert.crt 证书"
 
-#: class-checkout.php:248
+#: src/PaymentGateway.php:242
 #, php-format
 msgid ""
 "Enter The absolute path of alipayRootCert.crt, this is your website root "
 "path: %s"
 msgstr "请输入alipayRootCert.crt 文件的绝对路径, 你网站的根目录路径为： %s"
 
-#: class-checkout.php:251
+#: src/PaymentGateway.php:245
 msgid "appCertPublicKey.crt Path"
 msgstr "appCertPublicKey.crt 证书"
 
-#: class-checkout.php:253
+#: src/PaymentGateway.php:247
 #, php-format
 msgid ""
 "Enter The absolute path of appCertPublicKey.crt, this is your website root "
 "path: %s"
 msgstr "请输入 appCertPublicKey.crt 的绝对路径，这是您的网站根路径：%s"
 
-#: class-checkout.php:256
+#: src/PaymentGateway.php:250
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: class-checkout.php:257
+#: src/PaymentGateway.php:251
 msgid "Enable debug mod"
 msgstr "启用调试模式"
 
-#: class-checkout.php:259
+#: src/PaymentGateway.php:253
 msgid "If checked, plugin will show program errors in frontend."
 msgstr "如果启用，会在前端显示详情的错误信息。"
 
-#: class-checkout.php:267
+#: src/PaymentGateway.php:261
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: class-checkout.php:269
+#: src/PaymentGateway.php:263
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: class-checkout.php:283 wenprise-alipay-checkout-for-woocommerce.php:126
-msgid "Settings"
-msgstr "设置"
+#: src/PaymentGateway.php:278
+msgid "Return to payments page"
+msgstr "返回付款页面"
 
-#: class-checkout.php:302
+#: src/PaymentGateway.php:297
 #, php-format
 msgid ""
 "Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
@@ -199,61 +200,61 @@ msgstr ""
 "微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
 "币的汇率</a>。"
 
-#: class-checkout.php:429 class-checkout.php:430
+#: src/PaymentGateway.php:392 src/PaymentGateway.php:393
 #, php-format
 msgid "Pay for order %1$s at %2$s"
-msgstr "支付网站「%2$s」中的订单：%1$s "
+msgstr "支付网站「%2$s」中的订单：%1$s"
 
-#: class-checkout.php:511
-msgid "Online Payment"
-msgstr "在线支付"
+#: src/PaymentGateway.php:468
+msgid "Failed to send order to Alipay, please contact us."
+msgstr "无法发送订单到支付宝，请联系我们。"
 
-#: class-checkout.php:519
+#: src/PaymentGateway.php:500
 msgid "Please open alipay and scan this qrcode."
 msgstr "请打开支付宝并扫描此二维码。"
 
-#: class-checkout.php:535
+#: src/PaymentGateway.php:521
+msgid "Successfully submitted order!"
+msgstr "订单提交成功！"
+
+#: src/PaymentGateway.php:523
 msgid ""
-"Please complete the payment on the newly opened Alipay page. If the page "
-"does not automatically jump, click the button below to inquire according to "
-"the payment result."
-msgstr ""
-"请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击下"
-"面按钮查询。"
+"Please verify the payment information above and click the button below to "
+"pay via Alipay."
+msgstr "请核对上面的付款信息无误后，点击下面的按钮通过支付宝付款。"
 
-#: class-checkout.php:538
-msgid ""
-"If payment is successful, but the order still shows unpaid, please contact "
-"us."
-msgstr "如果支付成功后，如果订单依然显示未支付、请联系网站客服进行处理。"
+#: src/PaymentGateway.php:532
+msgid "pay via Alipay"
+msgstr "支付宝支付"
 
-#: class-checkout.php:546
-msgid "payment successful"
-msgstr "支付成功"
+#: src/PaymentGateway.php:535
+msgid "Check payment results"
+msgstr "检查支付结果"
 
-#: class-checkout.php:549
-msgid "Payment failed"
-msgstr "支付失败"
+#: src/PaymentGateway.php:606
+msgid "Failed to process order, please contact us."
+msgstr "无法处理订单，请联系我们。"
 
-#: class-checkout.php:681
-msgid "Redirecting to alipay..., please wait a moment"
-msgstr "正在重定向到支付宝，请稍候…"
+#: src/PaymentGateway.php:665 src/PaymentGateway.php:745
+msgid "Failed to send query order request, please contact us."
+msgstr "查询订单时出错，请联系我们。"
 
-#: class-checkout.php:682
-msgid "Redirecting to alipay, please wait a moment..."
-msgstr "正在重定向到支付宝，请稍候…"
-
-#: class-checkout.php:735
+#: src/PaymentGateway.php:727
 #, php-format
 msgid "Refunded %1$s"
 msgstr "退款 %1$s"
 
-#: class-checkout.php:758
+#: src/PaymentGateway.php:733
+#, php-format
+msgid "Failed to refunded %1$s. Error message: %2$s"
+msgstr "退款失败 %1$s，错误信息: %2$s"
+
+#: src/PaymentGateway.php:764
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"
 
-#: wenprise-alipay-checkout-for-woocommerce.php:28
+#: wenprise-alipay-checkout-for-woocommerce.php:29
 #, php-format
 msgid ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
@@ -263,6 +264,32 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid "Proceed to Alipay"
+#~ msgstr "到支付宝付款"
+
+#~ msgid "Online Payment"
+#~ msgstr "在线支付"
+
+#~ msgid ""
+#~ "Please complete the payment on the newly opened Alipay page. If the page "
+#~ "does not automatically jump, click the button below to inquire according "
+#~ "to the payment result."
+#~ msgstr ""
+#~ "请您在新打开的支付宝页面上完成支付，如果页面没有自动跳转，根据支付结果点击"
+#~ "下面按钮查询。"
+
+#~ msgid "payment successful"
+#~ msgstr "支付成功"
+
+#~ msgid "Payment failed"
+#~ msgstr "支付失败"
+
+#~ msgid "Redirecting to alipay..., please wait a moment"
+#~ msgstr "正在重定向到支付宝，请稍候…"
+
+#~ msgid "Redirecting to alipay, please wait a moment..."
+#~ msgstr "正在重定向到支付宝，请稍候…"
 
 #, php-format
 #~ msgid ""
@@ -322,9 +349,6 @@ msgstr ""
 
 #~ msgid "Enter your Alipay APPID.（开放平台密钥中的\"APPID\"）"
 #~ msgstr "输入您的支付宝 APPID（开放平台密中中的“APPID”）"
-
-#~ msgid "Check for updates"
-#~ msgstr "檢查更新"
 
 #~ msgid "View details"
 #~ msgstr "查看详情"

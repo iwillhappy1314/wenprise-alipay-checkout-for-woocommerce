@@ -52,8 +52,18 @@ add_action( 'plugins_loaded', function ()
 	}
 
 	// 加载文件
-	require WENPRISE_ALIPAY_PATH . 'build/autoload.php';
 	require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
+
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/AopClient.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/AopCertification.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePrecreateRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePagePayRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeWapPayRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeRefundRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeFastpayRefundQueryRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeQueryRequest.php';
+	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeCloseRequest.php';
+
 
 	// 加载语言包
 	load_plugin_textdomain( 'wprs-wc-alipay', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );

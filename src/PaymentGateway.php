@@ -13,9 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-use Wenprise\Alipay\Omnipay\Common\Exception\InvalidRequestException;
-use Wenprise\Alipay\Omnipay\Omnipay;
-
 /**
  * Gateway class
  */
@@ -278,7 +275,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
         <h3>
 			<?php echo ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'wprs-wc-alipay' ); ?>
-			<?php wc_back_link( __( 'Return to payments', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>
+			<?php wc_back_link( __( 'Return to payments page', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>
         </h3>
 
 		<?php echo ( ! empty( $this->method_description ) ) ? wpautop( $this->method_description ) : ''; ?>
@@ -340,51 +337,27 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	/**
 	 * 获取支付网关
 	 *
-	 * @return \Wenprise\Alipay\Omnipay\Alipay\AopPageGateway|\Wenprise\Alipay\Omnipay\Alipay\AopWapGateway|\Wenprise\Alipay\Omnipay\Common\GatewayInterface
-	 * @throws \Wenprise\Alipay\Omnipay\Common\Exception\InvalidRequestException
 	 */
-	public function get_gateway() {
+	public function get_gateway(): \AopClient {
 
-		/**
-		 * @var \Wenprise\Alipay\Omnipay\Alipay\AopWapGateway | \Wenprise\Alipay\Omnipay\Alipay\AopPageGateway $gateway
-		 */
+		$aop = new \AopClient();
 
-		if ( wp_is_mobile() ) {
-			$gateway = Omnipay::create( 'Alipay_AopWap' );
-		} else {
-			if ( $this->enabled_f2f === 'yes' ) {
-				$gateway = Omnipay::create( 'Alipay_AopF2F' );
-			} else {
-				$gateway = Omnipay::create( 'Alipay_AopPage' );
-			}
-		}
+		$aop->gatewayUrl    = 'https://openapi.alipay.com/gateway.do';
+		$aop->appId         = $this->app_id;
+		$aop->rsaPrivateKey = $this->private_key;
+		$aop->signType      = 'RSA2';
+		$aop->postCharset   = 'UTF-8';
+		$aop->format        = 'json';
 
-		$gateway->setAppId( $this->app_id );
-		$gateway->setSignType( 'RSA2' );
-		$gateway->setPrivateKey( $this->private_key );
+		// if ( $this->cert_type === 'public_key_certificate' ) {
+		// 	$aop->alipay_root_cert  = $this->alipay_root_cert;
+		// 	$aop->alipay_public_key = $this->alipay_cert_public_key_rsa2;
+		// 	$aop->app_cert          = $this->app_cert_publicKey;
+		// }
 
-		if ( $this->enabled_f2f !== 'yes' ) {
-			$gateway->setReturnUrl( WC()->api_request_url( 'wprs-wc-alipay-return' ) );
-		}
+		$aop->alipayrsaPublicKey = $this->alipay_public_key;
 
-		$gateway->setNotifyUrl( WC()->api_request_url( 'wprs-wc-alipay-notify' ) );
-
-		if ( $this->cert_type === 'public_key_certificate' ) {
-			$gateway->setAlipayRootCert( $this->alipay_root_cert );
-			$gateway->setAlipayPublicCert( $this->alipay_cert_public_key_rsa2 );
-			$gateway->setAppCert( $this->app_cert_publicKey );
-			$gateway->setCheckAlipayPublicCert( true );
-		} else {
-			$gateway->setAlipayPublicKey( $this->alipay_public_key );
-		}
-
-		$gateway->setAlipayPublicKey( $this->alipay_public_key );
-
-		if ( $this->is_sandbox_mod ) {
-			$gateway->sandbox();
-		}
-
-		return $gateway;
+		return $aop;
 	}
 
 
@@ -394,9 +367,6 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * @inheritdoc
 	 *
 	 * @param int $order_id
-	 *
-	 * @return array|void
-	 * @throws \Wenprise\Alipay\Omnipay\Common\Exception\InvalidRequestException
 	 */
 	public function process_payment( $order_id ) {
 		$order    = wc_get_order( $order_id );
@@ -416,7 +386,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		// 调用响应的方法来处理支付
 		$gateway = $this->get_gateway();
 
-		$order_data = apply_filters( 'woocommerce_wenprise_alipay_args',
+		$biz_content = apply_filters( 'woocommerce_wenprise_alipay_args',
 			[
 				'out_trade_no' => $order_no,
 				'subject'      => sprintf( __( 'Pay for order %1$s at %2$s', 'wprs-wc-alipay' ), $order_no, get_bloginfo( 'name' ) ),
@@ -426,63 +396,107 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			]
 		);
 
-		if ( $this->enabled_f2f !== 'yes' ) {
-			$order_data[ 'product_code' ] = 'FAST_INSTANT_TRADE_PAY';
-		}
+		/**
+		 * 不同的支付产品，主要是 product_code 和 Request 类不同
+		 */
+		if ( wp_is_mobile() ) {
+			// https://opendocs.alipay.com/open/29ae8cb6_alipay.trade.wap.pay?pathHash=1ef587fd&ref=api&scene=21
+			$biz_content[ 'product_code' ] = 'QUICK_WAP_WAY';
 
-		// 生成订单并发送支付
-		/** @var \Wenprise\Alipay\Omnipay\Alipay\Requests\AbstractAopRequest $request */
-		$request = $gateway->purchase();
-		$request->setBizContent( $order_data );
-
-		/** @var \Wenprise\Alipay\Omnipay\Alipay\Responses\AopTradePagePayResponse|\Wenprise\Alipay\Omnipay\Alipay\Responses\AopTradePreCreateResponse $response */
-		$response = $request->send();
-
-		// 生成订单后清空购物车，以免订单重复
-		WC()->cart->empty_cart();
-
-		do_action( 'woocommerce_wenprise_alipay_before_payment_redirect', $response );
-
-		$order->update_meta_data( '_gateway_payment_url', $response->getRedirectUrl() );
-		$order->save();
-
-		// 返回支付连接，由 WooCommerce 跳转到支付宝支付
-		if ( $response->isSuccessful() ) {
-
-			if ( $this->enabled_f2f === 'yes' ) {
-				$order->update_meta_data( 'wprs_wc_alipay_f2f_qrcode', $response->getQrCode() );
-				$order->save();
-
-				return [
-					'result'   => 'success',
-					'redirect' => $order->get_checkout_payment_url( true ),
-				];
-			}
-
-			if ( $response->isRedirect() ) {
-
-				return [
-					'result'      => 'success',
-					'redirect'    => $order->get_checkout_payment_url( true ),
-					'payment_url' => $response->getRedirectUrl(),
-				];
-
-			}
+			$request = new \AlipayTradeWapPayRequest();
 
 		} else {
+			if ( $this->enabled_f2f === 'yes' ) {
+				// https://opendocs.alipay.com/open/f540afd8_alipay.trade.precreate?pathHash=d3c84596&ref=api&scene=19
+				$biz_content[ 'product_code' ] = 'FACE_TO_FACE_PAYMENT';
+				$request                       = new \AlipayTradePrecreateRequest();
+			} else {
+				// https://opendocs.alipay.com/open/59da99d0_alipay.trade.page.pay?pathHash=e26b497f&ref=api&scene=22
+				$biz_content[ 'product_code' ] = 'FAST_INSTANT_TRADE_PAY';
+
+				$request = new \AlipayTradePagePayRequest();
+			}
+		}
+
+		$request->setNotifyUrl( $this->notify_url );
+		$request->setReturnUrl( $this->get_return_url( $order ) );
+		$request->setBizContent( json_encode( $biz_content ) );
+
+		try {
+			$response = $gateway->pageExecute( $request, 'GET' );
+
+			// 当面付需要两次请求，一次预创建订单，一次获取二维码
+			if ( $this->enabled_f2f === 'yes' ) {
+				$response     = wp_remote_get( $response );
+				$f2f_response = json_decode( wp_remote_retrieve_body( $response ) );
+				$f2f_result   = $f2f_response->alipay_trade_precreate_response;
+
+				if ( ! empty( $f2f_result->code ) && $f2f_result->code === '10000' ) {
+					$order->update_meta_data( 'wprs_wc_alipay_f2f_qrcode', $f2f_result->qr_code );
+					$order->save();
+
+					return [
+						'result'   => 'success',
+						'redirect' => $order->get_checkout_payment_url( true ),
+					];
+				} else {
+					if ( $this->is_debug_mod ) {
+						$error = $f2f_response->alipay_trade_precreate_response->code . ':' . $f2f_response->alipay_trade_precreate_response->msg;
+
+						$this->log( $error );
+						wc_add_notice( $error, 'error' );
+					}
+
+					return [
+						'result'   => 'failure',
+						'messages' => $this->get_error_message( $response ),
+					];
+				}
+			} else {
+				if ( $response ) {
+					$order->update_meta_data( '_gateway_payment_url', $response );
+					$order->save();
+
+					// 生成订单后清空购物车，以免订单重复
+					WC()->cart->empty_cart();
+
+					do_action( 'woocommerce_wenprise_alipay_before_payment_redirect', $response );
+
+					return [
+						'result'      => 'success',
+						'redirect'    => $order->get_checkout_payment_url( true ),
+						'payment_url' => $response,
+					];
+				} else {
+					if ( $this->is_debug_mod ) {
+						$error = $this->get_error_message( $response );
+
+						$this->log( $error );
+						wc_add_notice( $error, 'error' );
+					}
+
+					return [
+						'result'   => 'failure',
+						'messages' => $this->get_error_message( $response ),
+					];
+				}
+			}
+
+		} catch ( \Exception $e ) {
 
 			if ( $this->is_debug_mod ) {
-				$error = $this->get_error_message( $response );
-
-				$this->log( $error );
-				wc_add_notice( $error, 'error' );
+				$error = $this->get_error_message( $e->getMessage() );
+			} else {
+				$error = __( 'Failed to send order to Alipay, please contact us.', 'wprs-wc-alipay' );
 			}
+
+			$this->log( $error );
+			wc_add_notice( $error, 'error' );
 
 			return [
 				'result'   => 'failure',
-				'messages' => $this->get_error_message( $response ),
+				'messages' => $error,
 			];
-
 		}
 
 	}
@@ -526,9 +540,9 @@ class PaymentGateway extends \WC_Payment_Gateway {
                                   p-id="6585" fill="#16a34a"></path>
                         </svg>
 
-                        <div class="rs-instruction-box__title">订单提交成功！</div>
+                        <div class="rs-instruction-box__title"><?= __( 'Successfully submitted order!', 'wprs-wc-alipay' ); ?></div>
 
-                        <p>请核实上面的支付信息后，点击下面的按钮去支付宝支付。</p>
+                        <p><?= __( 'Please verify the payment information above and click the button below to pay via Alipay.', 'wprs-wc-alipay' ); ?></p>
                     </div>
 
                     <div class="rs-flex rs-justify-center rs-mt-4 rs-action-block">
@@ -537,10 +551,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
                                 <path d="M789 610.3c-38.7-12.9-90.7-32.7-148.5-53.6 34.8-60.3 62.5-129 80.7-203.6H530.5v-68.6h233.6v-38.3H530.5V132h-95.4c-16.7 0-16.7 16.5-16.7 16.5v97.8H182.2v38.3h236.3v68.6H223.4v38.3h378.4a667.18 667.18 0 0 1-54.5 132.9c-122.8-40.4-253.8-73.2-336.1-53-52.6 13-86.5 36.1-106.5 60.3-91.4 111-25.9 279.6 167.2 279.6C386 811.2 496 747.6 581.2 643 708.3 704 960 808.7 960 808.7V659.4s-31.6-2.5-171-49.1zM253.9 746.6c-150.5 0-195-118.3-120.6-183.1 24.8-21.9 70.2-32.6 94.4-35 89.4-8.8 172.2 25.2 269.9 72.8-68.8 89.5-156.3 145.3-243.7 145.3z"
                                       p-id="2629" fill="#ffffff"></path>
                             </svg>
-                            支付宝支付
+							<?= __( 'pay via Alipay', 'wprs-wc-alipay' ); ?>
                         </a>
                         <a href="#" id="js-alipay-fail" class="button rswc-button rs-flex alt2 rs-ml-4">
-							<?= __( '查询支付结果', 'wprs-wc-alipay' ); ?>
+							<?= __( 'Check payment results', 'wprs-wc-alipay' ); ?>
                         </a>
                     </div>
 
@@ -559,7 +573,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function listen_return_notify() {
 
-		if ( isset( $_REQUEST[ 'out_trade_no' ] ) && ! empty( $_REQUEST[ 'out_trade_no' ] ) ) {
+		if ( ! empty( $_REQUEST[ 'out_trade_no' ] ) ) {
 
 			$out_trade_no = $_REQUEST[ 'out_trade_no' ];
 
@@ -575,61 +589,48 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			$order = wc_get_order( $order_id );
 
+			$biz_content = [
+				'out_trade_no' => $out_trade_no,
+			];
+
+			$gateway = $this->get_gateway();
+
+			$request = new \AlipayTradeQueryRequest();
+			$request->setBizContent( json_encode( $biz_content, JSON_UNESCAPED_UNICODE ) );
+
 			try {
-				$gateway = $this->get_gateway();
+				$response = $gateway->execute( $request );
 
-				/**
-				 * 获取支付宝返回的参数
-				 */
-				/** @var \Wenprise\Alipay\Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
+				$result = $response->alipay_trade_query_response;
 
-				try {
-					$request = $gateway->completePurchase();
-				} catch ( \Exception $e ) {
-					$this->log( $e->getMessage() );
-					wp_die( $e->getMessage() );
-				}
+				if ( ! empty( $result->code ) && $result->code === '10000' ) {
+					$this->complete_order( $order, $result->trade_no );
 
-				$request->setParams( stripslashes_deep( array_merge( $_POST, $_GET ) ) );
-
-				try {
-
-					/** @var \Wenprise\Alipay\Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
-					$response = $request->send();
-
-					if ( $response->isPaid() ) {
-
-						// 添加订单备注
-						$this->complete_order( $order, $_REQUEST[ 'trade_no' ] );
-
-						if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
-							echo 'success';
-						} else {
-							wp_redirect( $this->get_return_url( $order ) );
-						}
-
+					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
+						echo 'success';
 					} else {
-
+						wp_redirect( $this->get_return_url( $order ) );
+					}
+				} else {
+					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
+						echo 'fail';
+					} else {
 						$error = $this->get_error_message( $response );
 						$this->log( $error );
 
 						wp_redirect( wc_get_checkout_url() );
-
 					}
-
-				} catch ( \Exception $e ) {
-
-					$this->log( $e->getMessage() );
-					wp_die( $e->getMessage() );
-
+				}
+			} catch ( \Exception $e ) {
+				if ( $this->is_debug_mod ) {
+					$error = $e->getMessage();
+				} else {
+					$error = __( 'Failed to process order, please contact us.', 'wprs-wc-alipay' );
 				}
 
-			} catch ( InvalidRequestException $e ) {
-
-				wp_die( $e->getMessage() );
-
+				$this->log( $error );
+				wp_die( $error );
 			}
-
 		}
 
 	}
@@ -648,39 +649,45 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			return;
 		}
 
+		$order = wc_get_order( $order_id );
+
+		$biz_content = [
+			'out_trade_no' => $this->get_order_number( $order_id ),
+		];
+
+		$gateway = $this->get_gateway();
+
+		$request = new \AlipayTradeQueryRequest();
+
+		$request->setBizContent( json_encode( $biz_content, JSON_UNESCAPED_UNICODE ) );
+
 		try {
-			$gateway = $this->get_gateway();
+			$response = $gateway->execute( $request );
 
-			$order = wc_get_order( $order_id );
+			if ( $response ) {
+				$result = $response->alipay_trade_query_response;
 
-			/** @var \Wenprise\Alipay\Omnipay\Alipay\Requests\AopCompletePurchaseRequest $request */
-			$request = $gateway->query();
+				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
+					$this->complete_order( $order, $result->trade_no );
 
-			$request->setBizContent( [
-				'out_trade_no' => $this->get_order_number( $order_id ),
-			] );
-
-			try {
-				/** @var \Wenprise\Alipay\Omnipay\Alipay\Responses\AopCompletePurchaseResponse $response */
-				$response = $request->send();
-
-				if ( $response->isPaid() ) {
-
-					$response_data = $response->getData()[ 'alipay_trade_query_response' ];
-					$this->complete_order( $order, $response_data[ 'trade_no' ] );
-
+					// 支付成功后，返回订单已收到 URL，前端收到后会自动跳转
 					wp_send_json_success( $order->get_checkout_order_received_url() );
 				} else {
+					// 支付失败时，返回失败消息，供前端调试
 					wp_send_json_error( $order->get_checkout_payment_url() );
 				}
-			} catch ( \Exception $e ) {
-				wp_send_json_error( $e->getMessage() );
 
-				$this->log( $e->getMessage() );
+			} else {
+				wp_send_json_error( 'Waiting alipay response.' );
+			}
+		} catch ( \Exception $e ) {
+			if ( $this->is_debug_mod ) {
+				$error = $e->getMessage();
+			} else {
+				$error = __( 'Failed to send query order request, please contact us.', 'wprs-wc-alipay' );
 			}
 
-		} catch ( InvalidRequestException $e ) {
-			wp_send_json_error( $e->getMessage() );
+			wp_send_json_error( $error );
 		}
 
 	}
@@ -697,7 +704,6 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * @param string $reason   Refund reason.
 	 *
 	 * @return boolean True or false based on success, or a WP_Error object.
-	 * @throws \Wenprise\Alipay\Omnipay\Common\Exception\InvalidRequestException
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ): bool {
 		$gateway = $this->get_gateway();
@@ -717,29 +723,51 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			return false;
 		}
 
-		/** @var \Wenprise\Alipay\Omnipay\Alipay\Requests\AopTradeRefundRequest $request */
-		$request = $gateway->refund();
-
-		$request->setBizContent( [
+		$biz_content = [
 			'out_trade_no'   => $this->get_order_number( $order_id ),
 			'trade_no'       => $order->get_transaction_id(),
 			'refund_amount'  => $refund_amount,
 			'out_request_no' => date( 'YmdHis' ) . wp_rand( 1000, 9999 ),
-		] );
+		];
 
+		$request = new \AlipayTradeRefundRequest();
+
+		$request->setBizContent( json_encode( $biz_content, JSON_UNESCAPED_UNICODE ) );
+
+		// 首先调用支付api
 		try {
-			/** @var \Wenprise\Alipay\Omnipay\Alipay\Responses\AopTradeRefundResponse $response */
-			$response = $request->send();
+			// 获取退款URL
+			$response = $gateway->pageExecute( $request, 'GET' );
 
-			if ( $response->isSuccessful() ) {
-				$order->add_order_note(
-					sprintf( __( 'Refunded %1$s', 'wprs-wc-alipay' ), $amount )
-				);
+			if ( $response ) {
+				// 发送退款请求
+				$refund_response = wp_remote_get( $response );
+				$refund_result   = json_decode( wp_remote_retrieve_body( $refund_response ) );
 
-				return true;
+				if ( ! empty( $refund_result->code ) && $refund_result->code == 10000 ) {
+					$order->add_order_note(
+						sprintf( __( 'Refunded %1$s', 'wprs-wc-alipay' ), $amount )
+					);
+
+					return true;
+				} else {
+					$order->add_order_note(
+						sprintf( __( 'Failed to refunded %1$s. Error message: %2$s', 'wprs-wc-alipay' ), $amount, $refund_result->alipay_trade_refund_response->code . ':' . $refund_result->alipay_trade_refund_response->sub_msg )
+					);
+
+					$this->log( $refund_response );
+				}
+
 			}
+
 		} catch ( \Exception $e ) {
-			return false;
+			if ( $this->is_debug_mod ) {
+				$error = $e->getMessage();
+			} else {
+				$error = __( 'Failed to send query order request, please contact us.', 'wprs-wc-alipay' );;
+			}
+
+			$this->log( $error );
 		}
 
 		return false;
@@ -750,7 +778,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * 完成支付、支付网关验证成功后调用此方法
 	 *
 	 * @param $order    \WC_Order
-	 * @param $trade_no string
+	 * @param $trade_no string 支付宝订单号
 	 */
 	public function complete_order( \WC_Order $order, string $trade_no ) {
 		// 添加订单备注
@@ -766,15 +794,17 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 
 	/**
-	 * @param $response \Wenprise\Alipay\Omnipay\Alipay\Responses\AopTradePagePayResponse|\Wenprise\Alipay\Omnipay\Alipay\Responses\AopTradePreCreateResponse | \Wenprise\Alipay\Omnipay\Alipay\Responses\AopCompletePurchaseResponse
+	 *
+	 * @param $response
 	 *
 	 * @return string
 	 */
 	public function get_error_message( $response ): string {
-		$message = $response->getMessage() . '：' . $response->getSubMessage();
+		$result  = $response->alipay_trade_query_response;
+		$message = $result->msg() . '：' . $result->sub_msg();
 
 		if ( $this->is_debug_mod ) {
-			$message .= '. Code：' . $response->getCode() . '，SubCode：' . $response->getSubCode();
+			$message .= '. Code：' . $result->code . '，Message：' . $result->sub_code;
 		}
 
 		return $message;

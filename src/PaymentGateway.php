@@ -600,10 +600,9 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			try {
 				$response = $gateway->execute( $request );
-
 				$result = $response->alipay_trade_query_response;
 
-				if ( ! empty( $result->code ) && $result->code === '10000' ) {
+				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
 					$this->complete_order( $order, $result->trade_no );
 
 					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
@@ -741,18 +740,19 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			if ( $response ) {
 				// 发送退款请求
-				$refund_response = wp_remote_get( $response );
-				$refund_result   = json_decode( wp_remote_retrieve_body( $refund_response ) );
+				$refund_request = wp_remote_get( $response );
+				$refund_response   = json_decode( wp_remote_retrieve_body( $refund_request ) );
+                $refund_result = $refund_response->alipay_trade_refund_response;
 
 				if ( ! empty( $refund_result->code ) && $refund_result->code == 10000 ) {
 					$order->add_order_note(
-						sprintf( __( 'Refunded %1$s', 'wprs-wc-alipay' ), $amount )
+						sprintf( __( 'Refunded %1$s via Alipay', 'wprs-wc-alipay' ), $refund_result->refund_fee )
 					);
 
 					return true;
 				} else {
 					$order->add_order_note(
-						sprintf( __( 'Failed to refunded %1$s. Error message: %2$s', 'wprs-wc-alipay' ), $amount, $refund_result->alipay_trade_refund_response->code . ':' . $refund_result->alipay_trade_refund_response->sub_msg )
+						sprintf( __( 'Failed to refunded %1$s. Error message: %2$s', 'wprs-wc-alipay' ), $amount, $refund_result->code . ':' . $refund_result->sub_msg )
 					);
 
 					$this->log( $refund_response );

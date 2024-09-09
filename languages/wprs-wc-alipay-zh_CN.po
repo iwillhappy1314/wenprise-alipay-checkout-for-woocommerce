@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2024-09-09 09:40+0800\n"
-"PO-Revision-Date: 2024-09-09 09:47+0800\n"
+"POT-Creation-Date: 2024-09-09 10:52+0800\n"
+"PO-Revision-Date: 2024-09-09 10:52+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -205,51 +205,51 @@ msgstr ""
 msgid "Pay for order %1$s at %2$s"
 msgstr "支付网站「%2$s」中的订单：%1$s"
 
-#: src/PaymentGateway.php:468
+#: src/PaymentGateway.php:490
 msgid "Failed to send order to Alipay, please contact us."
 msgstr "无法发送订单到支付宝，请联系我们。"
 
-#: src/PaymentGateway.php:500
+#: src/PaymentGateway.php:522
 msgid "Please open alipay and scan this qrcode."
 msgstr "请打开支付宝并扫描此二维码。"
 
-#: src/PaymentGateway.php:521
+#: src/PaymentGateway.php:543
 msgid "Successfully submitted order!"
 msgstr "订单提交成功！"
 
-#: src/PaymentGateway.php:523
+#: src/PaymentGateway.php:545
 msgid ""
 "Please verify the payment information above and click the button below to "
 "pay via Alipay."
 msgstr "请核对上面的付款信息无误后，点击下面的按钮通过支付宝付款。"
 
-#: src/PaymentGateway.php:532
+#: src/PaymentGateway.php:554
 msgid "pay via Alipay"
 msgstr "支付宝支付"
 
-#: src/PaymentGateway.php:535
+#: src/PaymentGateway.php:557
 msgid "Check payment results"
 msgstr "检查支付结果"
 
-#: src/PaymentGateway.php:606
+#: src/PaymentGateway.php:628
 msgid "Failed to process order, please contact us."
 msgstr "无法处理订单，请联系我们。"
 
-#: src/PaymentGateway.php:665 src/PaymentGateway.php:745
+#: src/PaymentGateway.php:687 src/PaymentGateway.php:768
 msgid "Failed to send query order request, please contact us."
 msgstr "查询订单时出错，请联系我们。"
 
-#: src/PaymentGateway.php:727
+#: src/PaymentGateway.php:750
 #, php-format
-msgid "Refunded %1$s"
-msgstr "退款 %1$s"
+msgid "Refunded %1$s via Alipay"
+msgstr "通过支付宝退款 %1$s"
 
-#: src/PaymentGateway.php:733
+#: src/PaymentGateway.php:756
 #, php-format
 msgid "Failed to refunded %1$s. Error message: %2$s"
 msgstr "退款失败 %1$s，错误信息: %2$s"
 
-#: src/PaymentGateway.php:764
+#: src/PaymentGateway.php:787
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"

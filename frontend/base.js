@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { decodeEntities } from '@wordpress/html-entities';
 
 const defaultLabel = __(
-    '支付宝支付',
+    'Alipay By Wenprise',
     'wenprise-wc-alipay'
 );
 

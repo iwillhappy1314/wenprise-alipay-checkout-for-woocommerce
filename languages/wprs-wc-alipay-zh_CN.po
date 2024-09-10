@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2024-09-09 10:52+0800\n"
-"PO-Revision-Date: 2024-09-09 10:52+0800\n"
+"POT-Creation-Date: 2024-09-10 15:48+0800\n"
+"PO-Revision-Date: 2024-09-10 15:48+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -25,9 +25,9 @@ msgstr ""
 msgid "Settings"
 msgstr "设置"
 
-#: src/PaymentGateway.php:111 src/PaymentGateway.php:194
-msgid "Alipay"
-msgstr "支付宝"
+#: src/PaymentGateway.php:111
+msgid "Alipay By Wenprise"
+msgstr "Alipay By Wenprise"
 
 #: src/PaymentGateway.php:114
 msgid "Alipay Payment Gateway for WooCommerce"
@@ -64,6 +64,10 @@ msgstr ""
 #: src/PaymentGateway.php:192
 msgid "Title"
 msgstr "标题"
+
+#: src/PaymentGateway.php:194
+msgid "Alipay"
+msgstr "支付宝"
 
 #: src/PaymentGateway.php:197
 msgid "Description"
@@ -231,25 +235,25 @@ msgstr "支付宝支付"
 msgid "Check payment results"
 msgstr "检查支付结果"
 
-#: src/PaymentGateway.php:628
+#: src/PaymentGateway.php:627
 msgid "Failed to process order, please contact us."
 msgstr "无法处理订单，请联系我们。"
 
-#: src/PaymentGateway.php:687 src/PaymentGateway.php:768
+#: src/PaymentGateway.php:686 src/PaymentGateway.php:767
 msgid "Failed to send query order request, please contact us."
 msgstr "查询订单时出错，请联系我们。"
 
-#: src/PaymentGateway.php:750
+#: src/PaymentGateway.php:749
 #, php-format
 msgid "Refunded %1$s via Alipay"
 msgstr "通过支付宝退款 %1$s"
 
-#: src/PaymentGateway.php:756
+#: src/PaymentGateway.php:755
 #, php-format
 msgid "Failed to refunded %1$s. Error message: %2$s"
 msgstr "退款失败 %1$s，错误信息: %2$s"
 
-#: src/PaymentGateway.php:787
+#: src/PaymentGateway.php:786
 #, php-format
 msgid "Alipay payment complete (Alipay ID: %s)"
 msgstr "支付宝支付完成(支付宝订单号: %s)"

@@ -108,7 +108,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
 		// 支付网关页面显示的支付网关标题
-		$this->method_title = __( 'Alipay', 'wprs-wc-alipay' );
+		$this->method_title = __( 'Alipay Payment Gateway By Wenprise', 'wprs-wc-alipay' );
 
 		// 支付网关设置页面显示的支付网关标题
 		$this->method_description = __( 'Alipay Payment Gateway for WooCommerce', 'wprs-wc-alipay' );

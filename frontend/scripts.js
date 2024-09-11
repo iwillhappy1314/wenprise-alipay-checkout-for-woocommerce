@@ -42,7 +42,7 @@ jQuery(document).ready(function($) {
       },
       success: function(data) {
         if (data && data.success === true || manual_trigger === true) {
-          location.href = data.data;
+          location.href = data.data.url;
         } else {
           if (loop_count-- > 0) {
             setTimeout(wprs_woo_alipay_query_order, loop_time);

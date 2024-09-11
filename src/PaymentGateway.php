@@ -600,7 +600,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			try {
 				$response = $gateway->execute( $request );
-				$result = $response->alipay_trade_query_response;
+				$result   = $response->alipay_trade_query_response;
 
 				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
 					$this->complete_order( $order, $result->trade_no );
@@ -670,10 +670,17 @@ class PaymentGateway extends \WC_Payment_Gateway {
 					$this->complete_order( $order, $result->trade_no );
 
 					// 支付成功后，返回订单已收到 URL，前端收到后会自动跳转
-					wp_send_json_success( $order->get_checkout_order_received_url() );
+					wp_send_json_success( [
+							'url'     => $order->get_checkout_order_received_url(),
+							'message' => 'Payment successful',
+						]
+					);
 				} else {
 					// 支付失败时，返回失败消息，供前端调试
-					wp_send_json_error( $order->get_checkout_payment_url() );
+					wp_send_json_error( [
+						'url'     => $order->get_checkout_payment_url(),
+						'message' => $result->msg . ': ' . $result->sub_msg . $result->trade_status,
+					] );
 				}
 
 			} else {
@@ -740,9 +747,9 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			if ( $response ) {
 				// 发送退款请求
-				$refund_request = wp_remote_get( $response );
-				$refund_response   = json_decode( wp_remote_retrieve_body( $refund_request ) );
-                $refund_result = $refund_response->alipay_trade_refund_response;
+				$refund_request  = wp_remote_get( $response );
+				$refund_response = json_decode( wp_remote_retrieve_body( $refund_request ) );
+				$refund_result   = $refund_response->alipay_trade_refund_response;
 
 				if ( ! empty( $refund_result->code ) && $refund_result->code == 10000 ) {
 					$order->add_order_note(

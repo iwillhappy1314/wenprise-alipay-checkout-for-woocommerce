@@ -1,10 +1,10 @@
 <?php
-
 require_once 'AopEncrypt.php';
 require_once 'EncryptParseItem.php';
 require_once 'EncryptResponseData.php';
 require_once 'SignData.php';
 require_once 'AlipayConfig.php';
+
 class AopClient
 {
     //应用ID
@@ -65,6 +65,7 @@ class AopClient
     private $targetServiceUrl = "";
 
     protected $alipaySdkVersion = "alipay-sdk-PHP-4.20.249.ALL";
+
     function __construct() {
         //根据参数个数和参数类型 来做相应的判断
         if(func_num_args()==1 && func_get_arg(0) instanceof AlipayConfig){
@@ -893,7 +894,7 @@ class AopClient
         return $strnull;
     }
 
-    function splitCN($cont, $n = 0, $subnum, $charset)
+    function splitCN($cont, $n = 0, $subnum = 4, $charset = 'utf-8')
     {
         //$len = strlen($cont) / 3;
         $arrr = array();
@@ -907,7 +908,7 @@ class AopClient
         return $arrr;
     }
 
-    function subCNchar($str, $start = 0, $length, $charset = "gbk")
+    function subCNchar($str, $start = 0, $length = 8, $charset = "gbk")
     {
         if (strlen($str) <= $length) {
             return $str;

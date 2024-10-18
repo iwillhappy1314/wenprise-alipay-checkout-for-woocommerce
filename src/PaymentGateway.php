@@ -426,7 +426,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$response = $gateway->pageExecute( $request, 'GET' );
 
 			// 当面付需要两次请求，一次预创建订单，一次获取二维码
-			if ( $this->enabled_f2f === 'yes' ) {
+			if ( $this->enabled_f2f === 'yes' && ! wp_is_mobile()) {
 				$response     = wp_remote_get( $response );
 				$f2f_response = json_decode( wp_remote_retrieve_body( $response ) );
 				$f2f_result   = $f2f_response->alipay_trade_precreate_response;

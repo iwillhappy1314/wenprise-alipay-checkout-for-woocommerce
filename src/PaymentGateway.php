@@ -516,7 +516,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
         <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal">
             <div class="rs-payment-box">
 
-				<?php if ( $this->enabled_f2f === 'yes' ) : ?>
+				<?php if ( $this->enabled_f2f === 'yes' && !wp_is_mobile() ) : ?>
 
                     <div class='rs-alert rs-alert--warning'>
 						<?= __( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
@@ -808,10 +808,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function get_error_message( $response ): string {
 		$result  = $response->alipay_trade_query_response;
-		$message = $result->msg() . '：' . $result->sub_msg();
+		$message = $result ?? $result->msg() . '：' . $result->sub_msg();
 
 		if ( $this->is_debug_mod ) {
-			$message .= '. Code：' . $result->code . '，Message：' . $result->sub_code;
+			$message .= $result ?? '. Code：' . $result->code . '，Message：' . $result->sub_code;
 		}
 
 		return $message;

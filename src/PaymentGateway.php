@@ -426,7 +426,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$response = $gateway->pageExecute( $request, 'GET' );
 
 			// 当面付需要两次请求，一次预创建订单，一次获取二维码
-			if ( $this->enabled_f2f === 'yes' && ! wp_is_mobile()) {
+			if ( $this->enabled_f2f === 'yes' ) {
 				$response     = wp_remote_get( $response );
 				$f2f_response = json_decode( wp_remote_retrieve_body( $response ) );
 				$f2f_result   = $f2f_response->alipay_trade_precreate_response;
@@ -516,7 +516,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
         <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal">
             <div class="rs-payment-box">
 
-				<?php if ( $this->enabled_f2f === 'yes' && !wp_is_mobile() ) : ?>
+				<?php if ( $this->enabled_f2f === 'yes' ) : ?>
 
                     <div class='rs-alert rs-alert--warning'>
 						<?= __( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
@@ -665,7 +665,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			if ( $response ) {
 				$result = $response->alipay_trade_query_response;
-
+                
 				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
 					$this->complete_order( $order, $result->trade_no );
 
@@ -808,10 +808,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function get_error_message( $response ): string {
 		$result  = $response->alipay_trade_query_response;
-		$message = $result ?? $result->msg() . '：' . $result->sub_msg();
+		$message = $result->msg() . '：' . $result->sub_msg();
 
 		if ( $this->is_debug_mod ) {
-			$message .= $result ?? '. Code：' . $result->code . '，Message：' . $result->sub_code;
+			$message .= '. Code：' . $result->code . '，Message：' . $result->sub_code;
 		}
 
 		return $message;

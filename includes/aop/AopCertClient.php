@@ -386,7 +386,7 @@ class AopCertClient
         return $strnull;
     }
 
-    function splitCN($cont, $n = 0, $subnum, $charset) {
+    function splitCN($cont, $n = 0, $subnum = 30, $charset = "gbk") {
         //$len = strlen($cont) / 3;
         $arrr = array();
         for ($i = $n; $i < strlen($cont); $i += $subnum) {
@@ -399,7 +399,7 @@ class AopCertClient
         return $arrr;
     }
 
-    function subCNchar($str, $start = 0, $length, $charset = "gbk") {
+    function subCNchar($str, $start = 0, $length = 0, $charset = "gbk") {
         if (strlen($str) <= $length) {
             return $str;
         }

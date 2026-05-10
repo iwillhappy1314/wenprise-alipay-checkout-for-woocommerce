@@ -8,7 +8,7 @@
  * Author URI: https://www.wpzhiku.com
  * Text Domain: wprs-wc-alipay
  * Domain Path: /languages
- * Requires PHP: 7.2
+ * Requires PHP: 7.4
  * Requires at least: 4.7
  * Tested up to: 6.2
  * WC requires at least: 3.6
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-if ( PHP_VERSION_ID < 70200 ) {
+if ( PHP_VERSION_ID < 70400 ) {
 
 	// 显示警告信息
 	if ( is_admin() ) {
@@ -28,7 +28,7 @@ if ( PHP_VERSION_ID < 70200 ) {
 		{
 			printf( '<div class="error"><p>' . __( 'Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没有任何作用。',
 					'wprs' ) . '</p></div>',
-				'7.2.0', PHP_VERSION );
+				'7.4.0', PHP_VERSION );
 		} );
 	}
 
@@ -52,17 +52,17 @@ add_action( 'plugins_loaded', function ()
 	}
 
 	// 加载文件
-	require WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
+	require_once WENPRISE_ALIPAY_PATH . 'vendor/autoload.php';
 
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/AopClient.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/AopCertification.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePrecreateRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePagePayRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeWapPayRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeRefundRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeFastpayRefundQueryRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeQueryRequest.php';
-	require WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeCloseRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/AopClient.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/AopCertClient.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePrecreateRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradePagePayRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeWapPayRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeRefundRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeFastpayRefundQueryRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeQueryRequest.php';
+	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeCloseRequest.php';
 
 
 	// 加载语言包

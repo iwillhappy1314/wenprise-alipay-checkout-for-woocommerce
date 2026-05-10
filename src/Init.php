@@ -64,7 +64,9 @@ class Init {
 
 
 	function admin_enqueue_scripts() {
-		if ( isset( $_GET[ 'section' ] ) && $_GET[ 'section' ] === 'wprs-wc-alipay' ) {
+		$section = isset( $_GET[ 'section' ] ) ? sanitize_key( wp_unslash( $_GET[ 'section' ] ) ) : '';
+
+		if ( $section === 'wprs-wc-alipay' ) {
 			wp_enqueue_script( 'wprs-wc-alipay-admin-script', WENPRISE_ALIPAY_URL . '/frontend/admin.js', [ 'jquery' ] );
 		}
 	}
@@ -75,10 +77,15 @@ class Init {
 
 		$order_id    = $wp->query_vars[ 'order-pay' ];
 		$order       = wc_get_order( $order_id );
+
+		if ( ! $order instanceof \WC_Order ) {
+			return $html;
+		}
+
 		$payment_url = $order->get_meta( '_gateway_payment_url' );
 
 		if ( $payment_url ) {
-			$html .= '<input type="hidden" name="wc-alipay-payment-url" value="' . $payment_url . '">';
+			$html .= '<input type="hidden" name="wc-alipay-payment-url" value="' . esc_url( $payment_url ) . '">';
 		}
 
 		return $html;

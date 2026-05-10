@@ -145,6 +145,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		$this->exchange_rate = $this->get_option( 'exchange_rate' );
 
+		$this->notify_url = WC()->api_request_url( 'wprs-wc-alipay-notify' );
+
 		// 保存设置
 		if ( is_admin() ) {
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
@@ -274,11 +276,11 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	public function admin_options() { ?>
 
         <h3>
-			<?php echo ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'wprs-wc-alipay' ); ?>
+			<?php echo esc_html( ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'wprs-wc-alipay' ) ); ?>
 			<?php wc_back_link( __( 'Return to payments page', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>
         </h3>
 
-		<?php echo ( ! empty( $this->method_description ) ) ? wpautop( $this->method_description ) : ''; ?>
+		<?php echo ( ! empty( $this->method_description ) ) ? wp_kses_post( wpautop( $this->method_description ) ) : ''; ?>
 
         <table class="form-table">
 		<?php $this->generate_settings_html(); ?>
@@ -294,9 +296,17 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function requirement_checks() {
 		if ( ! $this->exchange_rate && ! in_array( $this->current_currency, [ 'RMB', 'CNY' ] ) ) {
-			echo '<div class="error"><p>' . sprintf( __( 'Alipay is enabled, but the store currency is ·not set to Chinese Yuan. Please <a href="%1s">set the %2s against the Chinese Yuan exchange rate</a>.',
-					'wprs-wc-alipay' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate' ),
-					$this->current_currency ) . '</p></div>';
+			printf(
+				'<div class="error"><p>%s</p></div>',
+				wp_kses_post(
+					sprintf(
+						__( 'Alipay is enabled, but the store currency is ·not set to Chinese Yuan. Please <a href="%1$s">set the %2$s against the Chinese Yuan exchange rate</a>.',
+							'wprs-wc-alipay' ),
+						esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate' ) ),
+						esc_html( $this->current_currency )
+					)
+				)
+			);
 		}
 	}
 
@@ -310,6 +320,42 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function get_order_number( $order_id ): string {
 		return $this->order_prefix . ltrim( $order_id, '#' );
+	}
+
+
+	/**
+	 * 获取支付宝网关地址
+	 *
+	 * @return string
+	 */
+	private function get_gateway_url(): string {
+		if ( $this->is_sandbox_mod ) {
+			return 'https://openapi.alipaydev.com/gateway.do';
+		}
+
+		return 'https://openapi.alipay.com/gateway.do';
+	}
+
+
+	/**
+	 * 校验证书模式所需文件路径
+	 *
+	 * @return void
+	 */
+	private function validate_cert_paths() {
+		$cert_paths = [
+			'alipay_cert_public_key_rsa2' => $this->alipay_cert_public_key_rsa2,
+			'alipay_root_cert'            => $this->alipay_root_cert,
+			'app_cert_publicKey'          => $this->app_cert_publicKey,
+		];
+
+		foreach ( $cert_paths as $field => $path ) {
+			if ( ! $path || ! is_readable( $path ) ) {
+				throw new \InvalidArgumentException(
+					sprintf( __( 'Alipay certificate file is not readable: %s', 'wprs-wc-alipay' ), $field )
+				);
+			}
+		}
 	}
 
 
@@ -338,26 +384,28 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * 获取支付网关
 	 *
 	 */
-	public function get_gateway(): \AopClient {
+	public function get_gateway() {
+		$config = new \AlipayConfig();
+		$config->setServerUrl( $this->get_gateway_url() );
+		$config->setAppId( $this->app_id );
+		$config->setPrivateKey( $this->private_key );
+		$config->setSignType( 'RSA2' );
+		$config->setCharset( 'UTF-8' );
+		$config->setFormat( 'json' );
 
-		$aop = new \AopClient();
+		if ( $this->cert_type === 'public_key_certificate' ) {
+			$this->validate_cert_paths();
 
-		$aop->gatewayUrl    = 'https://openapi.alipay.com/gateway.do';
-		$aop->appId         = $this->app_id;
-		$aop->rsaPrivateKey = $this->private_key;
-		$aop->signType      = 'RSA2';
-		$aop->postCharset   = 'UTF-8';
-		$aop->format        = 'json';
+			$config->setAlipayPublicCertPath( $this->alipay_cert_public_key_rsa2 );
+			$config->setRootCertPath( $this->alipay_root_cert );
+			$config->setAppCertPath( $this->app_cert_publicKey );
 
-		// if ( $this->cert_type === 'public_key_certificate' ) {
-		// 	$aop->alipay_root_cert  = $this->alipay_root_cert;
-		// 	$aop->alipay_public_key = $this->alipay_cert_public_key_rsa2;
-		// 	$aop->app_cert          = $this->app_cert_publicKey;
-		// }
+			return new \AopCertClient( $config );
+		}
 
-		$aop->alipayrsaPublicKey = $this->alipay_public_key;
+		$config->setAlipayPublicKey( $this->alipay_public_key );
 
-		return $aop;
+		return new \AopClient( $config );
 	}
 
 
@@ -419,7 +467,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		}
 
 		$request->setNotifyUrl( $this->notify_url );
-		$request->setReturnUrl( $this->get_return_url( $order ) );
+		$request->setReturnUrl( WC()->api_request_url( 'wprs-wc-alipay-return' ) );
 		$request->setBizContent( json_encode( $biz_content ) );
 
 		try {
@@ -509,17 +557,22 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 *
 	 */
 	public function receipt_page( $order_id ) {
-		$order    = wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order instanceof \WC_Order ) {
+			return;
+		}
+
 		$code_url = $order->get_meta( 'wprs_wc_alipay_f2f_qrcode' );
 		?>
 
-        <div id="js-alipay-confirm-modal" data-order_id="<?= $order_id; ?>" class="rs-confirm-modal">
+        <div id="js-alipay-confirm-modal" data-order_id="<?= esc_attr( $order_id ); ?>" data-order_key="<?= esc_attr( $order->get_order_key() ); ?>" class="rs-confirm-modal">
             <div class="rs-payment-box">
 
 				<?php if ( $this->enabled_f2f === 'yes' ) : ?>
 
                     <div class='rs-alert rs-alert--warning'>
-						<?= __( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
+						<?= esc_html__( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
                     </div>
 
                     <div class="wprs-qrcode">
@@ -528,7 +581,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
                     <script>
                       jQuery(document).ready(function($) {
-                        $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= $code_url; ?>');
+                        $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= esc_js( $code_url ); ?>');
                       });
                     </script>
 
@@ -540,21 +593,21 @@ class PaymentGateway extends \WC_Payment_Gateway {
                                   p-id="6585" fill="#16a34a"></path>
                         </svg>
 
-                        <div class="rs-instruction-box__title"><?= __( 'Successfully submitted order!', 'wprs-wc-alipay' ); ?></div>
+                        <div class="rs-instruction-box__title"><?= esc_html__( 'Successfully submitted order!', 'wprs-wc-alipay' ); ?></div>
 
-                        <p><?= __( 'Please verify the payment information above and click the button below to pay via Alipay.', 'wprs-wc-alipay' ); ?></p>
+                        <p><?= esc_html__( 'Please verify the payment information above and click the button below to pay via Alipay.', 'wprs-wc-alipay' ); ?></p>
                     </div>
 
                     <div class="rs-flex rs-justify-center rs-mt-4 rs-action-block">
-                        <a target="_blank" class="button alt rs-flex rs-payment-url rswc-button" href="<?= $order->get_meta( '_gateway_payment_url' ); ?>">
+                        <a target="_blank" class="button alt rs-flex rs-payment-url rswc-button" href="<?= esc_url( $order->get_meta( '_gateway_payment_url' ) ); ?>">
                             <svg t="1682581409962" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="2628" width="24" height="24">
                                 <path d="M789 610.3c-38.7-12.9-90.7-32.7-148.5-53.6 34.8-60.3 62.5-129 80.7-203.6H530.5v-68.6h233.6v-38.3H530.5V132h-95.4c-16.7 0-16.7 16.5-16.7 16.5v97.8H182.2v38.3h236.3v68.6H223.4v38.3h378.4a667.18 667.18 0 0 1-54.5 132.9c-122.8-40.4-253.8-73.2-336.1-53-52.6 13-86.5 36.1-106.5 60.3-91.4 111-25.9 279.6 167.2 279.6C386 811.2 496 747.6 581.2 643 708.3 704 960 808.7 960 808.7V659.4s-31.6-2.5-171-49.1zM253.9 746.6c-150.5 0-195-118.3-120.6-183.1 24.8-21.9 70.2-32.6 94.4-35 89.4-8.8 172.2 25.2 269.9 72.8-68.8 89.5-156.3 145.3-243.7 145.3z"
                                       p-id="2629" fill="#ffffff"></path>
                             </svg>
-							<?= __( 'pay via Alipay', 'wprs-wc-alipay' ); ?>
+							<?= esc_html__( 'pay via Alipay', 'wprs-wc-alipay' ); ?>
                         </a>
                         <a href="#" id="js-alipay-fail" class="button rswc-button rs-flex alt2 rs-ml-4">
-							<?= __( 'Check payment results', 'wprs-wc-alipay' ); ?>
+							<?= esc_html__( 'Check payment results', 'wprs-wc-alipay' ); ?>
                         </a>
                     </div>
 
@@ -568,6 +621,175 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 
 	/**
+	 * 根据支付宝商户订单号获取 WooCommerce 订单
+	 *
+	 * @param string $out_trade_no 支付宝商户订单号
+	 *
+	 * @return \WC_Order|false
+	 */
+	private function get_order_by_out_trade_no( string $out_trade_no ) {
+		if ( ! empty( $this->order_prefix ) && strpos( $out_trade_no, $this->order_prefix ) !== 0 ) {
+			return false;
+		}
+
+		$order_id = (int) str_replace( $this->order_prefix, '', $out_trade_no );
+		$order    = wc_get_order( $order_id );
+
+		if ( ! $order instanceof \WC_Order ) {
+			return false;
+		}
+
+		if ( $this->get_order_number( $order->get_id() ) !== $out_trade_no ) {
+			return false;
+		}
+
+		return $order;
+	}
+
+
+	/**
+	 * 获取订单支付宝应付金额
+	 *
+	 * @param \WC_Order $order 订单对象
+	 *
+	 * @return string
+	 */
+	private function get_alipay_order_amount( \WC_Order $order ): string {
+		$exchange_rate = (float) $this->get_option( 'exchange_rate' );
+		if ( $exchange_rate <= 0 ) {
+			$exchange_rate = 1;
+		}
+
+		$total = round( (float) $order->get_total() * $exchange_rate, get_option( 'woocommerce_price_num_decimals' ) );
+
+		return number_format( $total, get_option( 'woocommerce_price_num_decimals' ), '.', '' );
+	}
+
+
+	/**
+	 * 获取支付宝响应对象属性
+	 *
+	 * @param object $result       支付宝响应对象
+	 * @param string $property_key 属性名称
+	 *
+	 * @return mixed|null
+	 */
+	private function get_response_property( $result, string $property_key ) {
+		if ( is_object( $result ) && property_exists( $result, $property_key ) ) {
+			return $result->$property_key;
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * 判断支付宝交易状态是否已支付
+	 *
+	 * @param object $result 支付宝响应对象
+	 *
+	 * @return bool
+	 */
+	private function is_paid_trade_status( $result ): bool {
+		return in_array( $this->get_response_property( $result, 'trade_status' ), [ 'TRADE_SUCCESS', 'TRADE_FINISHED' ], true );
+	}
+
+
+	/**
+	 * 校验支付宝查询结果是否匹配当前订单
+	 *
+	 * @param \WC_Order $order        订单对象
+	 * @param object    $result       支付宝响应对象
+	 * @param string    $out_trade_no 商户订单号
+	 *
+	 * @return bool
+	 */
+	private function is_valid_paid_result_for_order( \WC_Order $order, $result, string $out_trade_no ): bool {
+		if ( $order->get_payment_method() !== $this->id ) {
+			return false;
+		}
+
+		if ( $this->get_response_property( $result, 'code' ) !== '10000' || ! $this->is_paid_trade_status( $result ) ) {
+			return false;
+		}
+
+		$result_out_trade_no = (string) $this->get_response_property( $result, 'out_trade_no' );
+		if ( $result_out_trade_no === '' || $result_out_trade_no !== $out_trade_no ) {
+			return false;
+		}
+
+		if ( (string) $this->get_response_property( $result, 'trade_no' ) === '' ) {
+			return false;
+		}
+
+		$total_amount = $this->get_response_property( $result, 'total_amount' );
+		if ( $total_amount === null ) {
+			return false;
+		}
+
+		if ( abs( (float) $total_amount - (float) $this->get_alipay_order_amount( $order ) ) >= 0.01 ) {
+			return false;
+		}
+
+		$response_app_id = $this->get_response_property( $result, 'app_id' );
+		if ( $response_app_id !== null && (string) $response_app_id !== (string) $this->app_id ) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * 校验主动查单请求是否可访问订单
+	 *
+	 * @param \WC_Order $order     订单对象
+	 * @param string    $order_key 订单 key
+	 *
+	 * @return bool
+	 */
+	private function can_query_order( \WC_Order $order, string $order_key ): bool {
+		if ( $order->get_payment_method() !== $this->id ) {
+			return false;
+		}
+
+		if ( ! hash_equals( $order->get_order_key(), $order_key ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * 校验支付宝服务端通知签名
+	 *
+	 * @param array $request_data 请求数据
+	 *
+	 * @return bool
+	 */
+	private function verify_alipay_request( array $request_data ): bool {
+		if ( $_SERVER[ 'REQUEST_METHOD' ] !== 'POST' ) {
+			return true;
+		}
+
+		if ( empty( $request_data[ 'sign' ] ) ) {
+			return false;
+		}
+
+		try {
+			$gateway = $this->get_gateway();
+
+			return (bool) $gateway->rsaCheckV2( $request_data, $this->alipay_public_key, 'RSA2' );
+		} catch ( \Exception $e ) {
+			$this->log( $e->getMessage() );
+
+			return false;
+		}
+	}
+
+
+	/**
 	 * 监听支付网关同步返回信息
 	 * 处理支付接口异步返回的信息
 	 */
@@ -575,19 +797,19 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		if ( ! empty( $_REQUEST[ 'out_trade_no' ] ) ) {
 
-			$out_trade_no = $_REQUEST[ 'out_trade_no' ];
+			$request_data = wp_unslash( $_REQUEST );
+			$out_trade_no = wc_clean( $request_data[ 'out_trade_no' ] );
+			$order        = $this->get_order_by_out_trade_no( $out_trade_no );
 
-			if ( is_numeric( $out_trade_no ) ) {
-				if ( ! empty( $this->order_prefix ) ) {
-					$order_id = (int) str_replace( $this->order_prefix, '', $out_trade_no );
-				} else {
-					$order_id = (int) $out_trade_no;
+			if ( ! $order instanceof \WC_Order || ! $this->verify_alipay_request( $request_data ) ) {
+				if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
+					echo 'fail';
+					exit;
 				}
-			} else {
-				$order_id = (int) str_replace( $this->order_prefix, '', $out_trade_no );
-			}
 
-			$order = wc_get_order( $order_id );
+				wp_safe_redirect( wc_get_checkout_url() );
+				exit;
+			}
 
 			$biz_content = [
 				'out_trade_no' => $out_trade_no,
@@ -600,24 +822,33 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			try {
 				$response = $gateway->execute( $request );
+
+				if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
+					throw new \UnexpectedValueException( $this->get_error_message( $response ) );
+				}
+
 				$result   = $response->alipay_trade_query_response;
 
-				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
+				if ( $this->is_valid_paid_result_for_order( $order, $result, $out_trade_no ) ) {
 					$this->complete_order( $order, $result->trade_no );
 
 					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
 						echo 'success';
+						exit;
 					} else {
-						wp_redirect( $this->get_return_url( $order ) );
+						wp_safe_redirect( $this->get_return_url( $order ) );
+						exit;
 					}
 				} else {
 					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
 						echo 'fail';
+						exit;
 					} else {
 						$error = $this->get_error_message( $response );
 						$this->log( $error );
 
-						wp_redirect( wc_get_checkout_url() );
+						wp_safe_redirect( wc_get_checkout_url() );
+						exit;
 					}
 				}
 			} catch ( \Exception $e ) {
@@ -642,16 +873,23 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 */
 	public function query_alipay_order() {
 
-		$order_id = isset( $_POST[ 'order_id' ] ) ? (int) $_POST[ 'order_id' ] : false;
+		$order_id  = isset( $_POST[ 'order_id' ] ) ? absint( wp_unslash( $_POST[ 'order_id' ] ) ) : 0;
+		$order_key = isset( $_POST[ 'order_key' ] ) ? wc_clean( wp_unslash( $_POST[ 'order_key' ] ) ) : '';
 
 		if ( ! $order_id ) {
-			return;
+			wp_send_json_error( __( 'Invalid order.', 'wprs-wc-alipay' ) );
 		}
 
 		$order = wc_get_order( $order_id );
 
+		if ( ! $order instanceof \WC_Order || ! $this->can_query_order( $order, $order_key ) ) {
+			wp_send_json_error( __( 'You are not allowed to query this order.', 'wprs-wc-alipay' ) );
+		}
+
+		$out_trade_no = $this->get_order_number( $order_id );
+
 		$biz_content = [
-			'out_trade_no' => $this->get_order_number( $order_id ),
+			'out_trade_no' => $out_trade_no,
 		];
 
 		$gateway = $this->get_gateway();
@@ -664,9 +902,13 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$response = $gateway->execute( $request );
 
 			if ( $response ) {
+				if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
+					wp_send_json_error( $this->get_error_message( $response ) );
+				}
+
 				$result = $response->alipay_trade_query_response;
                 
-				if ( ! empty( $result->code ) && $result->code === '10000' && $result->trade_status === 'TRADE_SUCCESS' ) {
+				if ( $this->is_valid_paid_result_for_order( $order, $result, $out_trade_no ) ) {
 					$this->complete_order( $order, $result->trade_no );
 
 					// 支付成功后，返回订单已收到 URL，前端收到后会自动跳转
@@ -679,7 +921,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 					// 支付失败时，返回失败消息，供前端调试
 					wp_send_json_error( [
 						'url'     => $order->get_checkout_payment_url(),
-						'message' => $result->msg . ': ' . $result->sub_msg . $result->trade_status,
+						'message' => $this->get_error_message( $response ),
 					] );
 				}
 
@@ -788,10 +1030,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * @param $trade_no string 支付宝订单号
 	 */
 	public function complete_order( \WC_Order $order, string $trade_no ) {
-		// 添加订单备注
 		if ( $order->get_status() === 'pending' ) {
-			$order->add_order_note( sprintf( __( 'Alipay payment complete (Alipay ID: %s)', 'wprs-wc-alipay' ), $trade_no ) );
-
 			$order->payment_complete( $trade_no );
 		}
 
@@ -807,11 +1046,32 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * @return string
 	 */
 	public function get_error_message( $response ): string {
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message();
+		}
+
+		if ( is_string( $response ) ) {
+			return $response;
+		}
+
+		if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
+			return __( 'Alipay returned an invalid response.', 'wprs-wc-alipay' );
+		}
+
 		$result  = $response->alipay_trade_query_response;
-		$message = $result->msg() . '：' . $result->sub_msg();
+		$message = (string) $this->get_response_property( $result, 'msg' );
+		$sub_msg = (string) $this->get_response_property( $result, 'sub_msg' );
+
+		if ( $sub_msg !== '' ) {
+			$message .= '：' . $sub_msg;
+		}
+
+		if ( $message === '' ) {
+			$message = __( 'Alipay payment has not completed yet.', 'wprs-wc-alipay' );
+		}
 
 		if ( $this->is_debug_mod ) {
-			$message .= '. Code：' . $result->code . '，Message：' . $result->sub_code;
+			$message .= '. Code：' . (string) $this->get_response_property( $result, 'code' ) . '，Message：' . (string) $this->get_response_property( $result, 'sub_code' );
 		}
 
 		return $message;

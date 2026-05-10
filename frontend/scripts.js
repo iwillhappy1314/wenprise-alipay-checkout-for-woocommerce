@@ -38,10 +38,12 @@ jQuery(document).ready(function($) {
       type   : 'POST',
       url    : WpWooAlipayData.query_url,
       data   : {
-        order_id: $('#js-alipay-confirm-modal').data('order_id'),
+        order_id : $('#js-alipay-confirm-modal').data('order_id'),
+        order_key: $('#js-alipay-confirm-modal').data('order_key'),
       },
       success: function(data) {
-        if (data && data.success === true || manual_trigger === true) {
+        if (data && data.data && data.data.url &&
+            (data.success === true || manual_trigger === true)) {
           location.href = data.data.url;
         } else {
           if (loop_count-- > 0) {

@@ -3,6 +3,11 @@ jQuery(document).ready(function($) {
   var loop_time = 1000;
   var wprs_woo_alipay_query_order;
   var confirm_modal = $('#js-alipay-confirm-modal');
+  var f2f_qrcode = $('#wprs_wc_alipay_f2f_qrcode');
+
+  if (f2f_qrcode.length && typeof f2f_qrcode.qrcode === 'function') {
+    f2f_qrcode.qrcode(f2f_qrcode.data('qrcode'));
+  }
 
   /**
    * 重新支付页面的支付按钮

@@ -51,8 +51,8 @@ class Init {
 
 		if ( is_checkout_pay_page() ) {
 			wp_enqueue_style( 'wprs-wc-alipay-style', WENPRISE_ALIPAY_URL . '/frontend/styles.css', [], WENPRISE_ALIPAY_VERSION, false );
-			wp_enqueue_script( 'wprs-wc-alipay-script', WENPRISE_ALIPAY_URL . '/frontend/scripts.js', [ 'jquery', 'wc-checkout' ], WENPRISE_ALIPAY_VERSION, true );
-			wp_enqueue_script( 'qrcode', WC()->plugin_url() . '/assets/js/jquery-qrcode/jquery.qrcode.js', [ 'jquery' ], WENPRISE_ALIPAY_VERSION );
+			wp_enqueue_script( 'wprs-wc-alipay-qrcode', WC()->plugin_url() . '/assets/js/jquery-qrcode/jquery.qrcode.js', [ 'jquery' ], WENPRISE_ALIPAY_VERSION, true );
+			wp_enqueue_script( 'wprs-wc-alipay-script', WENPRISE_ALIPAY_URL . '/frontend/scripts.js', [ 'jquery', 'wc-checkout', 'wprs-wc-alipay-qrcode' ], WENPRISE_ALIPAY_VERSION, true );
 
 			$js_data = [
 				'query_url' => WC()->api_request_url( 'wprs-wc-query-order' ),

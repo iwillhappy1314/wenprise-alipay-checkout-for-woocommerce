@@ -576,14 +576,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
                     </div>
 
                     <div class="wprs-qrcode">
-                        <div id="wprs_wc_alipay_f2f_qrcode"></div>
+                        <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
                     </div>
-
-                    <script>
-                      jQuery(document).ready(function($) {
-                        $('#wprs_wc_alipay_f2f_qrcode').qrcode('<?= esc_js( $code_url ); ?>');
-                      });
-                    </script>
 
 				<?php else: ?>
 

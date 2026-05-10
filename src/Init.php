@@ -55,7 +55,8 @@ class Init {
 			wp_enqueue_script( 'wprs-wc-alipay-script', WENPRISE_ALIPAY_URL . '/frontend/scripts.js', [ 'jquery', 'wc-checkout', 'wprs-wc-alipay-qrcode' ], WENPRISE_ALIPAY_VERSION, true );
 
 			$js_data = [
-				'query_url' => WC()->api_request_url( 'wprs-wc-query-order' ),
+				'query_url'   => WC()->api_request_url( 'wprs-wc-query-order' ),
+				'refresh_url' => WC()->api_request_url( 'wprs-wc-refresh-qrcode' ),
 			];
 
 			wp_localize_script( 'wprs-wc-alipay-script', 'WpWooAlipayData', $js_data );

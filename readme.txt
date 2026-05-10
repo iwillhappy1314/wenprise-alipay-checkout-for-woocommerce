@@ -7,7 +7,7 @@ Requires at least: 4.7
 Tested up to: 6.6
 WC requires at least: 3.6
 WC tested up to: 9.1
-Stable tag: 2.0.1
+Stable tag: 3.0.0
 License: GPL-2.0+
 
 
@@ -70,6 +70,12 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+
+### 3.0.0 ###
+* 更换为支付宝官方 SDK
+* 当面付增加二维码过期处理
+* 安全增强
+* UI 优化
 
 ### 2.0.0 ###
 * 支持结账区块

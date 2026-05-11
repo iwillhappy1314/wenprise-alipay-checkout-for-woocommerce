@@ -6,7 +6,7 @@ on:
 jobs:
   master:
     name: Push to master
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@master
       - name: WordPress.org plugin asset/readme update

@@ -2,7 +2,7 @@
 Contributors: iwillhappy1314
 Donate link: https://www.wpzhiku.com/
 Tags: Alipay, WooCommerce, Woocommerce Payment Gateway, 支付宝支付, Alipay Payment Gateway
-Requires PHP: 7.2
+Requires PHP: 7.4
 Requires at least: 4.7
 Tested up to: 6.6
 WC requires at least: 3.6

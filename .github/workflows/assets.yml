@@ -6,11 +6,12 @@ on:
 jobs:
   master:
     name: Push to master
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: wenprise-alipay-checkout-for-woocommerce

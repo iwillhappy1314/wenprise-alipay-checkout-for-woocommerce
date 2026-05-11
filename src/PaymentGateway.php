@@ -789,29 +789,36 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 					<?php if ( $is_f2f_receipt ) : ?>
 
-                    <div class='rs-alert rs-alert--warning'>
-						<?= esc_html__( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
-                    </div>
+	                    <div class="wprs-qrcode-layout">
+		                    <div class="wprs-qrcode-main">
+			                    <div class="wprs-qrcode">
+				                        <div class="wprs-qrcode__code-slot">
+				                            <div id="js-alipay-qrcode-loading" class="wprs-qrcode__loading">
+				                                <span class="wprs-qrcode__spinner"></span>
+				                            </div>
+				                            <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
+				                            <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
+				                                <button type="button" id="js-alipay-refresh-qrcode" class="button alt rswc-button">
+													<?= esc_html__( 'Refresh QR code', 'wprs-wc-alipay' ); ?>
+				                                </button>
+				                            </div>
+				                        </div>
+			                        <div class="wprs-qrcode-status is-loading">
+				                        <p id="js-alipay-qrcode-countdown" class="rs-qrcode-countdown">
+											<?= esc_html( '正在生成二维码...' ); ?>
+				                        </p>
+			                        </div>
+			                    </div>
+		                    </div>
 
-		                    <div class="wprs-qrcode">
-		                        <div id="js-alipay-qrcode-loading" class="wprs-qrcode__loading">
-		                            <span class="wprs-qrcode__spinner"></span>
-		                            <span><?= esc_html__( 'Generating QR code...', 'wprs-wc-alipay' ); ?></span>
-		                        </div>
-		                        <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
-		                        <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
-		                            <div class="wprs-qrcode__expired-text">
-									<?= esc_html__( 'QR code has expired. Please click "Refresh QR code" to pay again.', 'wprs-wc-alipay' ); ?>
-	                            </div>
-	                            <button type="button" id="js-alipay-refresh-qrcode" class="button rswc-button">
-									<?= esc_html__( 'Refresh QR code', 'wprs-wc-alipay' ); ?>
-	                            </button>
-	                        </div>
+		                    <img
+			                    class="wprs-qrcode-guide-image"
+			                    src="<?= esc_url( WENPRISE_ALIPAY_URL . '/frontend/alipay-scan-guide.png' ); ?>"
+			                    alt="<?= esc_attr__( 'Open Alipay, tap Scan, scan the QR code, and confirm payment.', 'wprs-wc-alipay' ); ?>"
+		                    >
 	                    </div>
 
-	                    <p id="js-alipay-qrcode-countdown" class="rs-qrcode-countdown"></p>
-
-				<?php else: ?>
+					<?php else: ?>
 
                     <div class="rs-instruction-box">
                         <svg t="1682582744808" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="6584" width="64" height="64">

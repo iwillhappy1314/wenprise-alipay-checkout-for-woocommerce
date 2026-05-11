@@ -7,9 +7,28 @@ jQuery(document).ready(function($) {
   var confirm_modal = $('#js-alipay-confirm-modal');
   var f2f_qrcode = $('#wprs_wc_alipay_f2f_qrcode');
   var qrcode_loading = $('#js-alipay-qrcode-loading');
+  var qrcode_status = $('.wprs-qrcode-status');
   var qrcode_countdown = $('#js-alipay-qrcode-countdown');
   var qrcode_expired = $('#js-alipay-qrcode-expired');
   var refresh_qrcode = $('#js-alipay-refresh-qrcode');
+
+  function should_continue_query() {
+    var expires_at = get_expires_at();
+
+    if (!expires_at) {
+      return loop_count-- > 0;
+    }
+
+    return Math.floor(Date.now() / 1000) <= expires_at + 300;
+  }
+
+  function set_qrcode_status(text, status) {
+    qrcode_status.
+        removeClass('is-loading is-ready is-expired').
+        addClass('is-' + status).
+        css('display', 'flex');
+    qrcode_countdown.text(text).show();
+  }
 
   function show_qrcode_loading() {
     if (f2f_qrcode.length) {
@@ -17,8 +36,8 @@ jQuery(document).ready(function($) {
     }
 
     qrcode_expired.hide();
-    qrcode_countdown.hide();
-    qrcode_loading.show();
+    set_qrcode_status('正在生成二维码...', 'loading');
+    qrcode_loading.css('display', 'flex');
   }
 
   function hide_qrcode_loading() {
@@ -26,11 +45,17 @@ jQuery(document).ready(function($) {
     f2f_qrcode.show();
   }
 
-  function render_f2f_qrcode() {
+  function render_f2f_qrcode(callback) {
     if (f2f_qrcode.length && typeof f2f_qrcode.qrcode === 'function') {
       show_qrcode_loading();
-      f2f_qrcode.empty().qrcode(f2f_qrcode.data('qrcode'));
-      hide_qrcode_loading();
+      window.setTimeout(function() {
+        f2f_qrcode.empty().qrcode(f2f_qrcode.data('qrcode'));
+        hide_qrcode_loading();
+
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }, 50);
     }
   }
 
@@ -52,13 +77,8 @@ jQuery(document).ready(function($) {
   }
 
   function show_qrcode_expired() {
-    qrcode_countdown.hide();
+    set_qrcode_status('二维码已过期，请刷新。', 'expired');
     qrcode_expired.show();
-
-    if (query_timer) {
-      clearTimeout(query_timer);
-      query_timer = null;
-    }
 
     if (countdown_timer) {
       clearInterval(countdown_timer);
@@ -81,7 +101,7 @@ jQuery(document).ready(function($) {
 
     f2f_qrcode.show();
     qrcode_expired.hide();
-    qrcode_countdown.text('二维码剩余有效时间：' + format_remaining_time(remaining_seconds)).show();
+    set_qrcode_status('请在 ' + format_remaining_time(remaining_seconds) + ' 内使用支付宝扫码支付', 'ready');
   }
 
   function start_qrcode_countdown() {
@@ -94,8 +114,7 @@ jQuery(document).ready(function($) {
   }
 
   if (f2f_qrcode.length) {
-    render_f2f_qrcode();
-    start_qrcode_countdown();
+    render_f2f_qrcode(start_qrcode_countdown);
   }
 
   /**
@@ -128,11 +147,6 @@ jQuery(document).ready(function($) {
       return false;
     }
 
-    if (is_qrcode_expired()) {
-      show_qrcode_expired();
-      return false;
-    }
-
     $.ajax({
       type   : 'POST',
       url    : WpWooAlipayData.query_url,
@@ -146,13 +160,13 @@ jQuery(document).ready(function($) {
             (data.success === true || manual_trigger === true)) {
           location.href = data.data.url;
         } else {
-          if (loop_count-- > 0) {
+          if (should_continue_query()) {
             query_timer = setTimeout(wprs_woo_alipay_query_order, loop_time);
           }
         }
       },
       error  : function() {
-        if (loop_count-- > 0) {
+        if (should_continue_query()) {
           query_timer = setTimeout(wprs_woo_alipay_query_order, loop_time);
         }
       },
@@ -183,7 +197,9 @@ jQuery(document).ready(function($) {
         nonce    : WpWooAlipayData.nonce,
       },
       success: function(data) {
-        if (data && data.success === true && data.data && data.data.qrcode) {
+        if (data && data.success === true && data.data && data.data.url) {
+          location.href = data.data.url;
+        } else if (data && data.success === true && data.data && data.data.qrcode) {
           confirm_modal.data('expires_at', data.data.expires_at);
           confirm_modal.attr('data-expires_at', data.data.expires_at);
           f2f_qrcode.data('qrcode', data.data.qrcode);
@@ -196,18 +212,19 @@ jQuery(document).ready(function($) {
 
           loop_count = 50;
           qrcode_expired.hide();
-          render_f2f_qrcode();
-          start_qrcode_countdown();
-          wprs_woo_alipay_query_order();
+          render_f2f_qrcode(function() {
+            start_qrcode_countdown();
+            wprs_woo_alipay_query_order();
+          });
         } else {
           hide_qrcode_loading();
-          qrcode_expired.show();
+          show_qrcode_expired();
           window.alert(data && data.data ? data.data : '二维码重新生成失败，请稍后重试。');
         }
       },
       error  : function() {
         hide_qrcode_loading();
-        qrcode_expired.show();
+        show_qrcode_expired();
         window.alert('二维码重新生成失败，请稍后重试。');
       },
       complete: function() {

@@ -7,7 +7,7 @@ Requires at least: 4.7
 Tested up to: 6.6
 WC requires at least: 3.6
 WC tested up to: 9.1
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 License: GPL-2.0+
 
 

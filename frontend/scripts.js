@@ -121,6 +121,7 @@ jQuery(document).ready(function($) {
       data   : {
         order_id : $('#js-alipay-confirm-modal').data('order_id'),
         order_key: $('#js-alipay-confirm-modal').data('order_key'),
+        nonce    : WpWooAlipayData.nonce,
       },
       success: function(data) {
         if (data && data.data && data.data.url &&
@@ -160,6 +161,7 @@ jQuery(document).ready(function($) {
       data   : {
         order_id : confirm_modal.data('order_id'),
         order_key: confirm_modal.data('order_key'),
+        nonce    : WpWooAlipayData.nonce,
       },
       success: function(data) {
         if (data && data.success === true && data.data && data.data.qrcode) {

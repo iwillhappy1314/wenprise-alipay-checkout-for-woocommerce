@@ -57,6 +57,7 @@ class Init {
 			$js_data = [
 				'query_url'   => WC()->api_request_url( 'wprs-wc-query-order' ),
 				'refresh_url' => WC()->api_request_url( 'wprs-wc-refresh-qrcode' ),
+				'nonce'       => wp_create_nonce( 'wprs_wc_alipay_order_action' ),
 			];
 
 			wp_localize_script( 'wprs-wc-alipay-script', 'WpWooAlipayData', $js_data );

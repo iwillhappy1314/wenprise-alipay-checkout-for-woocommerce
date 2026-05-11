@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wenprise Alipay for WooCommerce\n"
-"POT-Creation-Date: 2024-09-10 15:48+0800\n"
-"PO-Revision-Date: 2024-11-16 21:35+0800\n"
+"POT-Creation-Date: 2026-05-10 22:31+0800\n"
+"PO-Revision-Date: 2026-05-10 22:34+0800\n"
 "Last-Translator: Amos Lee <iwillhappy1314@gmail.com>\n"
 "Language-Team: Amos Lee (amos@wpcio.com)\n"
 "Language: zh_CN\n"
@@ -10,50 +10,57 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: ../../../../../../Amoslee/Sites/ibiobio/wp-"
 "content/plugins/wenprise-alipay-for-woocommerce/vendor\n"
 "X-Poedit-SearchPathExcluded-1: *.js\n"
 
-#: src/Init.php:110 src/PaymentGateway.php:277
+#: src/Init.php:118 src/PaymentGateway.php:290
 msgid "Settings"
 msgstr "设置"
 
 #: src/PaymentGateway.php:111
-msgid "Alipay By Wenprise"
-msgstr "Alipay By Wenprise"
+msgid "Alipay Payment Gateway By Wenprise"
+msgstr "WooCommerce 的支付宝支付网关"
 
 #: src/PaymentGateway.php:114
 msgid "Alipay Payment Gateway for WooCommerce"
 msgstr "WooCommerce 的支付宝支付网关"
 
-#: src/PaymentGateway.php:173
+#: src/PaymentGateway.php:176
 msgid "Enable / Disable"
 msgstr "启用/停用"
 
-#: src/PaymentGateway.php:174
+#: src/PaymentGateway.php:177
 msgid "Enable this payment gateway"
 msgstr "启用此付款网关"
 
-#: src/PaymentGateway.php:179
+#: src/PaymentGateway.php:182
 msgid "Enable Face2Face Payment"
 msgstr "启用当面付"
 
-#: src/PaymentGateway.php:180
+#: src/PaymentGateway.php:183
 msgid "Enable Face2Face Payment on PC"
 msgstr "在PC端启用当面付"
 
-#: src/PaymentGateway.php:185 src/PaymentGateway.php:186
+#: src/PaymentGateway.php:188
+msgid "Face2Face QR Code Timeout (Minutes)"
+msgstr "当面付二维码超时（分钟）"
+
+#: src/PaymentGateway.php:190
+msgid "Set the Face2Face QR code payment timeout in minutes."
+msgstr "请设置当面付二维码超时时间（单位为分钟）"
+
+#: src/PaymentGateway.php:198 src/PaymentGateway.php:199
 msgid "Enable Alipay Sandbox Mode"
 msgstr "启用支付宝沙盒模式"
 
-#: src/PaymentGateway.php:188
+#: src/PaymentGateway.php:201
 #, php-format
 msgid ""
 "Alipay sandbox can be used to test payments. Sign up for an account <a "
@@ -61,83 +68,83 @@ msgid ""
 msgstr ""
 "支付宝沙盒可用于测试付款。<a target=\"_blank\" href=\"%s\">在此处</a>注册帐户"
 
-#: src/PaymentGateway.php:192
+#: src/PaymentGateway.php:205
 msgid "Title"
 msgstr "标题"
 
-#: src/PaymentGateway.php:194
+#: src/PaymentGateway.php:207
 msgid "Alipay"
 msgstr "支付宝"
 
-#: src/PaymentGateway.php:197
+#: src/PaymentGateway.php:210
 msgid "Description"
 msgstr "描述"
 
-#: src/PaymentGateway.php:199
+#: src/PaymentGateway.php:212
 msgid "Pay securely using Alipay"
 msgstr "使用支付宝安全快捷的支付"
 
-#: src/PaymentGateway.php:203
+#: src/PaymentGateway.php:216
 msgid "Order Number Prefix"
 msgstr "订单号前缀"
 
-#: src/PaymentGateway.php:205
+#: src/PaymentGateway.php:218
 msgid "Only alphabet or number Allowed"
 msgstr "仅允许字母或数字"
 
-#: src/PaymentGateway.php:206
+#: src/PaymentGateway.php:219
 msgid "WC-"
 msgstr "WC-"
 
-#: src/PaymentGateway.php:209
+#: src/PaymentGateway.php:222
 msgid "App ID"
 msgstr "支付宝 App ID"
 
-#: src/PaymentGateway.php:211
+#: src/PaymentGateway.php:224
 msgid "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 msgstr "Enter your Alipay APPID. 开放平台密钥中的\"APPID\"，授权回调地址："
 
-#: src/PaymentGateway.php:214
+#: src/PaymentGateway.php:227
 msgid "Private Key"
 msgstr "应用私钥"
 
-#: src/PaymentGateway.php:216
+#: src/PaymentGateway.php:229
 msgid ""
 "Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使"
 "用)"
 msgstr "输入应用私钥，(rsa_private_key.pem 文件的全部内容)"
 
-#: src/PaymentGateway.php:220
+#: src/PaymentGateway.php:233
 msgid "signing mode"
 msgstr "加签模式"
 
-#: src/PaymentGateway.php:222
+#: src/PaymentGateway.php:235
 msgid "Select the signing mode。"
 msgstr "选择加签模式。"
 
-#: src/PaymentGateway.php:225
+#: src/PaymentGateway.php:238
 msgid "Public Key"
 msgstr "公钥"
 
-#: src/PaymentGateway.php:226
+#: src/PaymentGateway.php:239
 msgid "Public Key Certificate"
 msgstr "公钥证书"
 
-#: src/PaymentGateway.php:230
+#: src/PaymentGateway.php:243
 msgid "Alipay Public Key"
 msgstr "支付宝公钥"
 
-#: src/PaymentGateway.php:232
+#: src/PaymentGateway.php:245
 msgid ""
 "Enter your Alipay public key.（开放平台密钥中的\"支付宝公钥\"，验证支付结果时"
 "使用）"
 msgstr "输入您的支付宝公钥开放平台密钥中的\"支付宝公钥\""
 
-#: src/PaymentGateway.php:235
+#: src/PaymentGateway.php:248
 msgid "alipayCertPublicKey_RSA2.crt Path"
 msgstr "alipayCertPublicKey_RSA2.crt 证书"
 
-#: src/PaymentGateway.php:237
+#: src/PaymentGateway.php:250
 #, php-format
 msgid ""
 "Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your "
@@ -145,118 +152,163 @@ msgid ""
 msgstr ""
 "请输入alipayCertPublicKey_RSA2.crt 路径的绝对路径，这是您的网站根路径：%s"
 
-#: src/PaymentGateway.php:240
+#: src/PaymentGateway.php:253
 msgid "alipayRootCert.crt Path"
 msgstr "alipayRootCert.crt 证书"
 
-#: src/PaymentGateway.php:242
+#: src/PaymentGateway.php:255
 #, php-format
 msgid ""
 "Enter The absolute path of alipayRootCert.crt, this is your website root "
 "path: %s"
 msgstr "请输入alipayRootCert.crt 文件的绝对路径, 你网站的根目录路径为： %s"
 
-#: src/PaymentGateway.php:245
+#: src/PaymentGateway.php:258
 msgid "appCertPublicKey.crt Path"
 msgstr "appCertPublicKey.crt 证书"
 
-#: src/PaymentGateway.php:247
+#: src/PaymentGateway.php:260
 #, php-format
 msgid ""
 "Enter The absolute path of appCertPublicKey.crt, this is your website root "
 "path: %s"
 msgstr "请输入 appCertPublicKey.crt 的绝对路径，这是您的网站根路径：%s"
 
-#: src/PaymentGateway.php:250
+#: src/PaymentGateway.php:263
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: src/PaymentGateway.php:251
+#: src/PaymentGateway.php:264
 msgid "Enable debug mod"
 msgstr "启用调试模式"
 
-#: src/PaymentGateway.php:253
+#: src/PaymentGateway.php:266
 msgid "If checked, plugin will show program errors in frontend."
 msgstr "如果启用，会在前端显示详情的错误信息。"
 
-#: src/PaymentGateway.php:261
+#: src/PaymentGateway.php:274
 msgid "Exchange Rate"
 msgstr "汇率"
 
-#: src/PaymentGateway.php:263
+#: src/PaymentGateway.php:276
 #, php-format
 msgid ""
 "Please set the %s against Chinese Yuan exchange rate, eg if your currency is "
 "US Dollar, then you should enter 6.19"
 msgstr "请设置 %s 转人民币的汇率，例如您的商店货币时美元，请填写 6.19"
 
-#: src/PaymentGateway.php:278
+#: src/PaymentGateway.php:291
 msgid "Return to payments page"
 msgstr "返回付款页面"
 
-#: src/PaymentGateway.php:297
+#: src/PaymentGateway.php:314
 #, php-format
 msgid ""
 "Alipay is enabled, but the store currency is ·not set to Chinese Yuan. "
-"Please <a href=\"%1s\">set the %2s against the Chinese Yuan exchange rate</"
+"Please <a href=\"%1$s\">set the %2$s against the Chinese Yuan exchange rate</"
 "a>."
 msgstr ""
-"微信支付已启用，但是您的商店货币不是人民币，请<a href=\"%1s\">设置 %2s 转人民"
-"币的汇率</a>。"
+"支付宝支付已启用，但是您的商店货币不是人民币，请<a href=\"%1$s\">设置 %2$s 转"
+"人民币的汇率</a>。"
 
-#: src/PaymentGateway.php:392 src/PaymentGateway.php:393
+#: src/PaymentGateway.php:431
+#, php-format
+msgid "Alipay certificate file is not readable: %s"
+msgstr "无法读取支付宝证书文件：%s"
+
+#: src/PaymentGateway.php:572 src/PaymentGateway.php:573
+#: src/PaymentGateway.php:638 src/PaymentGateway.php:639
 #, php-format
 msgid "Pay for order %1$s at %2$s"
 msgstr "支付网站「%2$s」中的订单：%1$s"
 
-#: src/PaymentGateway.php:490
+#: src/PaymentGateway.php:597
+msgid "Failed to create Alipay QR code."
+msgstr "无法生成支付宝二维码。"
+
+#: src/PaymentGateway.php:747
 msgid "Failed to send order to Alipay, please contact us."
 msgstr "无法发送订单到支付宝，请联系我们。"
 
-#: src/PaymentGateway.php:522
+#: src/PaymentGateway.php:788
 msgid "Please open alipay and scan this qrcode."
 msgstr "请打开支付宝并扫描此二维码。"
 
-#: src/PaymentGateway.php:543
+#: src/PaymentGateway.php:795
+msgid "QR code has expired. Please click \"Refresh QR code\" to pay again."
+msgstr "二维码已过期。请点击“刷新二维码”重新支付。"
+
+#: src/PaymentGateway.php:798
+msgid "Refresh QR code"
+msgstr "刷新二维码"
+
+#: src/PaymentGateway.php:813
 msgid "Successfully submitted order!"
 msgstr "订单提交成功！"
 
-#: src/PaymentGateway.php:545
+#: src/PaymentGateway.php:815
 msgid ""
 "Please verify the payment information above and click the button below to "
 "pay via Alipay."
 msgstr "请核对上面的付款信息无误后，点击下面的按钮通过支付宝付款。"
 
-#: src/PaymentGateway.php:554
+#: src/PaymentGateway.php:824
 msgid "pay via Alipay"
 msgstr "支付宝支付"
 
-#: src/PaymentGateway.php:557
+#: src/PaymentGateway.php:827
 msgid "Check payment results"
 msgstr "检查支付结果"
 
-#: src/PaymentGateway.php:627
+#: src/PaymentGateway.php:1077
 msgid "Failed to process order, please contact us."
 msgstr "无法处理订单，请联系我们。"
 
-#: src/PaymentGateway.php:686 src/PaymentGateway.php:767
+#: src/PaymentGateway.php:1099 src/PaymentGateway.php:1171
+msgid "Invalid order."
+msgstr "订单无效。"
+
+#: src/PaymentGateway.php:1105
+msgid "You are not allowed to query this order."
+msgstr "您无权查询此订单。"
+
+#: src/PaymentGateway.php:1154 src/PaymentGateway.php:1272
 msgid "Failed to send query order request, please contact us."
 msgstr "查询订单时出错，请联系我们。"
 
-#: src/PaymentGateway.php:749
+#: src/PaymentGateway.php:1177
+msgid "You are not allowed to refresh this QR code."
+msgstr "您无权刷新此二维码。"
+
+#: src/PaymentGateway.php:1181
+msgid "This order does not need payment."
+msgstr "此订单无需付款。"
+
+#: src/PaymentGateway.php:1191
+msgid "QR code refreshed."
+msgstr "二维码已刷新。"
+
+#: src/PaymentGateway.php:1195
+msgid "Failed to refresh Alipay QR code, please try again."
+msgstr "无法刷新支付宝二维码，请重试。"
+
+#: src/PaymentGateway.php:1254
 #, php-format
 msgid "Refunded %1$s via Alipay"
 msgstr "通过支付宝退款 %1$s"
 
-#: src/PaymentGateway.php:755
+#: src/PaymentGateway.php:1260
 #, php-format
 msgid "Failed to refunded %1$s. Error message: %2$s"
 msgstr "退款失败 %1$s，错误信息: %2$s"
 
-#: src/PaymentGateway.php:786
-#, php-format
-msgid "Alipay payment complete (Alipay ID: %s)"
-msgstr "支付宝支付完成(支付宝订单号: %s)"
+#: src/PaymentGateway.php:1314
+msgid "Alipay returned an invalid response."
+msgstr "支付宝返回了无效的响应。"
+
+#: src/PaymentGateway.php:1326
+msgid "Alipay payment has not completed yet."
+msgstr "支付宝支付尚未完成。"
 
 #: wenprise-alipay-checkout-for-woocommerce.php:29
 #, php-format
@@ -268,6 +320,9 @@ msgstr ""
 "Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运"
 "行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没"
 "有任何作用。"
+
+#~ msgid "Alipay By Wenprise"
+#~ msgstr "Alipay By Wenprise"
 
 #~ msgid "Proceed to Alipay"
 #~ msgstr "到支付宝付款"

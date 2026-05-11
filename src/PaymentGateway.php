@@ -365,6 +365,41 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 
 	/**
+	 * 判断当前支付请求是否来自移动端
+	 *
+	 * @return bool
+	 */
+	private function is_mobile_payment_request(): bool {
+		if ( wp_is_mobile() ) {
+			return true;
+		}
+
+		$sec_ch_ua_mobile = isset( $_SERVER[ 'HTTP_SEC_CH_UA_MOBILE' ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ 'HTTP_SEC_CH_UA_MOBILE' ] ) ) : '';
+
+		if ( $sec_ch_ua_mobile === '?1' ) {
+			return true;
+		}
+
+		$user_agent = isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) ? sanitize_text_field( wp_unslash( $_SERVER[ 'HTTP_USER_AGENT' ] ) ) : '';
+
+		return (bool) preg_match( '/(mobile|android|iphone|ipad|ipod|windows phone|blackberry|mqqbrowser|micromessenger|alipayclient)/i', $user_agent );
+	}
+
+
+	/**
+	 * 清理订单中保存的当面付二维码数据
+	 *
+	 * @param \WC_Order $order 订单对象
+	 */
+	private function delete_f2f_qrcode_data( \WC_Order $order ) {
+		$order->delete_meta_data( 'wprs_wc_alipay_f2f_qrcode' );
+		$order->delete_meta_data( 'wprs_wc_alipay_f2f_out_trade_no' );
+		$order->delete_meta_data( 'wprs_wc_alipay_f2f_qrcode_created_at' );
+		$order->delete_meta_data( 'wprs_wc_alipay_f2f_qrcode_expires_at' );
+	}
+
+
+	/**
 	 * 获取支付宝网关地址
 	 *
 	 * @return string
@@ -610,10 +645,11 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		/**
 		 * 不同的支付产品，主要是 product_code 和 Request 类不同
 		 */
-		$is_f2f_payment  = ! wp_is_mobile() && $this->enabled_f2f === 'yes';
+		$is_mobile_payment = $this->is_mobile_payment_request();
+		$is_f2f_payment    = ! $is_mobile_payment && $this->enabled_f2f === 'yes';
 		$timeout_express = '';
 
-		if ( wp_is_mobile() ) {
+		if ( $is_mobile_payment ) {
 			// https://opendocs.alipay.com/open/29ae8cb6_alipay.trade.wap.pay?pathHash=1ef587fd&ref=api&scene=21
 			$biz_content[ 'product_code' ] = 'QUICK_WAP_WAY';
 
@@ -650,6 +686,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				$f2f_result   = $f2f_response->alipay_trade_precreate_response;
 
 				if ( ! empty( $f2f_result->code ) && $f2f_result->code === '10000' ) {
+					$order->delete_meta_data( '_gateway_payment_url' );
+					$order->update_meta_data( 'wprs_wc_alipay_payment_product', 'f2f' );
 					$this->save_f2f_qrcode( $order, $f2f_result->qr_code, $order_no, $timeout_express );
 
 					return [
@@ -672,6 +710,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			} else {
 				if ( $response ) {
 					$order->update_meta_data( '_gateway_payment_url', $response );
+					$order->update_meta_data( 'wprs_wc_alipay_payment_product', $is_mobile_payment ? 'wap' : 'page' );
+					$this->delete_f2f_qrcode_data( $order );
 					$order->save();
 
 					// 生成订单后清空购物车，以免订单重复
@@ -681,7 +721,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 					return [
 						'result'      => 'success',
-						'redirect'    => $order->get_checkout_payment_url( true ),
+						'redirect'    => $is_mobile_payment ? $response : $order->get_checkout_payment_url( true ),
 						'payment_url' => $response,
 					];
 				} else {
@@ -732,14 +772,17 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			return;
 		}
 
-		$code_url = $order->get_meta( 'wprs_wc_alipay_f2f_qrcode' );
-		$expires_at = (int) $order->get_meta( 'wprs_wc_alipay_f2f_qrcode_expires_at' );
+		$code_url        = $order->get_meta( 'wprs_wc_alipay_f2f_qrcode' );
+		$payment_url     = $order->get_meta( '_gateway_payment_url' );
+		$payment_product = $order->get_meta( 'wprs_wc_alipay_payment_product' );
+		$is_f2f_receipt  = $this->enabled_f2f === 'yes' && $payment_product === 'f2f' && $code_url;
+		$expires_at      = (int) $order->get_meta( 'wprs_wc_alipay_f2f_qrcode_expires_at' );
 		?>
 
-        <div id="js-alipay-confirm-modal" data-order_id="<?= esc_attr( $order_id ); ?>" data-order_key="<?= esc_attr( $order->get_order_key() ); ?>" data-expires_at="<?= esc_attr( $expires_at ); ?>" class="rs-confirm-modal">
-            <div class="rs-payment-box">
+	        <div id="js-alipay-confirm-modal" data-order_id="<?= esc_attr( $order_id ); ?>" data-order_key="<?= esc_attr( $order->get_order_key() ); ?>" data-expires_at="<?= esc_attr( $expires_at ); ?>" class="rs-confirm-modal">
+	            <div class="rs-payment-box">
 
-				<?php if ( $this->enabled_f2f === 'yes' ) : ?>
+					<?php if ( $is_f2f_receipt ) : ?>
 
                     <div class='rs-alert rs-alert--warning'>
 						<?= esc_html__( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
@@ -773,7 +816,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
                     </div>
 
                     <div class="rs-flex rs-justify-center rs-mt-4 rs-action-block">
-                        <a target="_blank" class="button alt rs-flex rs-payment-url rswc-button" href="<?= esc_url( $order->get_meta( '_gateway_payment_url' ) ); ?>">
+	                        <a target="_blank" class="button alt rs-flex rs-payment-url rswc-button" href="<?= esc_url( $payment_url ); ?>">
                             <svg t="1682581409962" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="2628" width="24" height="24">
                                 <path d="M789 610.3c-38.7-12.9-90.7-32.7-148.5-53.6 34.8-60.3 62.5-129 80.7-203.6H530.5v-68.6h233.6v-38.3H530.5V132h-95.4c-16.7 0-16.7 16.5-16.7 16.5v97.8H182.2v38.3h236.3v68.6H223.4v38.3h378.4a667.18 667.18 0 0 1-54.5 132.9c-122.8-40.4-253.8-73.2-336.1-53-52.6 13-86.5 36.1-106.5 60.3-91.4 111-25.9 279.6 167.2 279.6C386 811.2 496 747.6 581.2 643 708.3 704 960 808.7 960 808.7V659.4s-31.6-2.5-171-49.1zM253.9 746.6c-150.5 0-195-118.3-120.6-183.1 24.8-21.9 70.2-32.6 94.4-35 89.4-8.8 172.2 25.2 269.9 72.8-68.8 89.5-156.3 145.3-243.7 145.3z"
                                       p-id="2629" fill="#ffffff"></path>

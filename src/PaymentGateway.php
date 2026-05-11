@@ -1014,6 +1014,89 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 
 	/**
+	 * 主动查询支付宝交易结果
+	 *
+	 * @param string $out_trade_no 商户订单号
+	 *
+	 * @return object 支付宝查单响应对象
+	 * @throws \UnexpectedValueException 支付宝响应异常
+	 */
+	private function query_alipay_trade_result( string $out_trade_no ) {
+		$gateway = $this->get_gateway();
+		$request = new \AlipayTradeQueryRequest();
+
+		$request->setBizContent( json_encode( [ 'out_trade_no' => $out_trade_no ], JSON_UNESCAPED_UNICODE ) );
+
+		$response = $gateway->execute( $request );
+
+		if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
+			throw new \UnexpectedValueException( $this->get_error_message( $response ) );
+		}
+
+		return $response->alipay_trade_query_response;
+	}
+
+
+	/**
+	 * 查询当前支付宝交易，已支付时完成 WooCommerce 订单
+	 *
+	 * @param \WC_Order $order        订单对象
+	 * @param string    $out_trade_no 商户订单号
+	 *
+	 * @return bool 是否已经完成支付
+	 * @throws \UnexpectedValueException 支付宝响应异常
+	 */
+	private function complete_order_if_alipay_trade_paid( \WC_Order $order, string $out_trade_no ): bool {
+		$result = $this->query_alipay_trade_result( $out_trade_no );
+
+		if ( ! $this->is_valid_paid_result_for_order( $order, $result, $out_trade_no ) ) {
+			return false;
+		}
+
+		$this->complete_order( $order, $result->trade_no );
+
+		return true;
+	}
+
+
+	/**
+	 * 关闭当面付旧交易，避免刷新二维码后出现多个可支付交易
+	 *
+	 * @param string $out_trade_no 商户订单号
+	 *
+	 * @throws \UnexpectedValueException 旧交易关闭失败
+	 */
+	private function close_f2f_trade( string $out_trade_no ) {
+		$gateway = $this->get_gateway();
+		$request = new \AlipayTradeCloseRequest();
+
+		$request->setBizContent( json_encode( [ 'out_trade_no' => $out_trade_no ], JSON_UNESCAPED_UNICODE ) );
+
+		$response = $gateway->execute( $request );
+
+		if ( ! is_object( $response ) || empty( $response->alipay_trade_close_response ) ) {
+			throw new \UnexpectedValueException( $this->get_error_message( $response ) );
+		}
+
+		$result   = $response->alipay_trade_close_response;
+		$code     = (string) $this->get_response_property( $result, 'code' );
+		$sub_code = (string) $this->get_response_property( $result, 'sub_code' );
+
+		if ( $code === '10000' || $sub_code === 'ACQ.TRADE_NOT_EXIST' ) {
+			return;
+		}
+
+		$message = (string) $this->get_response_property( $result, 'sub_msg' );
+
+		if ( $message === '' ) {
+			$message = (string) $this->get_response_property( $result, 'msg' );
+		}
+
+		throw new \UnexpectedValueException( $message ?: __( 'Failed to close the previous Alipay QR code.', 'wprs-wc-alipay' ) );
+	}
+
+
+	/**
 	 * 获取支付宝回调参数
 	 *
 	 * @return array
@@ -1169,46 +1252,22 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		$out_trade_no = $this->get_current_out_trade_no( $order );
 
-		$biz_content = [
-			'out_trade_no' => $out_trade_no,
-		];
-
-		$gateway = $this->get_gateway();
-
-		$request = new \AlipayTradeQueryRequest();
-
-		$request->setBizContent( json_encode( $biz_content, JSON_UNESCAPED_UNICODE ) );
-
 		try {
-			$response = $gateway->execute( $request );
+			if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
 
-			if ( $response ) {
-				if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
-					wp_send_json_error( $this->get_error_message( $response ) );
-				}
-
-				$result = $response->alipay_trade_query_response;
-                
-				if ( $this->is_valid_paid_result_for_order( $order, $result, $out_trade_no ) ) {
-					$this->complete_order( $order, $result->trade_no );
-
-					// 支付成功后，返回订单已收到 URL，前端收到后会自动跳转
-					wp_send_json_success( [
-							'url'     => $order->get_checkout_order_received_url(),
-							'message' => 'Payment successful',
-						]
-					);
-				} else {
-					// 支付失败时，返回失败消息，供前端调试
-					wp_send_json_error( [
-						'url'     => $order->get_checkout_payment_url(),
-						'message' => $this->get_error_message( $response ),
-					] );
-				}
-
+				// 支付成功后，返回订单已收到 URL，前端收到后会自动跳转
+				wp_send_json_success( [
+						'url'     => $order->get_checkout_order_received_url(),
+						'message' => 'Payment successful',
+					]
+				);
 			} else {
-				wp_send_json_error( 'Waiting alipay response.' );
+				// 支付未完成时保持当前页面轮询，不跳转回支付页
+				wp_send_json_error( [
+					'message' => __( 'Alipay payment has not completed yet.', 'wprs-wc-alipay' ),
+				] );
 			}
+
 		} catch ( \Exception $e ) {
 			if ( $this->is_debug_mod ) {
 				$error = $e->getMessage();
@@ -1246,6 +1305,35 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		}
 
 		try {
+			$out_trade_no = $this->get_current_out_trade_no( $order );
+
+			if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
+				wp_send_json_success( [
+					'url'     => $order->get_checkout_order_received_url(),
+					'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+				] );
+			}
+
+			if ( ! $order->needs_payment() ) {
+				wp_send_json_success( [
+					'url'     => $order->get_checkout_order_received_url(),
+					'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+				] );
+			}
+
+			try {
+				$this->close_f2f_trade( $out_trade_no );
+			} catch ( \Exception $e ) {
+				if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
+					wp_send_json_success( [
+						'url'     => $order->get_checkout_order_received_url(),
+						'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+					] );
+				}
+
+				throw $e;
+			}
+
 			$qrcode_data = $this->precreate_f2f_qrcode( $order );
 
 			wp_send_json_success( [

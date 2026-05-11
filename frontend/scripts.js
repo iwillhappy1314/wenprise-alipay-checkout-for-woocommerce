@@ -6,13 +6,31 @@ jQuery(document).ready(function($) {
   var wprs_woo_alipay_query_order;
   var confirm_modal = $('#js-alipay-confirm-modal');
   var f2f_qrcode = $('#wprs_wc_alipay_f2f_qrcode');
+  var qrcode_loading = $('#js-alipay-qrcode-loading');
   var qrcode_countdown = $('#js-alipay-qrcode-countdown');
   var qrcode_expired = $('#js-alipay-qrcode-expired');
   var refresh_qrcode = $('#js-alipay-refresh-qrcode');
 
+  function show_qrcode_loading() {
+    if (f2f_qrcode.length) {
+      f2f_qrcode.empty().hide();
+    }
+
+    qrcode_expired.hide();
+    qrcode_countdown.hide();
+    qrcode_loading.show();
+  }
+
+  function hide_qrcode_loading() {
+    qrcode_loading.hide();
+    f2f_qrcode.show();
+  }
+
   function render_f2f_qrcode() {
     if (f2f_qrcode.length && typeof f2f_qrcode.qrcode === 'function') {
+      show_qrcode_loading();
       f2f_qrcode.empty().qrcode(f2f_qrcode.data('qrcode'));
+      hide_qrcode_loading();
     }
   }
 
@@ -154,6 +172,7 @@ jQuery(document).ready(function($) {
     var button = $(this);
 
     button.prop('disabled', true);
+    show_qrcode_loading();
 
     $.ajax({
       type   : 'POST',
@@ -181,10 +200,14 @@ jQuery(document).ready(function($) {
           start_qrcode_countdown();
           wprs_woo_alipay_query_order();
         } else {
+          hide_qrcode_loading();
+          qrcode_expired.show();
           window.alert(data && data.data ? data.data : '二维码重新生成失败，请稍后重试。');
         }
       },
       error  : function() {
+        hide_qrcode_loading();
+        qrcode_expired.show();
         window.alert('二维码重新生成失败，请稍后重试。');
       },
       complete: function() {

@@ -793,10 +793,14 @@ class PaymentGateway extends \WC_Payment_Gateway {
 						<?= esc_html__( 'Please open alipay and scan this qrcode.', 'wprs-wc-alipay' ); ?>
                     </div>
 
-	                    <div class="wprs-qrcode">
-	                        <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
-	                        <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
-	                            <div class="wprs-qrcode__expired-text">
+		                    <div class="wprs-qrcode">
+		                        <div id="js-alipay-qrcode-loading" class="wprs-qrcode__loading">
+		                            <span class="wprs-qrcode__spinner"></span>
+		                            <span><?= esc_html__( 'Generating QR code...', 'wprs-wc-alipay' ); ?></span>
+		                        </div>
+		                        <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
+		                        <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
+		                            <div class="wprs-qrcode__expired-text">
 									<?= esc_html__( 'QR code has expired. Please click "Refresh QR code" to pay again.', 'wprs-wc-alipay' ); ?>
 	                            </div>
 	                            <button type="button" id="js-alipay-refresh-qrcode" class="button rswc-button">

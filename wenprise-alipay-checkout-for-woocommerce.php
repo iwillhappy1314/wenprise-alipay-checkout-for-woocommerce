@@ -6,7 +6,7 @@
  * Version: 3.1.0
  * Author: WordPress智库
  * Author URI: https://www.wpzhiku.com
- * Text Domain: wprs-wc-alipay
+ * Text Domain: wenprise-alipay-checkout-for-woocommerce
  * Domain Path: /languages
  * Requires PHP: 7.4
  * Requires at least: 4.7
@@ -27,7 +27,7 @@ if ( PHP_VERSION_ID < 70400 ) {
 		add_action( 'admin_notices', function ()
 		{
 			printf( '<div class="error"><p>' . __( 'Wenprise Alipay Payment Gateway For WooCommerce 需要 PHP %1$s 以上版本才能运行，您当前的 PHP 版本为 %2$s， 请升级到 PHP 到 %1$s 或更新的版本， 否则插件没有任何作用。',
-					'wprs' ) . '</p></div>',
+					'wenprise-alipay-checkout-for-woocommerce' ) . '</p></div>',
 				'7.4.0', PHP_VERSION );
 		} );
 	}
@@ -66,7 +66,7 @@ add_action( 'plugins_loaded', function ()
 
 
 	// 加载语言包
-	load_plugin_textdomain( 'wprs-wc-alipay', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'wenprise-alipay-checkout-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 	// 添加支付方法
 	add_filter( 'woocommerce_payment_gateways', function ( $methods )

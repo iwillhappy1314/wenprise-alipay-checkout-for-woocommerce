@@ -68,7 +68,7 @@ class Init {
 	function admin_enqueue_scripts() {
 		$section = isset( $_GET[ 'section' ] ) ? sanitize_key( wp_unslash( $_GET[ 'section' ] ) ) : '';
 
-		if ( $section === 'wprs-wc-alipay' ) {
+		if ( $section === WENPRISE_ALIPAY_WOOCOMMERCE_ID ) {
 			wp_enqueue_script( 'wprs-wc-alipay-admin-script', WENPRISE_ALIPAY_URL . '/frontend/admin.js', [ 'jquery' ] );
 		}
 	}
@@ -98,7 +98,7 @@ class Init {
 	 */
 	function ignore_translate_strings( $options ) {
 		$options[ 'exclude_gettext_strings' ][ 'string' ][] = 'Pay for order %1$s at %2$s';
-		$options[ 'exclude_gettext_strings' ][ 'domain' ][] = 'wprs-wc-alipay';
+		$options[ 'exclude_gettext_strings' ][ 'domain' ][] = 'wenprise-alipay-checkout-for-woocommerce';
 
 		return $options;
 	}
@@ -115,8 +115,8 @@ class Init {
 	 * 插件插件设置链接
 	 */
 	function add_settings_link( $links ) {
-		$url = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay' );
-		$url = '<a href="' . esc_url( $url ) . '">' . __( 'Settings', 'wprs-wc-alipay' ) . '</a>';
+		$url = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . WENPRISE_ALIPAY_WOOCOMMERCE_ID );
+		$url = '<a href="' . esc_url( $url ) . '">' . __( 'Settings', 'wenprise-alipay-checkout-for-woocommerce' ) . '</a>';
 		array_unshift( $links, $url );
 
 		return $links;

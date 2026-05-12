@@ -113,10 +113,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
 		// 支付网关页面显示的支付网关标题
-		$this->method_title = __( 'Alipay Payment Gateway By Wenprise', 'wprs-wc-alipay' );
+		$this->method_title = __( 'Alipay Payment Gateway By Wenprise', 'wenprise-alipay-checkout-for-woocommerce' );
 
 		// 支付网关设置页面显示的支付网关标题
-		$this->method_description = __( 'Alipay Payment Gateway for WooCommerce', 'wprs-wc-alipay' );
+		$this->method_description = __( 'Alipay Payment Gateway for WooCommerce', 'wenprise-alipay-checkout-for-woocommerce' );
 
 		// 被 init_settings() 加载的基础设置
 		$this->init_form_fields();
@@ -178,21 +178,21 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	public function init_form_fields() {
 		$this->form_fields = [
 			'enabled'                     => [
-				'title'   => __( 'Enable / Disable', 'wprs-wc-alipay' ),
-				'label'   => __( 'Enable this payment gateway', 'wprs-wc-alipay' ),
+				'title'   => __( 'Enable / Disable', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'label'   => __( 'Enable this payment gateway', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'default' => 'no',
 			],
 			'enabled_f2f'                 => [
-				'title'   => __( 'Enable Face2Face Payment', 'wprs-wc-alipay' ),
-				'label'   => __( 'Enable Face2Face Payment on PC', 'wprs-wc-alipay' ),
+				'title'   => __( 'Enable Face2Face Payment', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'label'   => __( 'Enable Face2Face Payment on PC', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'default' => 'no',
 			],
 			'f2f_timeout_express'         => [
-				'title'       => __( 'Face2Face QR Code Timeout (Minutes)', 'wprs-wc-alipay' ),
+				'title'       => __( 'Face2Face QR Code Timeout (Minutes)', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'number',
-				'description' => __( 'Set the Face2Face QR code payment timeout in minutes.', 'wprs-wc-alipay' ),
+				'description' => __( 'Set the Face2Face QR code payment timeout in minutes.', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'default'     => 10,
 				'custom_attributes' => [
 					'min'  => 1,
@@ -200,75 +200,75 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				],
 			],
 			'is_sandbox_mod'              => [
-				'title'       => __( 'Enable Alipay Sandbox Mode', 'wprs-wc-alipay' ),
-				'label'       => __( 'Enable Alipay Sandbox Mode', 'wprs-wc-alipay' ),
+				'title'       => __( 'Enable Alipay Sandbox Mode', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'label'       => __( 'Enable Alipay Sandbox Mode', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'checkbox',
-				'description' => sprintf( __( 'Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>', 'wprs-wc-alipay' ), 'https://sandbox.Alipay.com' ),
+				'description' => sprintf( __( 'Alipay sandbox can be used to test payments. Sign up for an account <a target="_blank" href="%s">here</a>', 'wenprise-alipay-checkout-for-woocommerce' ), 'https://sandbox.Alipay.com' ),
 				'default'     => 'no',
 			],
 			'title'                       => [
-				'title'   => __( 'Title', 'wprs-wc-alipay' ),
+				'title'   => __( 'Title', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'    => 'text',
-				'default' => __( 'Alipay', 'wprs-wc-alipay' ),
+				'default' => __( 'Alipay', 'wenprise-alipay-checkout-for-woocommerce' ),
 			],
 			'description'                 => [
-				'title'   => __( 'Description', 'wprs-wc-alipay' ),
+				'title'   => __( 'Description', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'    => 'textarea',
-				'default' => __( 'Pay securely using Alipay', 'wprs-wc-alipay' ),
+				'default' => __( 'Pay securely using Alipay', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'css'     => 'max-width:400px;',
 			],
 			'order_prefix'                => [
-				'title'       => __( 'Order Number Prefix', 'wprs-wc-alipay' ),
+				'title'       => __( 'Order Number Prefix', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Only alphabet or number Allowed', 'wprs-wc-alipay' ),
-				'default'     => __( 'WC-', 'wprs-wc-alipay' ),
+				'description' => __( 'Only alphabet or number Allowed', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'default'     => __( 'WC-', 'wenprise-alipay-checkout-for-woocommerce' ),
 			],
 			'app_id'                      => [
-				'title'       => __( 'App ID', 'wprs-wc-alipay' ),
+				'title'       => __( 'App ID', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Enter your Alipay APPID. 开放平台密钥中的"APPID"，授权回调地址：', 'wprs-wc-alipay' ) . home_url( 'wc-api/wprs-wc-alipay-notify/' ),
+				'description' => __( 'Enter your Alipay APPID. 开放平台密钥中的"APPID"，授权回调地址：', 'wenprise-alipay-checkout-for-woocommerce' ) . home_url( 'wc-api/wprs-wc-alipay-notify/' ),
 			],
 			'private_key'                 => [
-				'title'       => __( 'Private Key', 'wprs-wc-alipay' ),
+				'title'       => __( 'Private Key', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wprs-wc-alipay' ),
+				'description' => __( 'Enter your App secret key. (rsa_private_key.pem 文件的全部内容，创建订单时使用)', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'css'         => 'height:300px',
 			],
 			'cert_type'                   => [
-				'title'       => __( 'signing mode', 'wprs-wc-alipay' ),
+				'title'       => __( 'signing mode', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'select',
-				'description' => __( 'Select the signing mode。', 'wprs-wc-alipay' ),
+				'description' => __( 'Select the signing mode。', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'default'     => 'public_key',
 				'options'     => [
-					'public_key'             => __( 'Public Key', 'wprs-wc-alipay' ),
-					'public_key_certificate' => __( 'Public Key Certificate', 'wprs-wc-alipay' ),
+					'public_key'             => __( 'Public Key', 'wenprise-alipay-checkout-for-woocommerce' ),
+					'public_key_certificate' => __( 'Public Key Certificate', 'wenprise-alipay-checkout-for-woocommerce' ),
 				],
 			],
 			'alipay_public_key'           => [
-				'title'       => __( 'Alipay Public Key', 'wprs-wc-alipay' ),
+				'title'       => __( 'Alipay Public Key', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"，验证支付结果时使用）', 'wprs-wc-alipay' ),
+				'description' => __( 'Enter your Alipay public key.（开放平台密钥中的"支付宝公钥"，验证支付结果时使用）', 'wenprise-alipay-checkout-for-woocommerce' ),
 			],
 			'alipay_cert_public_key_rsa2' => [
-				'title'       => __( 'alipayCertPublicKey_RSA2.crt Path', 'wprs-wc-alipay' ),
+				'title'       => __( 'alipayCertPublicKey_RSA2.crt Path', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => sprintf( __( 'Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your website root path: %s', 'wprs-wc-alipay' ), ABSPATH ),
+				'description' => sprintf( __( 'Enter the absolute path of alipayCertPublicKey_RSA2.crt, this is your website root path: %s', 'wenprise-alipay-checkout-for-woocommerce' ), ABSPATH ),
 			],
 			'alipay_root_cert'            => [
-				'title'       => __( 'alipayRootCert.crt Path', 'wprs-wc-alipay' ),
+				'title'       => __( 'alipayRootCert.crt Path', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => sprintf( __( 'Enter The absolute path of alipayRootCert.crt, this is your website root path: %s', 'wprs-wc-alipay' ), ABSPATH ),
+				'description' => sprintf( __( 'Enter The absolute path of alipayRootCert.crt, this is your website root path: %s', 'wenprise-alipay-checkout-for-woocommerce' ), ABSPATH ),
 			],
 			'app_cert_publicKey'          => [
-				'title'       => __( 'appCertPublicKey.crt Path', 'wprs-wc-alipay' ),
+				'title'       => __( 'appCertPublicKey.crt Path', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => sprintf( __( 'Enter The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wprs-wc-alipay' ), ABSPATH ),
+				'description' => sprintf( __( 'Enter The absolute path of appCertPublicKey.crt, this is your website root path: %s', 'wenprise-alipay-checkout-for-woocommerce' ), ABSPATH ),
 			],
 			'is_debug_mod'                => [
-				'title'       => __( 'Debug Mode', 'wprs-wc-alipay' ),
-				'label'       => __( 'Enable debug mod', 'wprs-wc-alipay' ),
+				'title'       => __( 'Debug Mode', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'label'       => __( 'Enable debug mod', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'checkbox',
-				'description' => __( 'If checked, plugin will show program errors in frontend.', 'wprs-wc-alipay' ),
+				'description' => __( 'If checked, plugin will show program errors in frontend.', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'default'     => 'no',
 			],
 		];
@@ -276,10 +276,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		if ( ! in_array( $this->current_currency, [ 'RMB', 'CNY' ] ) ) {
 
 			$this->form_fields[ 'exchange_rate' ] = [
-				'title'       => __( 'Exchange Rate', 'wprs-wc-alipay' ),
+				'title'       => __( 'Exchange Rate', 'wenprise-alipay-checkout-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => sprintf( __( 'Please set the %s against Chinese Yuan exchange rate, eg if your currency is US Dollar, then you should enter 6.19',
-					'wprs-wc-alipay' ), $this->current_currency ),
+					'wenprise-alipay-checkout-for-woocommerce' ), $this->current_currency ),
 			];
 
 		}
@@ -292,7 +292,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	public function admin_options() { ?>
 
         <h3>
-			<?php echo esc_html( ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'wprs-wc-alipay' ) ); ?>
+			<?php echo esc_html( ( ! empty( $this->method_title ) ) ? $this->method_title : __( 'Settings', 'wenprise-alipay-checkout-for-woocommerce' ) ); ?>
 			<?php wc_back_link( __( 'Return to payments page', 'woocommerce' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) ); ?>
         </h3>
 
@@ -317,7 +317,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				wp_kses_post(
 					sprintf(
 						__( 'Alipay is enabled, but the store currency is ·not set to Chinese Yuan. Please <a href="%1$s">set the %2$s against the Chinese Yuan exchange rate</a>.',
-							'wprs-wc-alipay' ),
+							'wenprise-alipay-checkout-for-woocommerce' ),
 						esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wprs-wc-alipay#woocommerce_wprs-wc-alipay_exchange_rate' ) ),
 						esc_html( $this->current_currency )
 					)
@@ -433,7 +433,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		foreach ( $cert_paths as $field => $path ) {
 			if ( ! $path || ! is_readable( $path ) ) {
 				throw new \InvalidArgumentException(
-					sprintf( __( 'Alipay certificate file is not readable: %s', 'wprs-wc-alipay' ), $field )
+					sprintf( __( 'Alipay certificate file is not readable: %s', 'wenprise-alipay-checkout-for-woocommerce' ), $field )
 				);
 			}
 		}
@@ -574,8 +574,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			'woocommerce_wenprise_alipay_args',
 			[
 				'out_trade_no'    => $order_no,
-				'subject'         => sprintf( __( 'Pay for order %1$s at %2$s', 'wprs-wc-alipay' ), $display_order_no, get_bloginfo( 'name' ) ),
-				'body'            => sprintf( __( 'Pay for order %1$s at %2$s', 'wprs-wc-alipay' ), $display_order_no, get_bloginfo( 'name' ) ),
+				'subject'         => sprintf( __( 'Pay for order %1$s at %2$s', 'wenprise-alipay-checkout-for-woocommerce' ), $display_order_no, get_bloginfo( 'name' ) ),
+				'body'            => sprintf( __( 'Pay for order %1$s at %2$s', 'wenprise-alipay-checkout-for-woocommerce' ), $display_order_no, get_bloginfo( 'name' ) ),
 				'total_amount'    => $this->get_alipay_order_amount( $order ),
 				'show_url'        => $order->get_checkout_payment_url(),
 				'product_code'    => 'FACE_TO_FACE_PAYMENT',
@@ -599,7 +599,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		if ( empty( $f2f_result->code ) || $f2f_result->code !== '10000' || empty( $f2f_result->qr_code ) ) {
 			$error = trim( ( $f2f_result->code ?? '' ) . ':' . ( $f2f_result->sub_msg ?? $f2f_result->msg ?? '' ), ':' );
-			throw new \UnexpectedValueException( $error ?: __( 'Failed to create Alipay QR code.', 'wprs-wc-alipay' ) );
+			throw new \UnexpectedValueException( $error ?: __( 'Failed to create Alipay QR code.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		$expires_at = $this->save_f2f_qrcode( $order, $f2f_result->qr_code, $order_no, $timeout_express );
@@ -640,8 +640,8 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$biz_content = apply_filters( 'woocommerce_wenprise_alipay_args',
 			[
 				'out_trade_no' => $order_no,
-				'subject'      => sprintf( __( 'Pay for order %1$s at %2$s', 'wprs-wc-alipay' ), $order_no, get_bloginfo( 'name' ) ),
-				'body'         => sprintf( __( 'Pay for order %1$s at %2$s', 'wprs-wc-alipay' ), $order_no, get_bloginfo( 'name' ) ),
+				'subject'      => sprintf( __( 'Pay for order %1$s at %2$s', 'wenprise-alipay-checkout-for-woocommerce' ), $order_no, get_bloginfo( 'name' ) ),
+				'body'         => sprintf( __( 'Pay for order %1$s at %2$s', 'wenprise-alipay-checkout-for-woocommerce' ), $order_no, get_bloginfo( 'name' ) ),
 				'total_amount' => $total,
 				'show_url'     => $order->get_checkout_payment_url(),
 			]
@@ -749,7 +749,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			if ( $this->is_debug_mod ) {
 				$error = $this->get_error_message( $e->getMessage() );
 			} else {
-				$error = __( 'Failed to send order to Alipay, please contact us.', 'wprs-wc-alipay' );
+				$error = __( 'Failed to send order to Alipay, please contact us.', 'wenprise-alipay-checkout-for-woocommerce' );
 			}
 
 			$this->log( $error );
@@ -799,7 +799,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				                            <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
 				                            <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
 				                                <button type="button" id="js-alipay-refresh-qrcode" class="button alt rswc-button">
-													<?= esc_html__( 'Refresh QR code', 'wprs-wc-alipay' ); ?>
+													<?= esc_html__( 'Refresh QR code', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
 				                                </button>
 				                            </div>
 				                        </div>
@@ -814,7 +814,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		                    <img
 			                    class="wprs-qrcode-guide-image"
 			                    src="<?= esc_url( WENPRISE_ALIPAY_URL . '/frontend/alipay-scan-guide.png' ); ?>"
-			                    alt="<?= esc_attr__( 'Open Alipay, tap Scan, scan the QR code, and confirm payment.', 'wprs-wc-alipay' ); ?>"
+			                    alt="<?= esc_attr__( 'Open Alipay, tap Scan, scan the QR code, and confirm payment.', 'wenprise-alipay-checkout-for-woocommerce' ); ?>"
 		                    >
 	                    </div>
 
@@ -826,9 +826,9 @@ class PaymentGateway extends \WC_Payment_Gateway {
                                   p-id="6585" fill="#16a34a"></path>
                         </svg>
 
-                        <div class="rs-instruction-box__title"><?= esc_html__( 'Successfully submitted order!', 'wprs-wc-alipay' ); ?></div>
+                        <div class="rs-instruction-box__title"><?= esc_html__( 'Successfully submitted order!', 'wenprise-alipay-checkout-for-woocommerce' ); ?></div>
 
-                        <p><?= esc_html__( 'Please verify the payment information above and click the button below to pay via Alipay.', 'wprs-wc-alipay' ); ?></p>
+                        <p><?= esc_html__( 'Please verify the payment information above and click the button below to pay via Alipay.', 'wenprise-alipay-checkout-for-woocommerce' ); ?></p>
                     </div>
 
                     <div class="rs-flex rs-justify-center rs-mt-4 rs-action-block">
@@ -837,10 +837,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
                                 <path d="M789 610.3c-38.7-12.9-90.7-32.7-148.5-53.6 34.8-60.3 62.5-129 80.7-203.6H530.5v-68.6h233.6v-38.3H530.5V132h-95.4c-16.7 0-16.7 16.5-16.7 16.5v97.8H182.2v38.3h236.3v68.6H223.4v38.3h378.4a667.18 667.18 0 0 1-54.5 132.9c-122.8-40.4-253.8-73.2-336.1-53-52.6 13-86.5 36.1-106.5 60.3-91.4 111-25.9 279.6 167.2 279.6C386 811.2 496 747.6 581.2 643 708.3 704 960 808.7 960 808.7V659.4s-31.6-2.5-171-49.1zM253.9 746.6c-150.5 0-195-118.3-120.6-183.1 24.8-21.9 70.2-32.6 94.4-35 89.4-8.8 172.2 25.2 269.9 72.8-68.8 89.5-156.3 145.3-243.7 145.3z"
                                       p-id="2629" fill="#ffffff"></path>
                             </svg>
-							<?= esc_html__( 'pay via Alipay', 'wprs-wc-alipay' ); ?>
+							<?= esc_html__( 'pay via Alipay', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
                         </a>
                         <a href="#" id="js-alipay-fail" class="button rswc-button rs-flex alt2 rs-ml-4">
-							<?= esc_html__( 'Check payment results', 'wprs-wc-alipay' ); ?>
+							<?= esc_html__( 'Check payment results', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
                         </a>
                     </div>
 
@@ -1008,7 +1008,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$nonce = isset( $_POST[ 'nonce' ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'nonce' ] ) ) : '';
 
 		if ( ! wp_verify_nonce( $nonce, 'wprs_wc_alipay_order_action' ) ) {
-			wp_send_json_error( __( 'Invalid request.', 'wprs-wc-alipay' ), 403 );
+			wp_send_json_error( __( 'Invalid request.', 'wenprise-alipay-checkout-for-woocommerce' ), 403 );
 		}
 	}
 
@@ -1092,7 +1092,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$message = (string) $this->get_response_property( $result, 'msg' );
 		}
 
-		throw new \UnexpectedValueException( $message ?: __( 'Failed to close the previous Alipay QR code.', 'wprs-wc-alipay' ) );
+		throw new \UnexpectedValueException( $message ?: __( 'Failed to close the previous Alipay QR code.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 	}
 
 
@@ -1231,7 +1231,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				if ( $this->is_debug_mod ) {
 					$error = $e->getMessage();
 				} else {
-					$error = __( 'Failed to process order, please contact us.', 'wprs-wc-alipay' );
+					$error = __( 'Failed to process order, please contact us.', 'wenprise-alipay-checkout-for-woocommerce' );
 				}
 
 				error_log( $error );
@@ -1254,13 +1254,13 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$order_key = isset( $_POST[ 'order_key' ] ) ? wc_clean( wp_unslash( $_POST[ 'order_key' ] ) ) : '';
 
 		if ( ! $order_id ) {
-			wp_send_json_error( __( 'Invalid order.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( __( 'Invalid order.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		$order = wc_get_order( $order_id );
 
 		if ( ! $order instanceof \WC_Order || ! $this->can_query_order( $order, $order_key ) ) {
-			wp_send_json_error( __( 'You are not allowed to query this order.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( __( 'You are not allowed to query this order.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		$out_trade_no = $this->get_current_out_trade_no( $order );
@@ -1277,7 +1277,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			} else {
 				// 支付未完成时保持当前页面轮询，不跳转回支付页
 				wp_send_json_error( [
-					'message' => __( 'Alipay payment has not completed yet.', 'wprs-wc-alipay' ),
+					'message' => __( 'Alipay payment has not completed yet.', 'wenprise-alipay-checkout-for-woocommerce' ),
 				] );
 			}
 
@@ -1285,7 +1285,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			if ( $this->is_debug_mod ) {
 				$error = $e->getMessage();
 			} else {
-				$error = __( 'Failed to send query order request, please contact us.', 'wprs-wc-alipay' );
+				$error = __( 'Failed to send query order request, please contact us.', 'wenprise-alipay-checkout-for-woocommerce' );
 			}
 
 			wp_send_json_error( $error );
@@ -1304,17 +1304,17 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$order_key = isset( $_POST[ 'order_key' ] ) ? wc_clean( wp_unslash( $_POST[ 'order_key' ] ) ) : '';
 
 		if ( ! $order_id ) {
-			wp_send_json_error( __( 'Invalid order.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( __( 'Invalid order.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		$order = wc_get_order( $order_id );
 
 		if ( ! $order instanceof \WC_Order || ! $this->can_query_order( $order, $order_key ) ) {
-			wp_send_json_error( __( 'You are not allowed to refresh this QR code.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( __( 'You are not allowed to refresh this QR code.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		if ( ! $order->needs_payment() ) {
-			wp_send_json_error( __( 'This order does not need payment.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( __( 'This order does not need payment.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		try {
@@ -1323,14 +1323,14 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
 				wp_send_json_success( [
 					'url'     => $order->get_checkout_order_received_url(),
-					'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+					'message' => __( 'Payment successful', 'wenprise-alipay-checkout-for-woocommerce' ),
 				] );
 			}
 
 			if ( ! $order->needs_payment() ) {
 				wp_send_json_success( [
 					'url'     => $order->get_checkout_order_received_url(),
-					'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+					'message' => __( 'Payment successful', 'wenprise-alipay-checkout-for-woocommerce' ),
 				] );
 			}
 
@@ -1340,7 +1340,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
 					wp_send_json_success( [
 						'url'     => $order->get_checkout_order_received_url(),
-						'message' => __( 'Payment successful', 'wprs-wc-alipay' ),
+						'message' => __( 'Payment successful', 'wenprise-alipay-checkout-for-woocommerce' ),
 					] );
 				}
 
@@ -1353,11 +1353,11 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				'qrcode'     => $qrcode_data[ 'qrcode' ],
 				'expires_at' => $qrcode_data[ 'expires_at' ],
 				'out_trade_no' => $qrcode_data[ 'out_trade_no' ],
-				'message'    => __( 'QR code refreshed.', 'wprs-wc-alipay' ),
+				'message'    => __( 'QR code refreshed.', 'wenprise-alipay-checkout-for-woocommerce' ),
 			] );
 		} catch ( \Exception $e ) {
 			$this->log( $e->getMessage() );
-			wp_send_json_error( $this->is_debug_mod ? $e->getMessage() : __( 'Failed to refresh Alipay QR code, please try again.', 'wprs-wc-alipay' ) );
+			wp_send_json_error( $this->is_debug_mod ? $e->getMessage() : __( 'Failed to refresh Alipay QR code, please try again.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 	}
 
@@ -1422,7 +1422,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 				if ( ! empty( $refund_result->code ) && (string) $refund_result->code === '10000' ) {
 					$order->add_order_note(
-						sprintf( __( 'Refunded %1$s via Alipay', 'wprs-wc-alipay' ), $refund_result->refund_fee )
+						sprintf( __( 'Refunded %1$s via Alipay', 'wenprise-alipay-checkout-for-woocommerce' ), $refund_result->refund_fee )
 					);
 
 					return true;
@@ -1431,7 +1431,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 					$error_msg  = $refund_result->sub_msg ?? ( $refund_result->msg ?? '' );
 
 					$order->add_order_note(
-						sprintf( __( 'Failed to refunded %1$s. Error message: %2$s', 'wprs-wc-alipay' ), $amount, trim( $error_code . ':' . $error_msg, ':' ) )
+						sprintf( __( 'Failed to refunded %1$s. Error message: %2$s', 'wenprise-alipay-checkout-for-woocommerce' ), $amount, trim( $error_code . ':' . $error_msg, ':' ) )
 					);
 
 					$this->log( $response );
@@ -1442,7 +1442,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			if ( $this->is_debug_mod ) {
 				$error = $e->getMessage();
 			} else {
-				$error = __( 'Failed to send refund request, please contact us.', 'wprs-wc-alipay' );
+				$error = __( 'Failed to send refund request, please contact us.', 'wenprise-alipay-checkout-for-woocommerce' );
 			}
 
 			$this->log( $error );
@@ -1484,7 +1484,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		}
 
 		if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
-			return __( 'Alipay returned an invalid response.', 'wprs-wc-alipay' );
+			return __( 'Alipay returned an invalid response.', 'wenprise-alipay-checkout-for-woocommerce' );
 		}
 
 		$result  = $response->alipay_trade_query_response;
@@ -1496,7 +1496,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		}
 
 		if ( $message === '' ) {
-			$message = __( 'Alipay payment has not completed yet.', 'wprs-wc-alipay' );
+			$message = __( 'Alipay payment has not completed yet.', 'wenprise-alipay-checkout-for-woocommerce' );
 		}
 
 		if ( $this->is_debug_mod ) {

@@ -31,7 +31,7 @@ final class BlockSupport extends AbstractPaymentMethodType {
 		$payment_gateways_class = WC()->payment_gateways();
 		$payment_gateways       = $payment_gateways_class->payment_gateways();
 
-		return $payment_gateways[ 'wprs-wc-alipay' ]->is_available();
+		return $payment_gateways[ WENPRISE_ALIPAY_WOOCOMMERCE_ID ]->is_available();
 	}
 
 	/**
@@ -53,7 +53,7 @@ final class BlockSupport extends AbstractPaymentMethodType {
 		);
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'wc-alipay-blocks', 'wprs-wc-alipay', );
+			wp_set_script_translations( 'wc-alipay-blocks', 'wenprise-alipay-checkout-for-woocommerce', WENPRISE_ALIPAY_PATH . 'languages' );
 		}
 
 		return [ 'wc-alipay-blocks' ];

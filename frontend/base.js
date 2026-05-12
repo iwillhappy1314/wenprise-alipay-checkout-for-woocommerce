@@ -6,7 +6,7 @@ import { decodeEntities } from '@wordpress/html-entities';
 
 const defaultLabel = __(
     'Alipay By Wenprise',
-    'wenprise-wc-alipay'
+    'wenprise-alipay-checkout-for-woocommerce'
 );
 
 export const ariaLabel = ({ title }) => {

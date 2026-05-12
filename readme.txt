@@ -7,7 +7,7 @@ Requires at least: 4.7
 Tested up to: 6.6
 WC requires at least: 3.6
 WC tested up to: 9.1
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GPL-2.0+
 
 
@@ -70,6 +70,9 @@ Email: amos@wpcio.com
 * payment
 
 ## Changelog ##
+
+### 3.1.1 ###
+* 规范 text domain
 
 ### 3.1.0 ###
 * 精简支付宝 SDK，只保留必要的类

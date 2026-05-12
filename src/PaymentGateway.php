@@ -1140,7 +1140,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			return (bool) $gateway->rsaCheckV1( $request_data, $this->alipay_public_key, 'RSA2' );
 		} catch ( \Exception $e ) {
-			error_log( 'Alipay signature verification exception: ' . $e->getMessage() );
+			$this->log( 'Alipay signature verification exception: ' . $e->getMessage() );
 
 			return false;
 		}
@@ -1155,7 +1155,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		$request_data = $this->get_alipay_request_data();
 
-		error_log( 'Alipay notify/return request data: ' . wp_json_encode( $request_data, JSON_UNESCAPED_UNICODE ) );
+		$this->log( 'Alipay notify/return request data: ' . wp_json_encode( $request_data, JSON_UNESCAPED_UNICODE ) );
 
 		if ( ! empty( $request_data[ 'out_trade_no' ] ) ) {
 
@@ -1163,12 +1163,12 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$order        = $this->get_order_by_out_trade_no( $out_trade_no );
 
 			if ( ! $order instanceof \WC_Order ) {
-				error_log( 'Order not found for out_trade_no: ' . $out_trade_no );
+                $this->log( 'Order not found for out_trade_no: ' . $out_trade_no );
 			}
 
 			$is_signature_valid = $this->verify_alipay_request( $request_data );
 			if ( ! $is_signature_valid ) {
-				error_log( 'Alipay signature verification failed.' );
+                $this->log( 'Alipay signature verification failed.' );
 			}
 
 			if ( ! $order instanceof \WC_Order || ! $is_signature_valid ) {
@@ -1196,7 +1196,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			try {
 				$response = $gateway->execute( $request );
-				error_log( 'Alipay query response: ' . wp_json_encode( $response, JSON_UNESCAPED_UNICODE ) );
+                $this->log( 'Alipay query response: ' . wp_json_encode( $response, JSON_UNESCAPED_UNICODE ) );
 
 				if ( ! is_object( $response ) || empty( $response->alipay_trade_query_response ) ) {
 					throw new \UnexpectedValueException( $this->get_error_message( $response ) );
@@ -1205,7 +1205,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 				$result   = $response->alipay_trade_query_response;
 
 				if ( $this->is_valid_paid_result_for_order( $order, $result, $out_trade_no ) ) {
-					error_log( 'Alipay payment verified successfully for order: ' . $order->get_id() );
+                    $this->log( 'Alipay payment verified successfully for order: ' . $order->get_id() );
 					$this->complete_order( $order, $result->trade_no );
 
 					if ( $_SERVER[ 'REQUEST_METHOD' ] === 'POST' ) {
@@ -1221,7 +1221,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 						exit;
 					} else {
 						$error = $this->get_error_message( $response );
-						error_log( $error );
+                        $this->log( $error );
 
 						wp_safe_redirect( $this->get_order_return_fallback_url( $order ) );
 						exit;
@@ -1234,7 +1234,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 					$error = __( 'Failed to process order, please contact us.', 'wenprise-alipay-checkout-for-woocommerce' );
 				}
 
-				error_log( $error );
+                $this->log( $error );
 				wp_die( $error );
 			}
 		}

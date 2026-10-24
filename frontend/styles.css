@@ -65,10 +65,6 @@
     font-size: .875rem;
 }
 
-#wprs_wc_alipay_f2f_qrcode canvas:nth-child(2) {
-    display: none;
-}
-
 #js-alipay-success {
     margin-right: .5rem;
 }
@@ -139,15 +135,19 @@
 }
 
 #wprs_wc_alipay_f2f_qrcode {
+    display: block;
     width: 256px;
     height: 256px;
     position: absolute;
     top: 0;
     left: 0;
+    object-fit: contain;
 }
 
-.wprs-qrcode canvas {
+.wprs-qrcode__image {
     display: block;
+    max-width: 100%;
+    background: #fff;
 }
 
 .wprs-qrcode p {

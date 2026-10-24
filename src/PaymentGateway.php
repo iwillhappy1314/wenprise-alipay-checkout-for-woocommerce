@@ -2,6 +2,8 @@
 
 namespace Wenprise\Alipay;
 
+use Wenprise\Alipay\Support\QrcodeGenerator;
+
 /**
  *
  * trade_no | $order->get_transaction_id() :支付宝交易号，和商户订单号不能同时为空
@@ -108,7 +110,19 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	/** @var string WC_API for the gateway - 作为回调 url 使用 */
 	public $notify_url;
 
-	public function __construct() {
+	/**
+	 * @var QrcodeGenerator 后端二维码生成器。
+	 */
+	private $qrcode_generator;
+
+	/**
+	 * 初始化支付宝支付网关及其 WooCommerce hooks。
+	 *
+	 * @param QrcodeGenerator|null $qrcode_generator 可选的二维码生成器，主要用于测试替换。
+	 */
+	public function __construct( ?QrcodeGenerator $qrcode_generator = null ) {
+		$this->qrcode_generator = $qrcode_generator ?: new QrcodeGenerator();
+
 		// 支付方法的全局 ID
 		$this->id = WENPRISE_ALIPAY_WOOCOMMERCE_ID;
 
@@ -562,7 +576,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	 * @param \WC_Order $order 订单对象
 	 *
 	 * @return array
-	 * @throws \Exception 支付宝接口异常
+	 * @throws \Throwable 支付宝接口或响应异常。
 	 */
 	private function precreate_f2f_qrcode( \WC_Order $order ): array {
 		$gateway          = $this->get_gateway();
@@ -588,11 +602,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$request->setReturnUrl( WC()->api_request_url( 'wprs-wc-alipay-return' ) );
 		$request->setBizContent( json_encode( $biz_content ) );
 
-		$response     = wp_remote_get( $gateway->pageExecute( $request, 'GET' ) );
-		$f2f_response = json_decode( wp_remote_retrieve_body( $response ) );
+		$f2f_response = $gateway->execute( $request );
 
 		if ( ! is_object( $f2f_response ) || empty( $f2f_response->alipay_trade_precreate_response ) ) {
-			throw new \UnexpectedValueException( $this->get_error_message( $response ) );
+			throw new \UnexpectedValueException( __( 'Alipay returned an invalid QR code response.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}
 
 		$f2f_result = $f2f_response->alipay_trade_precreate_response;
@@ -634,9 +647,6 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 		do_action( 'wenprise_woocommerce_alipay_before_process_payment' );
 
-		// 调用响应的方法来处理支付
-		$gateway = $this->get_gateway();
-
 		$biz_content = apply_filters( 'woocommerce_wenprise_alipay_args',
 			[
 				'out_trade_no' => $order_no,
@@ -652,7 +662,33 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		 */
 		$is_mobile_payment = $this->is_mobile_payment_request();
 		$is_f2f_payment    = ! $is_mobile_payment && $this->enabled_f2f === 'yes';
-		$timeout_express = '';
+
+		if ( $is_f2f_payment ) {
+			try {
+				$this->precreate_f2f_qrcode( $order );
+				$order->delete_meta_data( '_gateway_payment_url' );
+				$order->update_meta_data( 'wprs_wc_alipay_payment_product', 'f2f' );
+				$order->save();
+
+				return [
+					'result'   => 'success',
+					'redirect' => $order->get_checkout_payment_url( true ),
+				];
+			} catch ( \Throwable $exception ) {
+				$this->log( $exception->getMessage() );
+
+				$error = $this->is_debug_mod
+					? $exception->getMessage()
+					: __( 'Failed to create Alipay QR code, please try again.', 'wenprise-alipay-checkout-for-woocommerce' );
+
+				wc_add_notice( $error, 'error' );
+
+				return [
+					'result'   => 'failure',
+					'messages' => $error,
+				];
+			}
+		}
 
 		if ( $is_mobile_payment ) {
 			// https://opendocs.alipay.com/open/29ae8cb6_alipay.trade.wap.pay?pathHash=1ef587fd&ref=api&scene=21
@@ -661,20 +697,10 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			$request = new \AlipayTradeWapPayRequest();
 
 		} else {
-			if ( $is_f2f_payment ) {
-				// https://opendocs.alipay.com/open/f540afd8_alipay.trade.precreate?pathHash=d3c84596&ref=api&scene=19
-				$timeout_express                 = $this->get_f2f_timeout_express();
-				$order_no                        = $this->get_new_f2f_order_number( $order );
-				$biz_content[ 'out_trade_no' ]   = $order_no;
-				$biz_content[ 'product_code' ]   = 'FACE_TO_FACE_PAYMENT';
-				$biz_content[ 'timeout_express' ] = $timeout_express;
-				$request                         = new \AlipayTradePrecreateRequest();
-			} else {
-				// https://opendocs.alipay.com/open/59da99d0_alipay.trade.page.pay?pathHash=e26b497f&ref=api&scene=22
-				$biz_content[ 'product_code' ] = 'FAST_INSTANT_TRADE_PAY';
+			// https://opendocs.alipay.com/open/59da99d0_alipay.trade.page.pay?pathHash=e26b497f&ref=api&scene=22
+			$biz_content[ 'product_code' ] = 'FAST_INSTANT_TRADE_PAY';
 
-				$request = new \AlipayTradePagePayRequest();
-			}
+			$request = new \AlipayTradePagePayRequest();
 		}
 
 		$request->setNotifyUrl( $this->notify_url );
@@ -682,69 +708,40 @@ class PaymentGateway extends \WC_Payment_Gateway {
 		$request->setBizContent( json_encode( $biz_content ) );
 
 		try {
+			$gateway  = $this->get_gateway();
 			$response = $gateway->pageExecute( $request, 'GET' );
 
-			// 当面付需要两次请求，一次预创建订单，一次获取二维码
-			if ( $is_f2f_payment ) {
-				$response     = wp_remote_get( $response );
-				$f2f_response = json_decode( wp_remote_retrieve_body( $response ) );
-				$f2f_result   = $f2f_response->alipay_trade_precreate_response;
+			if ( $response ) {
+				$order->update_meta_data( '_gateway_payment_url', $response );
+				$order->update_meta_data( 'wprs_wc_alipay_payment_product', $is_mobile_payment ? 'wap' : 'page' );
+				$this->delete_f2f_qrcode_data( $order );
+				$order->save();
 
-				if ( ! empty( $f2f_result->code ) && $f2f_result->code === '10000' ) {
-					$order->delete_meta_data( '_gateway_payment_url' );
-					$order->update_meta_data( 'wprs_wc_alipay_payment_product', 'f2f' );
-					$this->save_f2f_qrcode( $order, $f2f_result->qr_code, $order_no, $timeout_express );
+				// 生成订单后清空购物车，以免订单重复
+				WC()->cart->empty_cart();
 
-					return [
-						'result'   => 'success',
-						'redirect' => $order->get_checkout_payment_url( true ),
-					];
-				} else {
-					if ( $this->is_debug_mod ) {
-						$error = $f2f_response->alipay_trade_precreate_response->code . ':' . $f2f_response->alipay_trade_precreate_response->msg;
+				do_action( 'woocommerce_wenprise_alipay_before_payment_redirect', $response );
 
-						$this->log( $error );
-						wc_add_notice( $error, 'error' );
-					}
-
-					return [
-						'result'   => 'failure',
-						'messages' => $this->get_error_message( $response ),
-					];
-				}
+				return [
+					'result'      => 'success',
+					'redirect'    => $is_mobile_payment ? $response : $order->get_checkout_payment_url( true ),
+					'payment_url' => $response,
+				];
 			} else {
-				if ( $response ) {
-					$order->update_meta_data( '_gateway_payment_url', $response );
-					$order->update_meta_data( 'wprs_wc_alipay_payment_product', $is_mobile_payment ? 'wap' : 'page' );
-					$this->delete_f2f_qrcode_data( $order );
-					$order->save();
+				if ( $this->is_debug_mod ) {
+					$error = $this->get_error_message( $response );
 
-					// 生成订单后清空购物车，以免订单重复
-					WC()->cart->empty_cart();
-
-					do_action( 'woocommerce_wenprise_alipay_before_payment_redirect', $response );
-
-					return [
-						'result'      => 'success',
-						'redirect'    => $is_mobile_payment ? $response : $order->get_checkout_payment_url( true ),
-						'payment_url' => $response,
-					];
-				} else {
-					if ( $this->is_debug_mod ) {
-						$error = $this->get_error_message( $response );
-
-						$this->log( $error );
-						wc_add_notice( $error, 'error' );
-					}
-
-					return [
-						'result'   => 'failure',
-						'messages' => $this->get_error_message( $response ),
-					];
+					$this->log( $error );
+					wc_add_notice( $error, 'error' );
 				}
+
+				return [
+					'result'   => 'failure',
+					'messages' => $this->get_error_message( $response ),
+				];
 			}
 
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 
 			if ( $this->is_debug_mod ) {
 				$error = $this->get_error_message( $e->getMessage() );
@@ -777,11 +774,22 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			return;
 		}
 
-		$code_url        = $order->get_meta( 'wprs_wc_alipay_f2f_qrcode' );
-		$payment_url     = $order->get_meta( '_gateway_payment_url' );
-		$payment_product = $order->get_meta( 'wprs_wc_alipay_payment_product' );
-		$is_f2f_receipt  = $this->enabled_f2f === 'yes' && $payment_product === 'f2f' && $code_url;
-		$expires_at      = (int) $order->get_meta( 'wprs_wc_alipay_f2f_qrcode_expires_at' );
+		$code_url         = $order->get_meta( 'wprs_wc_alipay_f2f_qrcode' );
+		$payment_url      = $order->get_meta( '_gateway_payment_url' );
+		$payment_product  = $order->get_meta( 'wprs_wc_alipay_payment_product' );
+		$is_f2f_receipt   = $this->enabled_f2f === 'yes' && $payment_product === 'f2f' && $code_url;
+		$expires_at       = (int) $order->get_meta( 'wprs_wc_alipay_f2f_qrcode_expires_at' );
+		$qrcode_image     = '';
+		$qrcode_has_error = false;
+
+		if ( $is_f2f_receipt ) {
+			try {
+				$qrcode_image = $this->qrcode_generator->generate_data_uri( (string) $code_url );
+			} catch ( \Throwable $exception ) {
+				$qrcode_has_error = true;
+				$this->log( '支付宝二维码图片生成失败：' . $exception->getMessage() );
+			}
+		}
 		?>
 
 	        <div id="js-alipay-confirm-modal" data-order_id="<?= esc_attr( $order_id ); ?>" data-order_key="<?= esc_attr( $order->get_order_key() ); ?>" data-expires_at="<?= esc_attr( $expires_at ); ?>" class="rs-confirm-modal">
@@ -792,22 +800,31 @@ class PaymentGateway extends \WC_Payment_Gateway {
 	                    <div class="wprs-qrcode-layout">
 		                    <div class="wprs-qrcode-main">
 			                    <div class="wprs-qrcode">
-				                        <div class="wprs-qrcode__code-slot">
-				                            <div id="js-alipay-qrcode-loading" class="wprs-qrcode__loading">
-				                                <span class="wprs-qrcode__spinner"></span>
-				                            </div>
-				                            <div id="wprs_wc_alipay_f2f_qrcode" data-qrcode="<?= esc_attr( $code_url ); ?>"></div>
-				                            <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="display:none;">
-				                                <button type="button" id="js-alipay-refresh-qrcode" class="button alt rswc-button">
-													<?= esc_html__( 'Refresh QR code', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
-				                                </button>
-				                            </div>
-				                        </div>
-			                        <div class="wprs-qrcode-status is-loading">
-				                        <p id="js-alipay-qrcode-countdown" class="rs-qrcode-countdown">
-											<?= esc_html( '正在生成二维码...' ); ?>
-				                        </p>
-			                        </div>
+				                    <div class="wprs-qrcode__code-slot">
+					                    <div id="js-alipay-qrcode-loading" class="wprs-qrcode__loading" style="display:none;">
+						                    <span class="wprs-qrcode__spinner"></span>
+					                    </div>
+					                    <img
+						                    id="wprs_wc_alipay_f2f_qrcode"
+						                    class="wprs-qrcode__image"
+						                    <?php if ( $qrcode_image ) : ?>src="<?= esc_attr( $qrcode_image ); ?>"<?php endif; ?>
+						                    width="256"
+						                    height="256"
+						                    alt="<?= esc_attr__( 'Alipay payment QR code', 'wenprise-alipay-checkout-for-woocommerce' ); ?>"
+					                    >
+					                    <div id="js-alipay-qrcode-expired" class="wprs-qrcode__overlay" style="<?= $qrcode_has_error ? 'display:flex;' : 'display:none;'; ?>">
+						                    <button type="button" id="js-alipay-refresh-qrcode" class="button alt rswc-button">
+							                    <?= esc_html__( 'Refresh QR code', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
+						                    </button>
+					                    </div>
+				                    </div>
+				                    <div class="wprs-qrcode-status <?= $qrcode_has_error ? 'is-expired' : 'is-ready'; ?>">
+					                    <p id="js-alipay-qrcode-countdown" class="rs-qrcode-countdown">
+						                    <?= $qrcode_has_error
+							                    ? esc_html__( 'Failed to generate the QR code. Please refresh it.', 'wenprise-alipay-checkout-for-woocommerce' )
+							                    : esc_html__( 'Please scan the QR code with Alipay.', 'wenprise-alipay-checkout-for-woocommerce' ); ?>
+					                    </p>
+				                    </div>
 			                    </div>
 		                    </div>
 
@@ -1227,7 +1244,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 						exit;
 					}
 				}
-			} catch ( \Exception $e ) {
+			} catch ( \Throwable $e ) {
 				if ( $this->is_debug_mod ) {
 					$error = $e->getMessage();
 				} else {
@@ -1336,7 +1353,7 @@ class PaymentGateway extends \WC_Payment_Gateway {
 
 			try {
 				$this->close_f2f_trade( $out_trade_no );
-			} catch ( \Exception $e ) {
+			} catch ( \Throwable $e ) {
 				if ( $this->complete_order_if_alipay_trade_paid( $order, $out_trade_no ) ) {
 					wp_send_json_success( [
 						'url'     => $order->get_checkout_order_received_url(),
@@ -1348,14 +1365,15 @@ class PaymentGateway extends \WC_Payment_Gateway {
 			}
 
 			$qrcode_data = $this->precreate_f2f_qrcode( $order );
+			$qrcode_image = $this->qrcode_generator->generate_data_uri( $qrcode_data[ 'qrcode' ] );
 
 			wp_send_json_success( [
-				'qrcode'     => $qrcode_data[ 'qrcode' ],
-				'expires_at' => $qrcode_data[ 'expires_at' ],
+				'qrcode_image' => $qrcode_image,
+				'expires_at'   => $qrcode_data[ 'expires_at' ],
 				'out_trade_no' => $qrcode_data[ 'out_trade_no' ],
-				'message'    => __( 'QR code refreshed.', 'wenprise-alipay-checkout-for-woocommerce' ),
+				'message'      => __( 'QR code refreshed.', 'wenprise-alipay-checkout-for-woocommerce' ),
 			] );
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->log( $e->getMessage() );
 			wp_send_json_error( $this->is_debug_mod ? $e->getMessage() : __( 'Failed to refresh Alipay QR code, please try again.', 'wenprise-alipay-checkout-for-woocommerce' ) );
 		}

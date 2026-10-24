@@ -1,6 +1,7 @@
 {
   "require": {
-    "php": "^7.4 || ^8.0"
+    "php": "^7.4 || ^8.0",
+    "chillerlan/php-qrcode": "^5.0.5"
   },
   "autoload": {
     "psr-4": {
@@ -13,7 +14,15 @@
     },
     "allow-plugins": {
       "php-http/discovery": true
+    },
+    "platform": {
+      "php": "7.4.0"
     }
+  },
+  "scripts": {
+    "test:sdk": "@php tests/alipay-sdk-smoke.php",
+    "test:qrcode": "@php tests/qrcode-generator-smoke.php",
+    "test:localization": "@php tests/localization-smoke.php"
   },
   "require-dev": {
   }

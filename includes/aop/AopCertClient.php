@@ -59,7 +59,7 @@ class AopCertClient
 
     public $encryptType = "AES";
 
-    protected $alipaySdkVersion = "alipay-sdk-PHP-4.20.249.ALL";
+    protected $alipaySdkVersion = "alipay-sdk-PHP-4.20.1435.ALL";
 
     private $fileCharset = "UTF-8";
 
@@ -764,7 +764,7 @@ class AopCertClient
             openssl_sign($data, $sign, $res);
         }
 
-        if(!$this->checkEmpty($this->rsaPrivateKeyFilePath)){
+        if(!$this->checkEmpty($this->rsaPrivateKeyFilePath) && is_resource($res)){
             openssl_free_key($res);
         }
         $sign = base64_encode($sign);
@@ -820,7 +820,7 @@ class AopCertClient
         } else {
             openssl_sign($data, $sign, $res);
         }
-        if($keyfromfile){
+        if($keyfromfile && is_resource($res)){
             openssl_free_key($res);
         }
         $sign = base64_encode($sign);
@@ -1195,7 +1195,7 @@ class AopCertClient
         } else {
             $result = (openssl_verify($data, base64_decode($sign), $res)===1);
         }
-        if(!$this->checkEmpty($this->alipayPublicKey)) {
+        if(!$this->checkEmpty($this->alipayPublicKey) && is_resource($res)) {
             //释放资源
             openssl_free_key($res);
         }

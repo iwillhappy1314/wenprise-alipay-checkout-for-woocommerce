@@ -65,9 +65,6 @@ add_action( 'plugins_loaded', function ()
 	require_once WENPRISE_ALIPAY_PATH . 'includes/aop/request/AlipayTradeCloseRequest.php';
 
 
-	// 加载语言包
-	load_plugin_textdomain( 'wenprise-alipay-checkout-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 	// 添加支付方法
 	add_filter( 'woocommerce_payment_gateways', function ( $methods )
 	{

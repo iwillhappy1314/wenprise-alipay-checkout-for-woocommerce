@@ -12,6 +12,14 @@ jQuery(document).ready(function($) {
   var qrcode_expired = $('#js-alipay-qrcode-expired');
   var refresh_qrcode = $('#js-alipay-refresh-qrcode');
 
+  function get_i18n_message(key, fallback) {
+    if (WpWooAlipayData.i18n && WpWooAlipayData.i18n[key]) {
+      return WpWooAlipayData.i18n[key];
+    }
+
+    return fallback;
+  }
+
   function should_continue_query() {
     var expires_at = get_expires_at();
 
@@ -32,30 +40,65 @@ jQuery(document).ready(function($) {
 
   function show_qrcode_loading() {
     if (f2f_qrcode.length) {
-      f2f_qrcode.empty().hide();
+      f2f_qrcode.removeAttr('src').hide();
     }
 
     qrcode_expired.hide();
-    set_qrcode_status('正在生成二维码...', 'loading');
+    set_qrcode_status(get_i18n_message('qrcode_loading', 'Generating QR code...'), 'loading');
     qrcode_loading.css('display', 'flex');
   }
 
   function hide_qrcode_loading() {
     qrcode_loading.hide();
-    f2f_qrcode.show();
+
+    if (f2f_qrcode.attr('src')) {
+      f2f_qrcode.show();
+    }
   }
 
-  function render_f2f_qrcode(callback) {
-    if (f2f_qrcode.length && typeof f2f_qrcode.qrcode === 'function') {
-      show_qrcode_loading();
-      window.setTimeout(function() {
-        f2f_qrcode.empty().qrcode(f2f_qrcode.data('qrcode'));
-        hide_qrcode_loading();
+  function load_qrcode_image(image_source, callback) {
+    var image_element = f2f_qrcode.get(0);
+    var is_complete = false;
 
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }, 50);
+    if (!image_element || !image_source) {
+      hide_qrcode_loading();
+      show_qrcode_failure();
+      return;
+    }
+
+    function complete_image_load(is_success) {
+      if (is_complete) {
+        return;
+      }
+
+      is_complete = true;
+      f2f_qrcode.off('.wprsAlipayQrcode');
+      hide_qrcode_loading();
+
+      if (!is_success) {
+        show_qrcode_failure();
+        return;
+      }
+
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }
+
+    show_qrcode_loading();
+    f2f_qrcode.
+        one('load.wprsAlipayQrcode', function() {
+          complete_image_load(true);
+        }).
+        one('error.wprsAlipayQrcode', function() {
+          complete_image_load(false);
+        }).
+        attr('src', image_source);
+
+    if (image_element.complete) {
+      window.setTimeout(function() {
+        complete_image_load(image_element.naturalWidth > 0);
+      }, 0);
     }
   }
 
@@ -77,7 +120,23 @@ jQuery(document).ready(function($) {
   }
 
   function show_qrcode_expired() {
-    set_qrcode_status('二维码已过期，请刷新。', 'expired');
+    set_qrcode_status(
+        get_i18n_message('qrcode_expired', 'The QR code has expired. Please refresh it.'),
+        'expired',
+    );
+    qrcode_expired.show();
+
+    if (countdown_timer) {
+      clearInterval(countdown_timer);
+      countdown_timer = null;
+    }
+  }
+
+  function show_qrcode_failure() {
+    set_qrcode_status(
+        get_i18n_message('qrcode_failure', 'Failed to generate the QR code. Please refresh it.'),
+        'expired',
+    );
     qrcode_expired.show();
 
     if (countdown_timer) {
@@ -101,7 +160,11 @@ jQuery(document).ready(function($) {
 
     f2f_qrcode.show();
     qrcode_expired.hide();
-    set_qrcode_status('请在 ' + format_remaining_time(remaining_seconds) + ' 内使用支付宝扫码支付', 'ready');
+    set_qrcode_status(
+        get_i18n_message('qrcode_ready', 'Please scan the QR code with Alipay within %s.').
+            replace('%s', format_remaining_time(remaining_seconds)),
+        'ready',
+    );
   }
 
   function start_qrcode_countdown() {
@@ -114,7 +177,17 @@ jQuery(document).ready(function($) {
   }
 
   if (f2f_qrcode.length) {
-    render_f2f_qrcode(start_qrcode_countdown);
+    f2f_qrcode.on('error.wprsAlipayQrcode', show_qrcode_failure);
+
+    if (f2f_qrcode.attr('src')) {
+      start_qrcode_countdown();
+
+      if (f2f_qrcode.get(0).complete && f2f_qrcode.get(0).naturalWidth === 0) {
+        show_qrcode_failure();
+      }
+    } else {
+      show_qrcode_failure();
+    }
   }
 
   /**
@@ -177,7 +250,11 @@ jQuery(document).ready(function($) {
    * 支付成功后，如果没有自动跳转，点击按钮查询订单并跳转支付结果
    */
   $('#js-alipay-success, #js-alipay-fail').click(function() {
-    $.blockUI({message: '<div style="padding: 1rem;">订单查询中...</div>'});
+    var querying_message = $('<div/>').
+        text(get_i18n_message('order_querying', 'Checking payment status...')).
+        css('padding', '1rem');
+
+    $.blockUI({message: querying_message});
 
     wprs_woo_alipay_query_order(true);
   });
@@ -199,11 +276,9 @@ jQuery(document).ready(function($) {
       success: function(data) {
         if (data && data.success === true && data.data && data.data.url) {
           location.href = data.data.url;
-        } else if (data && data.success === true && data.data && data.data.qrcode) {
+        } else if (data && data.success === true && data.data && data.data.qrcode_image) {
           confirm_modal.data('expires_at', data.data.expires_at);
           confirm_modal.attr('data-expires_at', data.data.expires_at);
-          f2f_qrcode.data('qrcode', data.data.qrcode);
-          f2f_qrcode.attr('data-qrcode', data.data.qrcode);
 
           if (query_timer) {
             clearTimeout(query_timer);
@@ -212,20 +287,26 @@ jQuery(document).ready(function($) {
 
           loop_count = 50;
           qrcode_expired.hide();
-          render_f2f_qrcode(function() {
+          load_qrcode_image(data.data.qrcode_image, function() {
             start_qrcode_countdown();
             wprs_woo_alipay_query_order();
           });
         } else {
           hide_qrcode_loading();
-          show_qrcode_expired();
-          window.alert(data && data.data ? data.data : '二维码重新生成失败，请稍后重试。');
+          show_qrcode_failure();
+          window.alert(
+              data && data.data
+                  ? data.data
+                  : get_i18n_message('qrcode_refresh_failure', 'Failed to refresh the QR code. Please try again later.'),
+          );
         }
       },
       error  : function() {
         hide_qrcode_loading();
-        show_qrcode_expired();
-        window.alert('二维码重新生成失败，请稍后重试。');
+        show_qrcode_failure();
+        window.alert(
+            get_i18n_message('qrcode_refresh_failure', 'Failed to refresh the QR code. Please try again later.'),
+        );
       },
       complete: function() {
         button.prop('disabled', false);

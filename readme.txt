@@ -71,6 +71,13 @@ Email: amos@wpcio.com
 
 ## Changelog ##
 
+### 3.1.2 ###
+* 将支付宝官方 V2 SDK 更新至 alipay-sdk-PHP-4.20.1435.ALL
+* 修复 PHP 8 中 OpenSSL 密钥释放产生的弃用警告
+* 当面付二维码改为后端生成 SVG，避免依赖 WooCommerce 内部二维码脚本
+* 统一首次创建和刷新二维码的支付宝预下单与错误处理流程
+* 修复旧版全局语言包导致二维码页面先显示英文再切换中文的问题
+
 ### 3.1.1 ###
 * 规范 text domain
 

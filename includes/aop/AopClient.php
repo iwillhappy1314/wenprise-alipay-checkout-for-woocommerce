@@ -64,7 +64,7 @@ class AopClient
 
     private $targetServiceUrl = "";
 
-    protected $alipaySdkVersion = "alipay-sdk-PHP-4.20.249.ALL";
+    protected $alipaySdkVersion = "alipay-sdk-PHP-4.20.1435.ALL";
     function __construct() {
         //根据参数个数和参数类型 来做相应的判断
         if(func_num_args()==1 && func_get_arg(0) instanceof AlipayConfig){
@@ -164,7 +164,7 @@ class AopClient
             openssl_sign($data, $sign, $res);
         }
 
-        if (!$this->checkEmpty($this->rsaPrivateKeyFilePath)) {
+        if (!$this->checkEmpty($this->rsaPrivateKeyFilePath) && is_resource($res)) {
             openssl_free_key($res);
         }
         $sign = base64_encode($sign);
@@ -200,7 +200,7 @@ class AopClient
             openssl_sign($data, $sign, $res);
         }
 
-        if ($keyfromfile) {
+        if ($keyfromfile && is_resource($res)) {
             openssl_free_key($res);
         }
         $sign = base64_encode($sign);
@@ -769,7 +769,7 @@ class AopClient
             $result = (openssl_verify($data, base64_decode($sign), $res) === 1);
         }
 
-        if (!$this->checkEmpty($this->alipayPublicKey)) {
+        if (!$this->checkEmpty($this->alipayPublicKey) && is_resource($res)) {
             //释放资源
             openssl_free_key($res);
         }
